@@ -110,9 +110,9 @@ const API_KEY = 'ENTER YOUR API';
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+###From Dataset to Knowledge Graph
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+[Link of colab Jupyter notebook](https://colab.research.google.com/drive/1a6JEIpiZZ_XFUKIr4osyUXfQEQS0pfMz#scrollTo=TDd4nvYaZEcb)_
 
 
 
