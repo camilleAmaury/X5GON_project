@@ -1,0 +1,127 @@
+html, body{
+    margin: 0;
+    height: 100%;
+    background: radial-gradient(#3c495a, #272e34);
+}
+
+#container-panel{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+}
+
+.space-container{
+    height:5vh;
+}
+.presentation-container{
+    width: 100%;
+    max-height: 20vh;
+    height:20vh;
+    border:1px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.presentation-title{
+    height:100%;
+}
+
+.panel-container{
+    width: 100%;
+    height:70vh;
+    max-height:80vh;
+    border:1px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.right-panel-container{
+    width:20%;
+    height: 100%;
+    border:1px solid blueviolet;
+    text-align: left;
+}
+
+.left-panel-container{
+    width:20%;
+    height: 100%;
+    border:1px solid blueviolet;
+    text-align: right;
+}
+
+.side-panel-container-title{
+    height: 10%;
+    color:white;
+    font-size: 20px;
+    font-weight: bold;
+}
+.side-panel-container-list-container{
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    border:1px solid red;
+}
+.right-list-container{
+    align-items: flex-start;
+    padding-left: 5px;
+}
+.left-list-container{
+    align-items: flex-end;
+    padding-right: 5px;
+}
+
+.side-panel-container-list-item{
+    height: 10%;
+    margin-bottom: 40px;
+    width: 90%;
+    display: flex;
+    align-items: center;
+    border:1px solid green;
+}
+.right-list-item{
+    justify-content: flex-start;
+    padding-left: 5px;
+}
+.left-list-item{
+    justify-content: flex-end;
+    padding-right: 5px;
+}
+
+.list-item-logo-container{
+    height:100%;
+    width: 50px;
+    border:1px solid white;
+}
+
+.list-item-text-container{
+    display: flex;
+    align-items: center;
+    height:100%;
+    width: 50%;
+    border:1px solid white;
+    color:white;
+}
+.left-list-text-item{
+    justify-content: flex-end;
+    margin-right: 20px;
+}
+.right-list-text-item{
+    justify-content: flex-start;
+    margin-left: 20px;
+}
+
+.center-panel-container{
+    width:50%;
+    height: 100%;
+    border:1px solid blueviolet;
+}
+
+.space-panel-container{
+    width:5%;
+}
