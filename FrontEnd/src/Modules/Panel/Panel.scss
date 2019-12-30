@@ -2,6 +2,7 @@ html, body{
     margin: 0;
     height: 100%;
     background: radial-gradient(#3c495a, #272e34);
+    z-index: 0;
 }
 
 #container-panel{
@@ -11,6 +12,7 @@ html, body{
     flex-direction: column;
     width: 100vw;
     height: 100vh;
+    z-index: 0;
 }
 
 .space-container{
@@ -24,6 +26,7 @@ html, body{
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    z-index: 1;
 }
 
 .presentation-title{
@@ -68,6 +71,7 @@ html, body{
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 1;
 }
 
 .right-panel-container{
@@ -116,7 +120,6 @@ html, body{
     width: auto;
     display: flex;
     align-items: center;
-    cursor:pointer;
 }
 .right-list-item{
     justify-content: flex-start;

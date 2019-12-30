@@ -13,6 +13,7 @@ import account from '../../assets/icons/iconAccount.png';
 import accountHover from '../../assets/icons/iconAccountHover.png';
 
 import ListItem from './Listitem';
+import Cursor from '../cursor/cursor';
 
 export default class Panel extends Component {
     constructor(props) {
@@ -87,6 +88,7 @@ export default class Panel extends Component {
                     </div>
                     <div className={"space-panel-container"}></div>
                 </div>
+                <Cursor></Cursor>
             </div>
         );
     }
