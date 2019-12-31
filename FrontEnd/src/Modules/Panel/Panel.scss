@@ -1,10 +1,10 @@
+/* -----------------------> SCREEN <-------------------------- */
 html, body{
     margin: 0;
     height: 100%;
     background: radial-gradient(#3c495a, #272e34);
     z-index: 0;
 }
-
 #container-panel{
     display: flex;
     align-items: center;
@@ -14,6 +14,8 @@ html, body{
     height: 100vh;
     z-index: 0;
 }
+
+/* -----------------------> Horizontal GRID (Title/content) <-------------------------- */
 
 .space-container{
     height:5vh;
@@ -28,6 +30,8 @@ html, body{
     flex-direction: column;
     z-index: 1;
 }
+
+/* --------------> Title section <---------------- */
 
 .presentation-title{
     height:100%;
@@ -64,6 +68,8 @@ html, body{
     width: 150px;
 }
 
+/* --------------> Panel section <---------------- */
+
 .panel-container{
     width: 100%;
     height:60vh;
@@ -71,13 +77,20 @@ html, body{
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1;
+    z-index: 2;
 }
 
+.space-panel-container{
+    width:5%;
+}
+
+
+/* ---------> Side panel content <------- */
 .right-panel-container{
     width:20%;
     height: 100%;
     text-align: left;
+    margin-left:20px;
 }
 
 .right-panel-container:hover{
@@ -91,8 +104,8 @@ html, body{
     width:20%;
     height: 100%;
     text-align: right;
+    margin-right:20px;
 }
-
 .side-panel-container-title{
     height: 10%;
     color:white;
@@ -150,22 +163,24 @@ html, body{
     justify-content: flex-start;
     margin-left: 20px;
 }
-
-.center-panel-container{
-    width:50%;
-    height: 100%;
-    // border:1px solid blueviolet;
-}
-
-.space-panel-container{
-    width:5%;
-}
-
-// popover
+// modal which pops when hovering an icon
 .popover-header{
     background-color: #E75B40;
 }
 .popover-body{
     background-color: #E75B40;
     font-size: 14px;
+}
+
+/* -------> scene panel content <------- */
+
+.center-panel-container{
+    width:50%;
+    min-width: 848px;
+    height: 100%;
+    min-height: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index:1;
 }

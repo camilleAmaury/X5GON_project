@@ -3,15 +3,22 @@ html,body{
 }
 
 #cursor-circle{
-    border:2px solid #FFCEAE;
     border-radius: 35px;
     width:70px;
     height:70px;
     position: absolute;
-    z-index: 0;
+    z-index: 1;
 }
 
 .hover-cursor{
     transition: 0.5s ease-out;
     background-image: radial-gradient( rgba(255,255,255,0.1), rgba(39,46,52,0.1));
+}
+
+.none-color{
+    border:2px solid rgba( #000000, 0.0001);
+}
+
+.base-color{
+    border:2px solid #FFCEAE;
 }
