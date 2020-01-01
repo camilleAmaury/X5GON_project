@@ -22,10 +22,13 @@ export default class Panel extends Component {
             listitems_right: [],
             listitems_left: [],
             isOpenedIcon: [],
+            isLoadingIcon: [],
+            isNotificationIcon: [],
             // animation
             openAnimationExec: false,
             isOpened: false,
             closeAnimationExec: false,
+            dismissPopover: false,
             gif_number: 0
         }
     }
@@ -42,7 +45,9 @@ export default class Panel extends Component {
         this.setState({
             listitems_right: listitems_right,
             listitems_left: listitems_left,
-            isOpenedIcon: [false, false, false, false]
+            isOpenedIcon: [false, false, false, false],
+            isLoadingIcon: [false, false, false, false],
+            isNotificationIcon: [false, false, false, false]
         })
     }
 
@@ -50,47 +55,31 @@ export default class Panel extends Component {
         event.preventDefault();
     }
 
-    changeScholarHover = event => {
-        event.preventDefault();
-        event.target.setAttribute("src", scholarHover);
-    }
-    changeScholar = event => {
-        event.preventDefault();
-        event.target.setAttribute("src", scholar);
-    }
-
     handleClickOnIcon = event => {
-        let double = false;
         let iconKey = event.target.getAttribute("data-key");
         let openIcon = this.state.isOpenedIcon;
         if (openIcon.includes(true)) {
             if (openIcon[iconKey]) {
-                //already opened --> no changement
-                openIcon[iconKey] = false;
+                this.animation_close(false, iconKey);
             } else {
-                openIcon = [false, false, false, false];
-                openIcon[iconKey] = true;
-                // close - open animation
-                double = true;
+                this.animation_close(true, iconKey);
             }
         } else {
-            openIcon[iconKey] = true;
-            // stop animation
+            this.animation_open(iconKey);
         }
-        this.setState({
-            isOpenedIcon: openIcon
-        }, () => {
-            this.handleAnimation(openIcon, double);
-        });
+
     }
 
-    animation_open = () => {
+    animation_open = (id) => {
+        let open = [false, false, false, false];
+        open[id] = true;
         let scene_animation = document.getElementById("scene-animation");
         let scene_background = document.getElementById("scene-background");
         scene_animation.style.visibility = "visible";
         scene_background.style.visibility = "hidden";
         this.setState({
-            openAnimationExec: true
+            openAnimationExec: true,
+            isOpenedIcon: open,
         }, () => {
             setTimeout(() => {
                 this.setState({
@@ -102,6 +91,7 @@ export default class Panel extends Component {
                             scene_animation.style.visibility = "hidden";
                             this.setState({
                                 openAnimationExec: false,
+                                dismissPopover: false,
                                 gif_number: Math.random()
                             });
                         }, 200);
@@ -109,15 +99,18 @@ export default class Panel extends Component {
                 });
             }, 1700);
         });
+
+
     }
-    animation_close = (change) => {
+    animation_close = (change, id) => {
         let scene_animation = document.getElementById("scene-animation");
         let scene_background = document.getElementById("scene-background");
         // --> fermeture
         scene_animation.style.visibility = "visible";
         scene_background.style.visibility = "hidden";
         this.setState({
-            closeAnimationExec: true
+            closeAnimationExec: true,
+            dismissPopover: true
         }, () => {
             setTimeout(() => {
                 this.setState({
@@ -131,8 +124,14 @@ export default class Panel extends Component {
                                 closeAnimationExec: false,
                                 gif_number: Math.random()
                             }, () => {
-                                if(change){
-                                    setTimeout(this.animation_open, 500);
+                                if (change) {
+                                    setTimeout(() => {
+                                        this.animation_open(id);
+                                    }, 750);
+                                } else {
+                                    this.setState({
+                                        isOpenedIcon: [false, false, false, false]
+                                    });
                                 }
                             });
                         }, 300);
@@ -141,15 +140,23 @@ export default class Panel extends Component {
             }, 1850);
         });
     }
-    handleAnimation(tab_bool, double) {
-        if (tab_bool.includes(true) && !this.state.openAnimationExec && !this.state.isOpened && !this.state.closeAnimationExec && !double) {
-            this.animation_open();
-        } else if (!tab_bool.includes(true) && this.state.isOpened && !this.state.openAnimationExec && !this.state.closeAnimationExec && !double) {
-            this.animation_close(double);
-        } else if (tab_bool.includes(true) && this.state.isOpened && !this.state.openAnimationExec && !this.state.closeAnimationExec && double) {
-            // --> fermeture puis ouverture
-            this.animation_close(double);
-        }
+
+    handleLoadingIcon = (id) => {
+        let loadingIcon = this.state.isLoadingIcon;
+        loadingIcon[id] = true;
+        this.setState({
+            isLoadingIcon: loadingIcon
+        });
+    }
+    handleNotificationIcon = (id) => {
+        let notifIcon = this.state.isNotificationIcon;
+        let loadingIcon = this.state.isLoadingIcon;
+        loadingIcon[id] = false;
+        notifIcon[id] = !notifIcon[id];
+        this.setState({
+            isLoadingIcon: loadingIcon,
+            isNotificationIcon: notifIcon
+        });
     }
 
     render() {
@@ -161,12 +168,10 @@ export default class Panel extends Component {
 
                     </div>
                     <div className={"presentation-container-title"}>
-                        {/* <img src={gif} alt={"potion"} className={"presentation-title-gif"} /> */}
                         <div className={"presentation-container-title-text"}>
                             <span className={"pre-title"}>A X5GON project</span>
                             <span className={"title"}>Knowledge's Recipe</span>
                         </div>
-                        {/* <img src={gif} alt={"potion"} className={"presentation-title-gif"} /> */}
                     </div>
 
                 </div>
@@ -176,18 +181,21 @@ export default class Panel extends Component {
                         <div className={"side-panel-container-title"}>Actions</div>
                         <div className={"side-panel-container-list-container left-list-container"}>
                             {this.state.listitems_left.map((item, i) => <ListItem key={i} image={item.image} imageHover={item.imageHover} alt={item.alt} left={true} title={item.title}
-                                details={item.details} detailsTitle={item.detailsTitle} handleClick={this.handleClickOnIcon} data={i} ></ListItem>)}
+                                details={item.details} detailsTitle={item.detailsTitle} handleClick={this.handleClickOnIcon} data={i} isLoading={this.state.isLoadingIcon[i]}
+                                isNotification={this.state.isNotificationIcon[i]}></ListItem>)}
                         </div>
                     </div>
                     <div className={"center-panel-container"}>
-                        <Scene opened={this.state.isOpenedIcon} isOpened={this.state.isOpened} number={this.state.gif_number}
-                            openAnimationExec={this.state.openAnimationExec} closeAnimationExec={this.state.closeAnimationExec}></Scene>
+                        <Scene opened={this.state.isOpenedIcon} isOpened={this.state.isOpened} number={this.state.gif_number} handleNotification={this.handleNotificationIcon}
+                            openAnimationExec={this.state.openAnimationExec} closeAnimationExec={this.state.closeAnimationExec} handleLoading={this.handleLoadingIcon}
+                            notification={this.state.isNotificationIcon} dismissPopover={this.state.dismissPopover}></Scene>
                     </div>
                     <div className={"right-panel-container"}>
                         <div className={"side-panel-container-title"}>Apprentice's Information</div>
                         <div className={"side-panel-container-list-container right-list-container"}>
                             {this.state.listitems_right.map((item, i) => <ListItem key={i} image={item.image} imageHover={item.imageHover} alt={item.alt} left={false} title={item.title}
-                                details={item.details} detailsTitle={item.detailsTitle} handleClick={this.handleClickOnIcon} data={this.state.listitems_left.length + i} ></ListItem>)}
+                                details={item.details} detailsTitle={item.detailsTitle} handleClick={this.handleClickOnIcon} data={this.state.listitems_left.length + i}
+                                isLoading={this.state.isLoadingIcon[this.state.listitems_left.length + i]} isNotification={this.state.isNotificationIcon[this.state.listitems_left.length + i]}></ListItem>)}
                         </div>
                     </div>
                 </div>
