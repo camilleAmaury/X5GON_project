@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-import loading from '../../assets/loadinganimation5.gif';
 
 export default class LoadingAnimation extends Component {
     constructor(props){
@@ -18,7 +17,7 @@ export default class LoadingAnimation extends Component {
 
     render() {
         return (
-            this.props.isLoading ? <img src={loading} style={{"width":this.props.size[0], "height":this.props.size[1]}} alt="loading"/>: this.props.else
+            this.props.isLoading ? <img src={""} style={{"width":this.props.size[0], "height":this.props.size[1]}} alt="loading"/>: this.props.else
         );
     }
 }

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import './Panel.scss';
 
-import gif from '../../assets/loadinganimation5.gif';
 import scholar from '../../assets/icons/iconScholar.png';
 import scholarHover from '../../assets/icons/iconScholarHover.png';
 import documentIm from '../../assets/icons/iconDocument.png';
