@@ -19,7 +19,7 @@ export default class SceneKnowledge extends Component {
             clickedCharacter: false,
             waitingData: false,
             isAnswering: false,
-            answerText: ""
+            data: []
         }
     }
 
@@ -70,16 +70,26 @@ export default class SceneKnowledge extends Component {
         }, () => {
             this.props.handleLoading(this.props.data);
             setTimeout(() => {
+                let data = [
+                    {title:"Two Planes three towers", author:"Larry Silverstein", keywords:["tower", "plane", "jew", "luck"]}, 
+                    {title:"Wigou Vigoula", author:"Gitan du désert", keywords:["gitan", "wesh", "derulo", "professionnel"]},
+                    {title:"Random book", author:"Random Author", keywords:["random"]},
+                    {title:"Random book", author:"Random Author", keywords:["random"]},
+                    {title:"Random book", author:"Random Author", keywords:["random"]},
+                    {title:"Random book", author:"Random Author", keywords:["random"]},
+                    {title:"Random book", author:"Random Author And Me", keywords:["random"]},
+                    {title:"Random book", author:"Random Author", keywords:["random"]},
+                ];
                 this.setState({
                     waitingData: false,
                     clickedCharacter: false,
-                    hoveringCharacter: false,
+                    hoveringCharacter: true,
                     isAnswering: true,
-                    answerText: "No server response - error"
+                    data: data
                 }, () => {
                     this.props.handleNotification(this.props.data);
                 });
-            }, 10000);
+            }, 5000);
         });
     }
 
@@ -95,18 +105,30 @@ export default class SceneKnowledge extends Component {
                 <img src={this.state.waitingData ? KnowledgeSeeking : this.state.isAnswering ? KnowledgeAnswer : KnowledgeCharacter}
                     alt={"scene-knwoledge-character"} id={"scene-knwoledge-character"} style={{visibility:this.props.visible ? "visible" : "hidden"}} />
 
-                <div id={"scene-knwoledge-block-character"} onMouseEnter={this.hoverCharacter} onMouseLeave={this.leaveCharacter} style={{visibility:this.props.visible ? "visible" : "hidden"}}
+                <div id={"scene-knwoledge-block-character"} onMouseEnter={this.hoverCharacter} onMouseLeave={this.state.isAnswering ? () => {} : this.leaveCharacter} style={{visibility:this.props.visible ? "visible" : "hidden"}}
                     onClick={this.state.waitingData ? () => { } : (this.state.isAnswering ? () => { this.setState({ isAnswering: false }); } : this.clickCharacter)}>
 
                 </div>
-                <Popover id={"scene-knwoledge-block-character-popover"} placement={this.state.clickedCharacter ? "top" : "left"} isOpen={(!this.props.dismissPopover && this.props.visible && this.state.hoveringCharacter)} target={"scene-knwoledge-block-character"}>
+                <Popover className={this.state.isAnswering ? "answer" : ""} id={"scene-knwoledge-block-character-popover"} placement={this.state.clickedCharacter ? "top" : "left"} isOpen={(!this.props.dismissPopover && this.props.visible && this.state.hoveringCharacter)} target={"scene-knwoledge-block-character"}>
                     <PopoverHeader>{"Librarian"}</PopoverHeader>
                     <PopoverBody>
                         {this.state.waitingData ?
                             "Let me a little more time to find what you are looking for !"
                             :
                             this.state.isAnswering ?
-                                this.state.answerText
+                                <div  className={"scrollbar"} id={"scrollbardocument"} >
+                                    <div className={"list-document"} >
+                                        <ol>
+                                            {this.state.data.map((item, i) => <li key={i}>
+                                                    <a href="#">
+                                                        <span className={"list-document-title"}>{item.title}</span>
+                                                        <span className={"list-document-author"}>{item.author}</span>
+                                                        <span className={"list-document-keywords"}>{item.keywords.join(" ")}</span>
+                                                    </a>
+                                                </li>)}
+                                        </ol>
+                                    </div>
+                                </div>
                                 :
                                 "Tell me what are the keywords of your needs."
                         }
