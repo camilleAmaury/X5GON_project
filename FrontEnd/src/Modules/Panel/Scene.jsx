@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import './Scene.scss';
 
 import SceneScholar from './SceneScholar';
+import SceneKnowledge from './SceneKnowledge';
 
 import sceneImage from '../../assets/Scene/scene_openPNG.png';
 import sceneImageClose from '../../assets/Scene/scene_closePNG.png';
@@ -54,6 +55,9 @@ export default class Scene extends Component {
 
                 <img src={(condOpen ? openSceneAnimation : (condClose ? closeSceneAnimation : "")) + "?id=" + this.props.number}
                     alt={"scene-animation"} id={"scene-animation"} />
+
+                <SceneKnowledge data={0} handleLoading={this.props.handleLoading} handleNotification={this.props.handleNotification} visible={this.props.opened[0]} 
+                    notification={this.props.notification[0]} dismissPopover={this.props.dismissPopover}></SceneKnowledge>
 
                 <SceneScholar data={1} handleLoading={this.props.handleLoading} handleNotification={this.props.handleNotification} visible={this.props.opened[1]} 
                     notification={this.props.notification[1]} dismissPopover={this.props.dismissPopover}></SceneScholar>

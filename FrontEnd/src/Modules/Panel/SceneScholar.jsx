@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 
-import './Scene.scss';
+import './SceneScholar.scss';
 
 import getDivPosition from '../../Functions/Position/DivPosition';
 
@@ -25,7 +25,7 @@ export default class SceneScholar extends Component {
 
     componentDidMount = () => {
         // position the character hover block at the right position
-        let blockhover = document.getElementById("scene-block-character");
+        let blockhover = document.getElementById("scene-scholar-block-character");
         let scene = document.getElementById("scene");
         let pos = getDivPosition(scene);
         blockhover.style.left = pos.left + 138 + "px";
@@ -38,7 +38,7 @@ export default class SceneScholar extends Component {
     }
 
     hoverCharacter = () => {
-        let hover = document.getElementById("scene-hover-character");
+        let hover = document.getElementById("scene-scholar-hover-character");
         hover.style.visibility = "visible";
         this.setState({ hoveringCharacter: true }, () => {
             if(this.state.isAnswering && this.props.notification){
@@ -48,7 +48,7 @@ export default class SceneScholar extends Component {
     }
 
     leaveCharacter = () => {
-        let hover = document.getElementById("scene-hover-character");
+        let hover = document.getElementById("scene-scholar-hover-character");
         hover.style.visibility = "hidden";
         this.setState({ hoveringCharacter: false });
     }
@@ -87,19 +87,19 @@ export default class SceneScholar extends Component {
         return (
             <Fragment>
                 <img src={ScholarBehind}
-                    alt={"scene-behind"} id={"scene-behind"} style={{visibility:this.props.visible ? "visible" : "hidden"}} />
+                    alt={"scene-scholar-behind"} id={"scene-scholar-behind"} style={{visibility:this.props.visible ? "visible" : "hidden"}} />
 
                 <img src={ScholarHover} style={{visibility:(this.props.visible && this.state.hoveringCharacter) ? "visible" : "hidden"}}
-                    alt={"scene-hover-character"} id={"scene-hover-character"} />
+                    alt={"scene-scholar-hover-character"} id={"scene-scholar-hover-character"} />
 
                 <img src={this.state.waitingData ? ScholarSeeking : this.state.isAnswering ? ScholarAnswer : ScholarCharacter}
-                    alt={"scene-character"} id={"scene-character"} style={{visibility:this.props.visible ? "visible" : "hidden"}} />
+                    alt={"scene-scholar-character"} id={"scene-scholar-character"} style={{visibility:this.props.visible ? "visible" : "hidden"}} />
 
-                <div id={"scene-block-character"} onMouseEnter={this.hoverCharacter} onMouseLeave={this.leaveCharacter} style={{visibility:this.props.visible ? "visible" : "hidden"}}
+                <div id={"scene-scholar-block-character"} onMouseEnter={this.hoverCharacter} onMouseLeave={this.leaveCharacter} style={{visibility:this.props.visible ? "visible" : "hidden"}}
                     onClick={this.state.waitingData ? () => { } : (this.state.isAnswering ? () => { this.setState({ isAnswering: false }); } : this.clickCharacter)}>
 
                 </div>
-                <Popover id={"scene-block-character-popover"} placement={this.state.clickedCharacter ? "top" : "right"} isOpen={(!this.props.dismissPopover && this.props.visible && this.state.hoveringCharacter)} target={"scene-block-character"}>
+                <Popover id={"scene-scholar-block-character-popover"} placement={this.state.clickedCharacter ? "top" : "right"} isOpen={(!this.props.dismissPopover && this.props.visible && this.state.hoveringCharacter)} target={"scene-scholar-block-character"}>
                     <PopoverHeader>{"Scholar"}</PopoverHeader>
                     <PopoverBody>
                         {this.state.waitingData ?
@@ -112,7 +112,7 @@ export default class SceneScholar extends Component {
                         }
                     </PopoverBody>
                 </Popover>
-                <Popover id={"scene-block-character-popover-dialog"} placement={"right"} isOpen={(!this.props.dismissPopover && this.props.visible && this.state.clickedCharacter)} target={"scene-block-character"}>
+                <Popover id={"scene-scholar-block-character-popover-dialog"} placement={"right"} isOpen={(!this.props.dismissPopover && this.props.visible && this.state.clickedCharacter)} target={"scene-scholar-block-character"}>
                     <PopoverHeader>{"Scholar"}</PopoverHeader>
                     <PopoverBody>
                         <div>

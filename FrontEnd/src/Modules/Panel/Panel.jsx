@@ -32,7 +32,6 @@ export default class Panel extends Component {
             gif_number: 0
         }
     }
-
     componentDidMount = () => {
         let listitems_left = [
             { image: documentIm, imageHover: documentHover, alt: "knowledge", title: "Find a Knowledge", details: "As an apprentice, you should learn to new knowledge in order to improve yourself. Just ask for some documents to the librarian !" },
@@ -48,7 +47,7 @@ export default class Panel extends Component {
             isOpenedIcon: [false, false, false, false],
             isLoadingIcon: [false, false, false, false],
             isNotificationIcon: [false, false, false, false]
-        })
+        });
     }
 
     handleSubmit = event => {
