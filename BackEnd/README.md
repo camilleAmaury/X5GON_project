@@ -16,15 +16,10 @@ $ python -m venv venv
 
 #### Activate the virtual machine
 
-In the `BackEnd` directory.
+In the `BackEnd` directory :
 
-Linux :
 ```
 $ venv/Scripts/activate
-```
-Windows :
-```
-$ venv\Scripts\activate
 ```
 
 #### Install packages
