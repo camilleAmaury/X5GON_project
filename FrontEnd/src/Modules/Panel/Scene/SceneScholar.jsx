@@ -3,13 +3,13 @@ import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 
 import './SceneScholar.scss';
 
-import getDivPosition from '../../Functions/Position/DivPosition';
+import getDivPosition from '../../../Functions/Position/DivPosition';
 
-import ScholarBehind from '../../assets/Scene/scholar/sceneScholarBehind.png';
-import ScholarCharacter from '../../assets/Scene/scholar/sceneScholarCharacter.png';
-import ScholarSeeking from '../../assets/Scene/scholar/sceneScholarSeeking.png';
-import ScholarAnswer from '../../assets/Scene/scholar/sceneScholarAnswer.png';
-import ScholarHover from '../../assets/Scene/scholar/sceneScholarHoverScholar.png';
+import ScholarBehind from '../../../assets/Scene/scholar/sceneScholarBehind.png';
+import ScholarCharacter from '../../../assets/Scene/scholar/sceneScholarCharacter.png';
+import ScholarSeeking from '../../../assets/Scene/scholar/sceneScholarSeeking.png';
+import ScholarAnswer from '../../../assets/Scene/scholar/sceneScholarAnswer.png';
+import ScholarHover from '../../../assets/Scene/scholar/sceneScholarHoverScholar.png';
 
 export default class SceneScholar extends Component {
     constructor(props) {

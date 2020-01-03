@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 
 import './Scene.scss';
 
-import SceneScholar from './SceneScholar';
-import SceneKnowledge from './SceneKnowledge';
+import SceneScholar from './Scene/SceneScholar';
+import SceneKnowledge from './Scene/SceneKnowledge';
+import ScenePagoda from './Scene/ScenePagoda';
 
 import sceneImage from '../../assets/Scene/scene_openPNG.png';
 import sceneImageClose from '../../assets/Scene/scene_closePNG.png';
@@ -61,6 +62,8 @@ export default class Scene extends Component {
 
                 <SceneScholar data={1} handleLoading={this.props.handleLoading} handleNotification={this.props.handleNotification} visible={this.props.opened[1]} 
                     notification={this.props.notification[1]} dismissPopover={this.props.dismissPopover}></SceneScholar>
+
+                <ScenePagoda data={2} visible={this.props.opened[2]} dismissPopover={this.props.dismissPopover}></ScenePagoda>
 
             </div>
         );

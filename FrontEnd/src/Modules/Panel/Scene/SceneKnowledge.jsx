@@ -3,13 +3,14 @@ import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 
 import './SceneKnowledge.scss';
 
-import getDivPosition from '../../Functions/Position/DivPosition';
+import getDivPosition from '../../../Functions/Position/DivPosition';
+import PopoverList from '../PopoverList';
 
-import KnowledgeBehind from '../../assets/Scene/knowledge/sceneKnowledgeBehind.png';
-import KnowledgeCharacter from '../../assets/Scene/knowledge/sceneKnowledgeCharacter.png';
-import KnowledgeSeeking from '../../assets/Scene/knowledge/sceneKnowledgeSeeking.png';
-import KnowledgeAnswer from '../../assets/Scene/knowledge/sceneKnowledgeAnswer.png';
-import KnowledgeHover from '../../assets/Scene/knowledge/sceneKnowledgeHoverKnowledge.png';
+import KnowledgeBehind from '../../../assets/Scene/knowledge/sceneKnowledgeBehind.png';
+import KnowledgeCharacter from '../../../assets/Scene/knowledge/sceneKnowledgeCharacter.png';
+import KnowledgeSeeking from '../../../assets/Scene/knowledge/sceneKnowledgeSeeking.png';
+import KnowledgeAnswer from '../../../assets/Scene/knowledge/sceneKnowledgeAnswer.png';
+import KnowledgeHover from '../../../assets/Scene/knowledge/sceneKnowledgeHoverKnowledge.png';
 
 export default class SceneKnowledge extends Component {
     constructor(props) {
@@ -19,13 +20,14 @@ export default class SceneKnowledge extends Component {
             clickedCharacter: false,
             waitingData: false,
             isAnswering: false,
-            data: []
+            data: [],
+            step:0
         }
     }
 
     componentDidMount = () => {
         // position the character hover block at the right position
-        let blockhover = document.getElementById("scene-knwoledge-block-character");
+        let blockhover = document.getElementById("scene-knowledge-block-character");
         let scene = document.getElementById("scene");
         let pos = getDivPosition(scene);
         blockhover.style.left = pos.left + 530 + "px";
@@ -38,7 +40,7 @@ export default class SceneKnowledge extends Component {
     }
 
     hoverCharacter = () => {
-        let hover = document.getElementById("scene-knwoledge-hover-character");
+        let hover = document.getElementById("scene-knowledge-hover-character");
         hover.style.visibility = "visible";
         this.setState({ hoveringCharacter: true }, () => {
             if(this.state.isAnswering && this.props.notification){
@@ -48,7 +50,7 @@ export default class SceneKnowledge extends Component {
     }
 
     leaveCharacter = () => {
-        let hover = document.getElementById("scene-knwoledge-hover-character");
+        let hover = document.getElementById("scene-knowledge-hover-character");
         hover.style.visibility = "hidden";
         this.setState({ hoveringCharacter: false });
     }
@@ -97,44 +99,23 @@ export default class SceneKnowledge extends Component {
         return (
             <Fragment>
                 <img src={KnowledgeBehind}
-                    alt={"scene-knwoledge-behind"} id={"scene-knwoledge-behind"} style={{visibility:this.props.visible ? "visible" : "hidden"}} />
+                    alt={"scene-knowledge-behind"} id={"scene-knowledge-behind"} style={{visibility:this.props.visible ? "visible" : "hidden"}} />
 
                 <img src={KnowledgeHover} style={{visibility:(this.props.visible && this.state.hoveringCharacter) ? "visible" : "hidden"}}
-                    alt={"scene-knwoledge-hover-character"} id={"scene-knwoledge-hover-character"} />
+                    alt={"scene-knowledge-hover-character"} id={"scene-knowledge-hover-character"} />
 
                 <img src={this.state.waitingData ? KnowledgeSeeking : this.state.isAnswering ? KnowledgeAnswer : KnowledgeCharacter}
-                    alt={"scene-knwoledge-character"} id={"scene-knwoledge-character"} style={{visibility:this.props.visible ? "visible" : "hidden"}} />
+                    alt={"scene-knowledge-character"} id={"scene-knowledge-character"} style={{visibility:this.props.visible ? "visible" : "hidden"}} />
 
-                <div id={"scene-knwoledge-block-character"} onMouseEnter={this.hoverCharacter} onMouseLeave={this.state.isAnswering ? () => {} : this.leaveCharacter} style={{visibility:this.props.visible ? "visible" : "hidden"}}
+                <div id={"scene-knowledge-block-character"} onMouseEnter={this.hoverCharacter} onMouseLeave={this.state.isAnswering ? () => {} : this.leaveCharacter} style={{visibility:this.props.visible ? "visible" : "hidden"}}
                     onClick={this.state.waitingData ? () => { } : (this.state.isAnswering ? () => { this.setState({ isAnswering: false }); } : this.clickCharacter)}>
 
                 </div>
-                <Popover className={this.state.isAnswering ? "answer" : ""} id={"scene-knwoledge-block-character-popover"} placement={this.state.clickedCharacter ? "top" : "left"} isOpen={(!this.props.dismissPopover && this.props.visible && this.state.hoveringCharacter)} target={"scene-knwoledge-block-character"}>
-                    <PopoverHeader>{"Librarian"}</PopoverHeader>
-                    <PopoverBody>
-                        {this.state.waitingData ?
-                            "Let me a little more time to find what you are looking for !"
-                            :
-                            this.state.isAnswering ?
-                                <div  className={"scrollbar"} id={"scrollbardocument"} >
-                                    <div className={"list-document"} >
-                                        <ol>
-                                            {this.state.data.map((item, i) => <li key={i}>
-                                                    <a href="#">
-                                                        <span className={"list-document-title"}>{item.title}</span>
-                                                        <span className={"list-document-author"}>{item.author}</span>
-                                                        <span className={"list-document-keywords"}>{item.keywords.join(" ")}</span>
-                                                    </a>
-                                                </li>)}
-                                        </ol>
-                                    </div>
-                                </div>
-                                :
-                                "Tell me what are the keywords of your needs."
-                        }
-                    </PopoverBody>
-                </Popover>
-                <Popover id={"scene-knwoledge-block-character-popover-dialog"} placement={"left"} isOpen={(!this.props.dismissPopover && this.props.visible && this.state.clickedCharacter)} target={"scene-knwoledge-block-character"}>
+                <PopoverList className={this.state.isAnswering ? "answer" : ""} id={"scene-knowledge-block-character-popover"} placement={this.state.clickedCharacter ? "top" : "left"} isOpen={(!this.props.dismissPopover && this.props.visible && this.state.hoveringCharacter)} target={"scene-knowledge-block-character"}
+                    title={"Librarian"} content={this.state.data.map((item, i) => <li key={i}><a href="#"><span className={"list-document-title"}>{item.title}</span><span className={"list-document-author"}>{item.author}</span><span className={"list-document-keywords"}>{item.keywords.join(" ")}</span></a></li>)}
+                    isAnswering={this.state.isAnswering} waitingData={this.state.waitingData}></PopoverList>
+
+                <Popover id={"scene-knowledge-block-character-popover-dialog"} placement={"left"} isOpen={(!this.props.dismissPopover && this.props.visible && this.state.clickedCharacter)} target={"scene-knowledge-block-character"}>
                     <PopoverHeader>{"Librarian"}</PopoverHeader>
                     <PopoverBody>
                         <div>
