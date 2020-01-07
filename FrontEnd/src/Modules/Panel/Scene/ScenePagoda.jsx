@@ -4,6 +4,7 @@ import './ScenePagoda.scss';
 
 import getDivPosition from '../../../Functions/Position/DivPosition';
 import PagodaPopover from './PagodaPopover';
+import PopoverClickMe from './PopoverClickMe';
 
 import PagodaBehind from '../../../assets/Scene/knowledge/Pagoda/scenePagodaBehind.png';
 import PagodaFloor from '../../../assets/Scene/knowledge/Pagoda/scenePagodaFloor.png';
@@ -11,6 +12,10 @@ import PagodaFloor1 from '../../../assets/Scene/knowledge/Pagoda/scenePagodaFloo
 import PagodaFloor2 from '../../../assets/Scene/knowledge/Pagoda/scenePagodaFloor2.png';
 import PagodaFloor3 from '../../../assets/Scene/knowledge/Pagoda/scenePagodaFloor3.png';
 import PagodaFloor4 from '../../../assets/Scene/knowledge/Pagoda/scenePagodaFloor4.png';
+import PagodaFloor1Hover from '../../../assets/Scene/knowledge/Pagoda/scenePagodaFloor1Hover.png';
+import PagodaFloor2Hover from '../../../assets/Scene/knowledge/Pagoda/scenePagodaFloor2Hover.png';
+import PagodaFloor3Hover from '../../../assets/Scene/knowledge/Pagoda/scenePagodaFloor3Hover.png';
+import PagodaFloor4Hover from '../../../assets/Scene/knowledge/Pagoda/scenePagodaFloor4Hover.png';
 
 export default class ScenePagoda extends Component {
     constructor(props) {
@@ -19,7 +24,9 @@ export default class ScenePagoda extends Component {
             floor1: [],
             floor2: [],
             floor3: [],
-            floor4: []
+            floor4: [],
+            isFloorClicked:[false, false, false, false],
+            isFloorHovered:[false, false, false, false],
         }
     }
 
@@ -160,21 +167,39 @@ export default class ScenePagoda extends Component {
         event.preventDefault();
     }
 
+    isFloorClicked = (id) => {
+        let floorclicked = this.state.isFloorClicked;
+        let clicked = floorclicked[id] ? false : true;
+        floorclicked = [false, false, false, false];
+        floorclicked[id] = clicked;
+        this.setState({isFloorClicked:floorclicked});
+    }
+
+    isFloorHovered = (id) => {
+        let floorhovered = this.state.isFloorHovered;
+        let hovered = floorhovered[id] ? false : true;
+        floorhovered = [false, false, false, false];
+        floorhovered[id] = hovered;
+        this.setState({ isFloorHovered: floorhovered });
+    }
+
     render() {
         return (
             <Fragment>
                 <img src={PagodaBehind}
                     alt={"scene-pagoda-behind"} id={"scene-pagoda-behind"} style={{ visibility: this.props.visible ? "visible" : "hidden" }} />
-
-                <PagodaPopover id={"scene-floor1"} visible={this.props.visible} src={PagodaFloor1} isOpen={(this.props.visible && !this.props.dismissPopover)}
-                    data={this.state.floor1}></PagodaPopover>
-                <PagodaPopover id={"scene-floor2"} visible={this.props.visible} src={PagodaFloor2} isOpen={(this.props.visible && !this.props.dismissPopover)}
-                    data={this.state.floor2}></PagodaPopover>
-                <PagodaPopover id={"scene-floor3"} visible={this.props.visible} src={PagodaFloor3} isOpen={(this.props.visible && !this.props.dismissPopover)}
-                    data={this.state.floor3}></PagodaPopover>
-                <PagodaPopover id={"scene-floor4"} visible={this.props.visible} src={PagodaFloor4} isOpen={(this.props.visible && !this.props.dismissPopover)}
-                    data={this.state.floor4}></PagodaPopover>
-
+                <PagodaPopover id={"scene-floor1"} visible={this.props.visible} src={PagodaFloor1} srcHover={PagodaFloor1Hover} isOpen={(this.props.visible && !this.props.dismissPopover)}
+                    data={this.state.floor1} clickHandle={this.isFloorClicked} openFloor={this.state.isFloorClicked[0]} datakey={0}
+                    hoverHandle={this.isFloorHovered} hoverFloor={this.state.isFloorHovered[0]}></PagodaPopover>
+                <PagodaPopover id={"scene-floor2"} visible={this.props.visible} src={PagodaFloor2} srcHover={PagodaFloor2Hover} isOpen={(this.props.visible && !this.props.dismissPopover)}
+                    data={this.state.floor2} clickHandle={this.isFloorClicked} openFloor={this.state.isFloorClicked[1]} datakey={1}
+                    hoverHandle={this.isFloorHovered} hoverFloor={this.state.isFloorHovered[1]}></PagodaPopover>
+                <PagodaPopover id={"scene-floor3"} visible={this.props.visible} src={PagodaFloor3} srcHover={PagodaFloor3Hover} isOpen={(this.props.visible && !this.props.dismissPopover)}
+                    data={this.state.floor3} clickHandle={this.isFloorClicked} openFloor={this.state.isFloorClicked[2]} datakey={2}
+                    hoverHandle={this.isFloorHovered} hoverFloor={this.state.isFloorHovered[2]}></PagodaPopover>
+                <PagodaPopover id={"scene-floor4"} visible={this.props.visible} src={PagodaFloor4} srcHover={PagodaFloor4Hover} isOpen={(this.props.visible && !this.props.dismissPopover)}
+                    data={this.state.floor4} clickHandle={this.isFloorClicked} openFloor={this.state.isFloorClicked[3]} datakey={3}
+                    hoverHandle={this.isFloorHovered} hoverFloor={this.state.isFloorHovered[3]}></PagodaPopover>
                 <img src={PagodaFloor} alt={"scene-floor-structure"} id={"scene-floor-structure"} style={{ visibility: this.props.visible ? "visible" : "hidden" }} />
             </Fragment>
         );
