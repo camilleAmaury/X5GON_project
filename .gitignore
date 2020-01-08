@@ -1,2 +1,9 @@
 BackEnd/venv/
 BackEnd/endpoints/__pycache__/
+BackEnd/flask_main.db
+BackEnd/__pycache__/
+BackEnd/api/__pycache__/
+BackEnd/api/database/__pycache__/
+BackEnd/api/endpoints/__pycache__/
+BackEnd/api/service/__pycache__/
+BackEnd/api/utils/__pycache__/
