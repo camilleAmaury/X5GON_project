@@ -1,18 +1,24 @@
-from flask import request
+from flask import request, current_app
 from flask_restplus import Namespace, Resource, fields
 from functools import wraps
 import uuid
 from cryptography.fernet import Fernet
 
 from .user import user_schema
-
-authorizations_token = uuid.uuid4().hex
+from api.service.authentication import generate_auth_token, verify_auth_token
+from api.service.user import check_user_auth
+from api.utils import validator
 
 authorizations = {
     'apiKey' : {
         'type' : 'apiKey',
         'in' : 'header',
-        'name' : 'X-API-KEY'
+        'name' : 'X-API-KEY',
+    },
+    'user_id' : {
+        'type' : 'apiKey',
+        'in' : 'header',
+        'name' : 'user_id'
     }
 }
 
@@ -21,7 +27,7 @@ def token_required(f):
     def decorated(*args, **kwargs):
 
         token = None
-        cipher_suite = None
+        user_id = None
 
         if 'X-API-KEY' in request.headers:
             token = request.headers['X-API-KEY']
@@ -29,22 +35,20 @@ def token_required(f):
         if not token:
             return {'message' : 'Token is missing.'}, 401
 
-        if 'username' in request.headers:
-            cipher_suite = Fernet(key)
+        if token != current_app.config['ADMIN_TOKEN']:
 
-        if not cipher_suite:
-            return {'message' : 'Username is missing.'}, 401
+            if 'user_id' in request.headers:
+                user_id = request.headers['user_id']
 
-        if authorizations_token != cipher_suite.decrypt(token):
-            return {'message' : 'Invalide token.'}, 401
+            if not user_id:
+                return {'message' : 'User id is missing.'}, 401
+
+            if user_id != str(verify_auth_token(token)):
+                return {'message' : 'Invalide token for this user.'}, 401
 
         return f(*args, **kwargs)
 
     return decorated
-
-def get_token(key):
-    cipher_suite = Fernet(key)
-    return cipher_suite.encrypt(message)
 
 api = Namespace('authentication', description='Authentication methods')
 
@@ -60,9 +64,4 @@ class UsersRoute(Resource):
     })
     def post(self):
         validator.validate_payload(request.json, user_schema)
-        user = get_user_by_name(request.json.get('username'))
-        if not user:
-            return 'User not found', 409
-        if not user.check_password(request.json.get('password')):
-            return 'Invalide password', 403
-        return get_token(user.username), 201
+        return check_user_auth(request.json.get('username'), request.json.get('password')), 201

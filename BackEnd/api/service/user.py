@@ -3,6 +3,7 @@ from sqlalchemy import exc
 
 from api.database import db
 from api.database.model import User
+from .authentication import generate_auth_token
 
 
 def build_user_schema(user):
@@ -51,7 +52,6 @@ def create_user(data):
                 'id_user': user.id_user
             }, 201
     except exc.DBAPIError as e:
-        #On error in SQL
         current_app.logger.error('Fail on create user %s' % str(e) )
         db.session().rollback()
         abort(make_response(jsonify({
@@ -84,3 +84,19 @@ def delete_user(id_user):
     db.session.delete(user)
     db.session.commit()
     return True
+
+def check_user_auth(username, password):
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        abort(make_response(jsonify({
+                "errors":{
+                    0:"Username not found"
+                },"message":"User not found"
+        }), 409))
+    if not user.check_password(password):
+        abort(make_response(jsonify({
+                "errors":{
+                    0:"Invalide password"
+                },"message":"Invalide password"
+        }), 403))
+    return generate_auth_token(user)

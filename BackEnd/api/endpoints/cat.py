@@ -15,7 +15,7 @@ CATS = [
 
 @api.route('/')
 class CatList(Resource):
-    @api.doc('list_cats', security='apiKey')
+    @api.doc('list_cats', security=['apiKey', 'user_id'])
     @token_required
     @api.marshal_list_with(cat)
     def get(self):
@@ -28,6 +28,7 @@ class CatList(Resource):
 @api.response(404, 'Cat not found')
 class Cat(Resource):
     @api.doc('get_cat', security='apiKey')
+    @token_required
     @api.marshal_with(cat)
     def get(self, id):
         '''Fetch a cat given its identifier'''
