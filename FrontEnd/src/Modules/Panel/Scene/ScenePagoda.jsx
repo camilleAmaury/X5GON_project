@@ -95,15 +95,15 @@ export default class ScenePagoda extends Component {
         let pos = getDivPosition(scene);
         let floor = document.getElementById("scene-floor-structure");
         let pos_floor = getDivPosition(floor);
-        floor.style.top = pos.top + pos_floor.top + "px";
-        floor.style.left = pos.left + pos_floor.left + "px";
+        floor.style.top = pos_floor.top - pos.top + "px";
+        floor.style.left = pos_floor.left - pos.left + "px";
         if (floors === 0) {
             console.log("pas de concepts");
         } else if (floors.length === 1) {
             let floor1 = document.getElementById("scene-floor1");
             let pos1 = getDivPosition(floor1);
-            floor1.style.top = pos.top + 265 + "px";
-            floor1.style.left = pos.left + pos1.left + "px";
+            floor1.style.top = 265 + "px";
+            floor1.style.left = pos1.left - pos.left + "px";
             floor1.style.visibility = "visible";
             this.setState({floor1:floors[0]});
         } else if (floors.length === 2) {
@@ -111,10 +111,10 @@ export default class ScenePagoda extends Component {
             let pos1 = getDivPosition(floor1);
             let floor2 = document.getElementById("scene-floor2");
             let pos2 = getDivPosition(floor2);
-            floor1.style.top = pos.top + 209 + "px";
-            floor1.style.left = pos.left + pos1.left + "px";
-            floor2.style.top = pos.top + 342 + "px";
-            floor2.style.left = pos.left + pos2.left + "px";
+            floor1.style.top = 209 + "px";
+            floor1.style.left = pos1.left - pos.left + "px";
+            floor2.style.top = 342 + "px";
+            floor2.style.left = pos2.left - pos.left + "px";
             floor1.style.visibility = "visible";
             floor2.style.visibility = "visible";
             this.setState({floor1:floors[0],floor2:floors[1]});
@@ -125,12 +125,12 @@ export default class ScenePagoda extends Component {
             let pos2 = getDivPosition(floor2);
             let floor3 = document.getElementById("scene-floor3");
             let pos3 = getDivPosition(floor3);
-            floor1.style.top = pos.top + 147 + "px";
-            floor1.style.left = pos.left + pos1.left + "px";
-            floor2.style.top = pos.top + 281 + "px";
-            floor2.style.left = pos.left + pos2.left + "px";
-            floor3.style.top = pos.top + 336 + "px";
-            floor3.style.left = pos.left + pos3.left + "px";
+            floor1.style.top = 147 + "px";
+            floor1.style.left = pos1.left - pos.left + "px";
+            floor2.style.top = 281 + "px";
+            floor2.style.left = pos2.left - pos.left + "px";
+            floor3.style.top = 336 + "px";
+            floor3.style.left = pos3.left - pos.left + "px";
             floor1.style.visibility = "visible";
             floor2.style.visibility = "visible";
             floor3.style.visibility = "visible";
@@ -144,14 +144,14 @@ export default class ScenePagoda extends Component {
             let pos3 = getDivPosition(floor3);
             let floor4 = document.getElementById("scene-floor4");
             let pos4 = getDivPosition(floor4);
-            floor1.style.top = pos.top + 76 + "px";
-            floor1.style.left = pos.left + pos1.left + "px";
-            floor2.style.top = pos.top + 209 + "px";
-            floor2.style.left = pos.left + pos2.left + "px";
-            floor3.style.top = pos.top + 265 + "px";
-            floor3.style.left = pos.left + pos3.left + "px";
-            floor4.style.top = pos.top + 327 + "px";
-            floor4.style.left = pos.left + pos4.left + "px";
+            floor1.style.top =  79 + "px";
+            floor1.style.left = pos1.left - pos.left + "px";
+            floor2.style.top =  209 + "px";
+            floor2.style.left = pos2.left - pos.left + "px";
+            floor3.style.top =  265 + "px";
+            floor3.style.left = pos3.left - pos.left + "px";
+            floor4.style.top =  327 + "px";
+            floor4.style.left = pos4.left - pos.left + "px";
             floor1.style.visibility = "visible";
             floor2.style.visibility = "visible";
             floor3.style.visibility = "visible";

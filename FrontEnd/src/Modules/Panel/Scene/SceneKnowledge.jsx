@@ -3,6 +3,8 @@ import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 
 import './SceneKnowledge.scss';
 
+import axios from "axios";
+
 import getDivPosition from '../../../Functions/Position/DivPosition';
 import PopoverList from '../PopoverList';
 
@@ -30,8 +32,8 @@ export default class SceneKnowledge extends Component {
         let blockhover = document.getElementById("scene-knowledge-block-character");
         let scene = document.getElementById("scene");
         let pos = getDivPosition(scene);
-        blockhover.style.left = pos.left + 530 + "px";
-        blockhover.style.top = pos.top + 69 + "px";
+        blockhover.style.left = 530 + "px";
+        blockhover.style.top = 69 + "px";
         // this.setState({hoveringCharacter:true});
     }
 
@@ -64,6 +66,7 @@ export default class SceneKnowledge extends Component {
 
     askQuestion = () => {
         // pass to a thinking state --> waiting for data
+        let question = document.getElementById('question-knowledge');
         this.setState({
             waitingData: true,
             isAnswering: false,
@@ -71,8 +74,15 @@ export default class SceneKnowledge extends Component {
             hoveringCharacter: true
         }, () => {
             this.props.handleLoading(this.props.data);
-            setTimeout(() => {
-                let data = [
+            axios.get('http://185.157.246.81:5000/search/' + question.value.replace(" ", "%20").replace(",","%20").replace(".","%20").replace("\n","%20"))
+            .then( request => {
+                let documents = request.data;
+                
+                let data = this.state.data;
+                // for(let i = 0; i < documents.length; i++){
+                //     data.push({id:documents[i][0], title:documents[i][1], author:documents[i][2], keywords:documents[i][3]})
+                // }
+                data = [
                     {title:"Two Planes three towers", author:"Larry Silverstein", keywords:["tower", "plane", "jew", "luck"]}, 
                     {title:"Wigou Vigoula", author:"Gitan du désert", keywords:["gitan", "wesh", "derulo", "professionnel"]},
                     {title:"Random book", author:"Random Author", keywords:["random"]},
@@ -91,7 +101,21 @@ export default class SceneKnowledge extends Component {
                 }, () => {
                     this.props.handleNotification(this.props.data);
                 });
-            }, 5000);
+            })
+            .catch( error => { 
+                let data = [
+                    {title:"No response for those keywords", author:"", keywords:[]}
+                ];
+                this.setState({
+                    waitingData: false,
+                    clickedCharacter: false,
+                    hoveringCharacter: true,
+                    isAnswering: true,
+                    data: data
+                }, () => {
+                    this.props.handleNotification(this.props.data);
+                });
+            });
         });
     }
 

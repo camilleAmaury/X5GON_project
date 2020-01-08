@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 
+import axios from "axios";
+
 import './SceneScholar.scss';
 
 import getDivPosition from '../../../Functions/Position/DivPosition';
@@ -28,8 +30,8 @@ export default class SceneScholar extends Component {
         let blockhover = document.getElementById("scene-scholar-block-character");
         let scene = document.getElementById("scene");
         let pos = getDivPosition(scene);
-        blockhover.style.left = pos.left + 138 + "px";
-        blockhover.style.top = pos.top + 144 + "px";
+        blockhover.style.left =  138 + "px";
+        blockhover.style.top = 144 + "px";
         // this.setState({hoveringCharacter:true});
     }
 
@@ -62,24 +64,39 @@ export default class SceneScholar extends Component {
 
     askQuestion = () => {
         // pass to a thinking state --> waiting for data
+        this.props.handleLoading(this.props.data);
+        let question = document.getElementById('question-scholar');
         this.setState({
             waitingData: true,
             isAnswering: false,
             clickedCharacter: false,
             hoveringCharacter: true
         }, () => {
-            this.props.handleLoading(this.props.data);
-            setTimeout(() => {
+            axios.get('http://185.157.246.81:5000/askquestion/' + question.value)
+            .then( request => {
+                console.log(JSON.parse(request.data))
                 this.setState({
                     waitingData: false,
                     clickedCharacter: false,
-                    hoveringCharacter: false,
+                    hoveringCharacter: true,
                     isAnswering: true,
-                    answerText: "No server response - error"
+                    answerText: <span>Well it was hard to find out : <span style={{fontWeight:"bold"}}>{JSON.parse(request.data)[0]}</span></span>
                 }, () => {
                     this.props.handleNotification(this.props.data);
                 });
-            }, 10000);
+            })
+            .catch( error => {
+                console.log(error)
+                this.setState({
+                    waitingData: false,
+                    clickedCharacter: false,
+                    hoveringCharacter: true,
+                    isAnswering: true,
+                    answerText: <span style={{fontWeight:"bold"}}>Error from server</span>
+                }, () => {
+                    this.props.handleNotification(this.props.data);
+                });
+            });
         });
     }
 
@@ -106,7 +123,7 @@ export default class SceneScholar extends Component {
                             "I need to find inner peace in order to answer you."
                             :
                             this.state.isAnswering ?
-                                "Well it was hard to find out : " + this.state.answerText
+                                this.state.answerText
                                 :
                                 "Ask me a question. I've been gathering knowledge since my childhood."
                         }
@@ -116,7 +133,7 @@ export default class SceneScholar extends Component {
                     <PopoverHeader>{"Scholar"}</PopoverHeader>
                     <PopoverBody>
                         <div>
-                            <textarea id={"question-scholar"} placeholder={"Your question goes here ..."}></textarea>
+                            <textarea id={"question-scholar"} className={"question-scholar"} placeholder={"Your question goes here ..."}></textarea>
                             <button onClick={this.askQuestion}>ask</button>
                         </div>
                     </PopoverBody>
