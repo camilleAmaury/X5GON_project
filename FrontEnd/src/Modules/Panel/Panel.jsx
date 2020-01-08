@@ -10,6 +10,7 @@ import knowledge from '../../assets/icons/iconKnowledge.png';
 import knowledgeHover from '../../assets/icons/iconKnowledgeHover.png';
 import account from '../../assets/icons/iconAccount.png';
 import accountHover from '../../assets/icons/iconAccountHover.png';
+import tori from '../../assets/tori.png';
 
 import ListItem from './Listitem';
 import Cursor from '../cursor/cursor';
@@ -41,6 +42,23 @@ export default class Panel extends Component {
             { image: knowledge, imageHover: knowledgeHover, alt: "rank", title: "Improvement", details: "As an apprentice, you would probably like to see your progression since the begginning of your studies. Just click here !" },
             { image: account, imageHover: accountHover, alt: "account", title: "Apprentice Papers", details: "Quite boring stuff, but it is really important to have an identity !" }
         ];
+        let container = document.getElementById("container-panel");
+        let centerdiv = {
+            height: container.offsetHeight,
+            width: container.offsetWidth,
+            top:0,
+            left:0
+        }
+        // set tori position
+        let tori = document.getElementById("tori");
+        let document_pos = {
+            left:(centerdiv.width - tori.clientWidth)/2,
+            top:(centerdiv.height - tori.clientHeight) - 30,
+            width: tori.clientWidth,
+            height:tori.clientHeight
+        }
+        tori.style.left = document_pos.left + "px";
+        tori.style.top = document_pos.top + "px";
         this.setState({
             listitems_right: listitems_right,
             listitems_left: listitems_left,
@@ -161,6 +179,7 @@ export default class Panel extends Component {
     render() {
         return (
             <div id={"container-panel"}>
+                <img id={"tori"} src={tori} alt={"tori"} width={1572} height={767}></img>
                 <div className={"space-container"}></div>
                 <div className={"presentation-container"}>
                     <div className={"presentation-container-pre-title"}>
