@@ -4,8 +4,6 @@ from werkzeug.contrib.fixers import ProxyFix
 from endpoints import api
 
 app = Flask(__name__)
-app.wsgi_app = ProxyFix(app.wsgi_app)
-
 api.init_app(app)
 
-app.run(debug=True)
+app.run(host='0.0.0.0', debug=True)
