@@ -4,7 +4,6 @@ import './ScenePagoda.scss';
 
 import getDivPosition from '../../../Functions/Position/DivPosition';
 import PagodaPopover from './PagodaPopover';
-import PopoverClickMe from './PopoverClickMe';
 
 import PagodaBehind from '../../../assets/Scene/knowledge/Pagoda/scenePagodaBehind.png';
 import PagodaFloor from '../../../assets/Scene/knowledge/Pagoda/scenePagodaFloor.png';

@@ -5,6 +5,7 @@ import './Scene.scss';
 import SceneScholar from './Scene/SceneScholar';
 import SceneKnowledge from './Scene/SceneKnowledge';
 import ScenePagoda from './Scene/ScenePagoda';
+import Document from './Scene/Document';
 
 import sceneImage from '../../assets/Scene/scene_openPNG.png';
 import sceneImageClose from '../../assets/Scene/scene_closePNG.png';
@@ -51,6 +52,11 @@ export default class Scene extends Component {
         let condClose = (this.props.isOpened && !this.props.openAnimationExec) || (!this.props.isOpened && !this.props.openAnimationExec && this.props.closeAnimationExec);
         return (
             <div id={"scene"}>
+                {/* Temporaire */}
+                <Document></Document>
+                {/* Temporaire */}
+
+
                 <img id={"scene-background"} src={this.props.isOpened ? sceneImage : sceneImageClose} alt={"scene-background"} onMouseOver={this.changeCursor}
                     onMouseLeave={this.changeCursor2} />
 

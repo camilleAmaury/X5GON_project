@@ -19,7 +19,7 @@ export default class PopoverList extends Component {
                         "Let me a little more time to find what you are looking for !"
                         :
                         this.props.isAnswering ?
-                            <div className={"scrollbar"} id={"scrollbardocument"} style={{direction:this.props.placement == "left" ? "rtl" : "ltr"}} >
+                            <div className={"scrollbar"} id={"scrollbardocument"} style={{direction:this.props.placement === "left" ? "rtl" : "ltr"}} >
                                 <div className={"list-document"} >
                                     <ol>
                                         {this.props.content}
