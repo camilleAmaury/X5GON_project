@@ -16,6 +16,7 @@ export default class Cursor extends Component {
         let circle = document.getElementById("cursor-circle");
         circle.style.left = 0 + 'px';
         circle.style.top = 0 + 'px';
+        this.props.cursorLoaded();
     }
 
     movement = event => {

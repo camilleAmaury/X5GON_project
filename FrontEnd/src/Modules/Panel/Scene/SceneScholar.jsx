@@ -113,9 +113,8 @@ export default class SceneScholar extends Component {
                     alt={"scene-scholar-character"} id={"scene-scholar-character"} style={{visibility:this.props.visible ? "visible" : "hidden"}} />
 
                 <div id={"scene-scholar-block-character"} onMouseEnter={this.hoverCharacter} onMouseLeave={this.leaveCharacter} style={{visibility:this.props.visible ? "visible" : "hidden"}}
-                    onClick={this.state.waitingData ? () => { } : (this.state.isAnswering ? () => { this.setState({ isAnswering: false }); } : this.clickCharacter)}>
+                    onClick={this.state.waitingData ? () => { } : (this.state.isAnswering ? () => { this.setState({ isAnswering: false }); } : this.clickCharacter)}></div>
 
-                </div>
                 <Popover id={"scene-scholar-block-character-popover"} placement={this.state.clickedCharacter ? "top" : "right"} isOpen={(!this.props.dismissPopover && this.props.visible && this.state.hoveringCharacter)} target={"scene-scholar-block-character"}>
                     <PopoverHeader>{"Scholar"}</PopoverHeader>
                     <PopoverBody>

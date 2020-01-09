@@ -1,12 +1,13 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 
 import './Scene.scss';
+
+import intersects from '../../Functions/Position/intersects';
 
 import SceneScholar from './Scene/SceneScholar';
 import SceneKnowledge from './Scene/SceneKnowledge';
 import ScenePagoda from './Scene/ScenePagoda';
-import Document from './Scene/Document';
-
+// import Document from './Scene/Document';
 
 import sceneImage from '../../assets/Scene/scene_openPNG.png';
 import sceneImageClose from '../../assets/Scene/scene_closePNG.png';
@@ -17,33 +18,21 @@ export default class Scene extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            leaveScene:false,
-            hovering: false
+            innerScenePosition: {
+                width: 848,
+                height: 480
+            },
+            leaveScene: false,
+            hovering: false,
+            scenePosition: {
+                width: 0,
+                height: 0
+            },
+            sceneTop: 0
         }
     }
 
     componentDidMount = () => {
-        let container = document.getElementById("container-panel");
-        let centerdiv = {
-            height: container.offsetHeight,
-            width: container.offsetWidth,
-            top:0,
-            left:0
-        }
-        // set scene position
-        let scene = document.getElementById("scene");
-        let scene_pos = {
-            left:(centerdiv.width - scene.offsetWidth)/2,
-            top:(centerdiv.height - scene.offsetHeight) - 100,
-            width: scene.offsetWidth,
-            height: scene.offsetHeight
-        }
-        scene.style.left = scene_pos.left + "px";
-        scene.style.top = scene_pos.top + "px";
-    }
-
-    handleSubmit = event => {
-        event.preventDefault();
     }
 
     changeCursor = () => {
@@ -65,30 +54,64 @@ export default class Scene extends Component {
         });
     }
 
+    cursorManagement = (div) => {
+        if(this.props.cursorLoaded){
+            let cursor = document.getElementById("cursor-circle");
+            console.log(this.props.mousePosition)
+            console.log(div)
+            console.log(intersects(this.props.mousePosition, div))
+            if(intersects(this.props.mousePosition, div)){
+                cursor.style.zIndex = 1;
+            }else{
+                cursor.style.zIndex = 12;
+            }
+        }
+    }
+
     render() {
+        let sceneWidth = Math.floor(this.state.innerScenePosition.width * this.props.ratio);
+        let sceneHeight = Math.floor(this.state.innerScenePosition.height * this.props.ratio);
+        let scenePosition = {
+            left: isNaN((this.props.windowSize.width - sceneWidth) / 2) ? 0 : (this.props.windowSize.width - sceneWidth) / 2,
+            top: isNaN((this.props.windowSize.height - sceneHeight) - 100) ? 0 : (this.props.windowSize.height - sceneHeight) - 100,
+            width: sceneWidth,
+            height: sceneHeight
+        };
+        this.cursorManagement(scenePosition);
         let condOpen = (!this.props.isOpened && !this.props.closeAnimationExec) || (this.props.isOpened && this.props.openAnimationExec && !this.props.closeAnimationExec);
         let condClose = (this.props.isOpened && !this.props.openAnimationExec) || (!this.props.isOpened && !this.props.openAnimationExec && this.props.closeAnimationExec);
         return (
-                <div id={"scene"}>
-                    {/* Temporaire */}
-                    {/* <Document></Document> */}
-                    {/* Temporaire */}
+            <div id={"scene"} style={{ left: scenePosition.left, top: scenePosition.top }} onMouseOver={this.changeCursor}
+                onMouseLeave={this.changeCursor2}>
+                {/* Temporaire */}
+                {/* <Document></Document> */}
+                {/* Temporaire */}
 
-                    <img id={"scene-background"} src={this.props.isOpened ? sceneImage : sceneImageClose} alt={"scene-background"} onMouseOver={this.changeCursor}
-                        onMouseLeave={this.changeCursor2} />
+                <img id={"scene-background"} src={this.props.isOpened ? sceneImage : sceneImageClose} alt={"scene-background"} style={
+                    {
+                        width: scenePosition.width,
+                        height: scenePosition.height
+                    }
+                } />
 
-                    <img src={(condOpen ? openSceneAnimation : (condClose ? closeSceneAnimation : "")) + "?id=" + this.props.number}
-                        alt={"scene-animation"} id={"scene-animation"} />
+                <img src={(condOpen ? openSceneAnimation : (condClose ? closeSceneAnimation : "")) + "?id=" + this.props.number}
+                    alt={"scene-animation"} id={"scene-animation"}
+                    style={
+                        {
+                            width: scenePosition.width,
+                            height: scenePosition.height
+                        }
+                    } />
 
-                    <SceneKnowledge data={0} handleLoading={this.props.handleLoading} handleNotification={this.props.handleNotification} visible={this.props.opened[0]} 
-                        notification={this.props.notification[0]} dismissPopover={this.props.dismissPopover}></SceneKnowledge>
+                <SceneScholar data={1} handleLoading={this.props.handleLoading} handleNotification={this.props.handleNotification} visible={this.props.opened[1]}
+                    notification={this.props.notification[1]} dismissPopover={this.props.dismissPopover} mousePosition={this.props.mousePosition}></SceneScholar>
 
-                    <SceneScholar data={1} handleLoading={this.props.handleLoading} handleNotification={this.props.handleNotification} visible={this.props.opened[1]} 
-                        notification={this.props.notification[1]} dismissPopover={this.props.dismissPopover}></SceneScholar>
 
-                    <ScenePagoda data={2} visible={this.props.opened[2]} dismissPopover={this.props.dismissPopover}></ScenePagoda>
-                </div>
-            
+                <SceneKnowledge data={0} handleLoading={this.props.handleLoading} handleNotification={this.props.handleNotification} visible={this.props.opened[0]}
+                    notification={this.props.notification[0]} dismissPopover={this.props.dismissPopover}></SceneKnowledge>
+
+                <ScenePagoda data={2} visible={this.props.opened[2]} dismissPopover={this.props.dismissPopover}></ScenePagoda>
+            </div>
         );
     }
 }
