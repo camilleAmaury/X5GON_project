@@ -8,13 +8,12 @@ from .authentication import generate_auth_token
 
 def build_user_schema(user):
     mod = {}
-    mod['id_user'] = user.id_user
+    mod['user_id'] = user.user_id
     mod['username'] = user.username
-    mod['password'] = user.password
     return mod
 
-def get_user(id_user):
-    user = User.query.get(id_user)
+def get_user(user_id):
+    user = User.query.get(user_id)
     return build_user_schema(user)
 
 def get_user_by_name(username):
@@ -23,7 +22,7 @@ def get_user_by_name(username):
 
 def get_all_users():
     arr_users = []
-    users = User.query.order_by(User.id_user).all()
+    users = User.query.order_by(User.user_id).all()
     for user in users:
         mod = build_user_schema(user)
         arr_users.append(mod)
@@ -49,7 +48,7 @@ def create_user(data):
         db.session.flush()
         db.session.commit()
         return {
-                'id_user': user.id_user
+                'user_id': user.user_id
             }, 201
     except exc.DBAPIError as e:
         current_app.logger.error('Fail on create user %s' % str(e) )
@@ -61,8 +60,8 @@ def create_user(data):
         }), 409))
 
 
-def update_user(id_user, data):
-    user = User.query.get(id_user)
+def update_user(user_id, data):
+    user = User.query.get(user_id)
     if not user:
         abort(make_response(jsonify({
                 "errors":{
@@ -73,8 +72,8 @@ def update_user(id_user, data):
     db.session.commit()
     return True
 
-def delete_user(id_user):
-    user = User.query.get(id_user)
+def delete_user(user_id):
+    user = User.query.get(user_id)
     if not user:
         abort(make_response(jsonify({
                 "errors":{

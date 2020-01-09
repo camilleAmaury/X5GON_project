@@ -5,7 +5,7 @@ from api.database import db
 class User(db.Model):
     __tablename__ = 'users'
 
-    id_user = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(), unique=True, nullable=False, index=True)
     password = db.Column(db.String())
 
@@ -14,10 +14,10 @@ class User(db.Model):
         self.password = generate_password_hash(password)
 
     def __repr__(self):
-        return '<User {}>'.format(self.id_user)
+        return '<User {}>'.format(self.user_id)
 
     def get_user_id(self):
-        return self.id_user
+        return self.user_id
 
     def set_password(self, password):
         self.password = generate_password_hash(password)

@@ -6,7 +6,8 @@ def generate_auth_token(user, expiration = 18000):
     token = s.dumps({'user_id' : user.get_user_id()})
     return {
         'token' : token.decode('ascii'),
-        'user_id' : user.get_user_id()}
+        'user_id' : user.get_user_id()
+    }
 
 def verify_auth_token(token):
     s = Serializer(current_app.config.get('SECRET_KEY', b'ss\x9a$M_\xfd\xee\xda\x12A\x88Z\xcf"$'))

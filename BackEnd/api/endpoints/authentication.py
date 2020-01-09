@@ -52,6 +52,11 @@ def token_required(f):
 
 api = Namespace('authentication', description='Authentication methods')
 
+authentication_schema = api.model('Authentication', {
+    'token' : fields.String(required=True, description='Connection token for this user'),
+    'user_id': fields.Integer(required=True, description='User id')
+})
+
 @api.route("/login")
 class UsersRoute(Resource):
 
@@ -62,6 +67,7 @@ class UsersRoute(Resource):
         409: 'User not found',
         422: 'Validation Error'
     })
+    @api.marshal_with(authentication_schema)
     def post(self):
         validator.validate_payload(request.json, user_schema)
         return check_user_auth(request.json.get('username'), request.json.get('password')), 201

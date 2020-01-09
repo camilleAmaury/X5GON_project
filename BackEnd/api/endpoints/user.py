@@ -9,7 +9,7 @@ import json
 api = Namespace('users', description='Users CRUD operations')
 
 user_schema = api.model('User', {
-    'id_user': fields.Integer(required=False, description='ID of the user', readonly=True),
+    'user_id': fields.Integer(required=False, description='ID of the user', readonly=True),
     'username': fields.String(required=True, description='Username of the user'),
     'password': fields.String(required=True, description='Password of the user')
 })
@@ -33,14 +33,14 @@ class UsersRoute(Resource):
         validator.validate_payload(request.json, user_schema)
         return create_user(data=request.json)
 
-@api.route("/<int:id_user>")
+@api.route("/<int:user_id>")
 class UserRoute(Resource):
 
     @api.marshal_with(user_schema)
     @api.response(200, 'User info')
     @api.doc()
-    def get(self, id_user):
-        return get_user(id_user)
+    def get(self, user_id):
+        return get_user(user_id)
 
     @api.expect(user_schema, envelope='json', validate=False)
     @api.doc(responses={
@@ -48,15 +48,15 @@ class UserRoute(Resource):
         409: 'User not found',
         422: 'Validation Error'
     })
-    def put(self, id_user):
+    def put(self, user_id):
         validator.validate_payload(request.json, user_schema, validate_required=False)
-        update_user(id_user=id_user, data=request.json )
+        update_user(user_id=user_id, data=request.json )
         return '', 201
 
     @api.doc(responses={
         201: 'User successfully deleted',
         409: 'User not found'
     })
-    def delete(self, id_user):
-        delete_user(id_user=id_user)
+    def delete(self, user_id):
+        delete_user(user_id=user_id)
         return '', 201
