@@ -2,7 +2,6 @@ import React, { Component, Fragment } from 'react';
 
 import './ScenePagoda.scss';
 
-import getDivPosition from '../../../Functions/Position/DivPosition';
 import PagodaPopover from './PagodaPopover';
 
 import PagodaBehind from '../../../assets/Scene/knowledge/Pagoda/scenePagodaBehind.png';
@@ -26,6 +25,37 @@ export default class ScenePagoda extends Component {
             floor4: [],
             isFloorClicked:[false, false, false, false],
             isFloorHovered:[false, false, false, false],
+            floorPosition:{
+                top:388,
+                left:332,
+                width:187,
+                height:34
+            },
+            floor1Position:{
+                top:0,
+                left:354,
+                width:143,
+                height:130
+            },
+            floor2Position:{
+                top:0,
+                left:348,
+                width:155,
+                height:57
+            },
+            floor3Position:{
+                top:0,
+                left:339,
+                width:173,
+                height:64
+            },
+            floor4Position:{
+                top:0,
+                left:327,
+                width:197,
+                height:72
+            },
+            isFloorVisible:[false, false, false, false]
         }
     }
 
@@ -90,80 +120,64 @@ export default class ScenePagoda extends Component {
             ]
         ];
         // draw the pagoda
-        let floors = data;
-        let scene = document.getElementById("scene");
-        let pos = getDivPosition(scene);
-        let floor = document.getElementById("scene-floor-structure");
-        let pos_floor = getDivPosition(floor);
-        floor.style.top = pos_floor.top - pos.top + "px";
-        floor.style.left = pos_floor.left - pos.left + "px";
-        if (floors === 0) {
+        let top1, top2, top3, top4 = 0;
+        let content1, content2, content3, content4 = [];
+        let floorVisible = [false, false, false, false];
+        if (data.length === 0) {
             console.log("pas de concepts");
-        } else if (floors.length === 1) {
-            let floor1 = document.getElementById("scene-floor1");
-            let pos1 = getDivPosition(floor1);
-            floor1.style.top = 265 + "px";
-            floor1.style.left = pos1.left - pos.left + "px";
-            floor1.style.visibility = "visible";
-            this.setState({floor1:floors[0]});
-        } else if (floors.length === 2) {
-            let floor1 = document.getElementById("scene-floor1");
-            let pos1 = getDivPosition(floor1);
-            let floor2 = document.getElementById("scene-floor2");
-            let pos2 = getDivPosition(floor2);
-            floor1.style.top = 209 + "px";
-            floor1.style.left = pos1.left - pos.left + "px";
-            floor2.style.top = 342 + "px";
-            floor2.style.left = pos2.left - pos.left + "px";
-            floor1.style.visibility = "visible";
-            floor2.style.visibility = "visible";
-            this.setState({floor1:floors[0],floor2:floors[1]});
-        } else if (floors.length === 3) {
-            let floor1 = document.getElementById("scene-floor1");
-            let pos1 = getDivPosition(floor1);
-            let floor2 = document.getElementById("scene-floor2");
-            let pos2 = getDivPosition(floor2);
-            let floor3 = document.getElementById("scene-floor3");
-            let pos3 = getDivPosition(floor3);
-            floor1.style.top = 147 + "px";
-            floor1.style.left = pos1.left - pos.left + "px";
-            floor2.style.top = 281 + "px";
-            floor2.style.left = pos2.left - pos.left + "px";
-            floor3.style.top = 336 + "px";
-            floor3.style.left = pos3.left - pos.left + "px";
-            floor1.style.visibility = "visible";
-            floor2.style.visibility = "visible";
-            floor3.style.visibility = "visible";
-            this.setState({floor1:floors[0],floor2:floors[1],floor3:floors[2]});
-        } else if (floors.length === 4) {
-            let floor1 = document.getElementById("scene-floor1");
-            let pos1 = getDivPosition(floor1);
-            let floor2 = document.getElementById("scene-floor2");
-            let pos2 = getDivPosition(floor2);
-            let floor3 = document.getElementById("scene-floor3");
-            let pos3 = getDivPosition(floor3);
-            let floor4 = document.getElementById("scene-floor4");
-            let pos4 = getDivPosition(floor4);
-            floor1.style.top =  79 + "px";
-            floor1.style.left = pos1.left - pos.left + "px";
-            floor2.style.top =  209 + "px";
-            floor2.style.left = pos2.left - pos.left + "px";
-            floor3.style.top =  265 + "px";
-            floor3.style.left = pos3.left - pos.left + "px";
-            floor4.style.top =  327 + "px";
-            floor4.style.left = pos4.left - pos.left + "px";
-            floor1.style.visibility = "visible";
-            floor2.style.visibility = "visible";
-            floor3.style.visibility = "visible";
-            floor4.style.visibility = "visible";
-            this.setState({floor1:floors[0],floor2:floors[1],floor3:floors[2],floor4:floors[3]});
+        } else if (data.length === 1) {
+            top1 = 265;
+            content1 = data[0];
+            floorVisible=[true, false, false, false];
+        } else if (data.length === 2) {
+            top1 = 209;
+            top2 = 342;
+            content1 = data[0]; content2 = data[1];
+            floorVisible=[true, true, false, false];
+        } else if (data.length === 3) {
+            top1 = 147;
+            top2 = 281;
+            top3 = 336;
+            content1 = data[0]; content2 = data[1]; content3 = data[2];
+            floorVisible=[true, true, true, false];
+        } else if (data.length === 4) {
+            top1 = 79;
+            top2 = 209;
+            top3 = 265;
+            top4 = 327;
+            content1 = data[0]; content2 = data[1]; content3 = data[2]; content4 = data[3];
+            floorVisible=[true, true, true, true];
         } else {
             console.log("plus de 8 concepts --> non viable");
         }
-    }
-
-    handleSubmit = event => {
-        event.preventDefault();
+        this.setState({
+            floor1Position:{
+                top:top1,
+                left:354,
+                width:143,
+                height:130
+            },
+            floor2Position:{
+                top:top2,
+                left:348,
+                width:155,
+                height:57
+            },
+            floor3Position:{
+                top:top3,
+                left:339,
+                width:173,
+                height:64
+            },
+            floor4Position:{
+                top:top4,
+                left:327,
+                width:197,
+                height:72
+            },
+            isFloorVisible:floorVisible,
+            floor1:content1, floor2:content2,floor3:content3, floor4:content4
+        });
     }
 
     isFloorClicked = (id) => {
@@ -183,23 +197,75 @@ export default class ScenePagoda extends Component {
     }
 
     render() {
+        let sceneWidth = Math.floor(this.props.innerScenePosition.width * this.props.ratio);
+        let sceneHeight = Math.floor(this.props.innerScenePosition.height * this.props.ratio);
+        let floorPosition = {
+            top:Math.floor(this.state.floorPosition.top*this.props.ratio),
+            left:Math.floor(this.state.floorPosition.left*this.props.ratio),
+            width:Math.floor(this.state.floorPosition.width*this.props.ratio),
+            height:Math.floor(this.state.floorPosition.height*this.props.ratio)
+        };
+        let floor1Position = {
+            top:Math.floor(this.state.floor1Position.top*this.props.ratio),
+            left:Math.floor(this.state.floor1Position.left*this.props.ratio),
+            width:Math.floor(this.state.floor1Position.width*this.props.ratio),
+            height:Math.floor(this.state.floor1Position.height*this.props.ratio)
+        };
+        let floor2Position = {
+            top:Math.floor(this.state.floor2Position.top*this.props.ratio),
+            left:Math.floor(this.state.floor2Position.left*this.props.ratio),
+            width:Math.floor(this.state.floor2Position.width*this.props.ratio),
+            height:Math.floor(this.state.floor2Position.height*this.props.ratio)
+        };
+        let floor3Position = {
+            top:Math.floor(this.state.floor3Position.top*this.props.ratio),
+            left:Math.floor(this.state.floor3Position.left*this.props.ratio),
+            width:Math.floor(this.state.floor3Position.width*this.props.ratio),
+            height:Math.floor(this.state.floor3Position.height*this.props.ratio)
+        };
+        let floor4Position = {
+            top:Math.floor(this.state.floor4Position.top*this.props.ratio),
+            left:Math.floor(this.state.floor4Position.left*this.props.ratio),
+            width:Math.floor(this.state.floor4Position.width*this.props.ratio),
+            height:Math.floor(this.state.floor4Position.height*this.props.ratio)
+        };
         return (
             <Fragment>
-                <img src={PagodaBehind}
-                    alt={"scene-pagoda-behind"} id={"scene-pagoda-behind"} style={{ visibility: this.props.visible ? "visible" : "hidden" }} />
+                <img src={PagodaBehind} alt={"scene-pagoda-behind"} id={"scene-pagoda-behind"} 
+                    style={
+                        { 
+                            visibility: this.props.visible ? "visible" : "hidden",
+                            height:sceneHeight,
+                            width:sceneWidth
+                        }
+                    } />
+
                 <PagodaPopover id={"scene-floor1"} visible={this.props.visible} src={PagodaFloor1} srcHover={PagodaFloor1Hover} isOpen={(this.props.visible && !this.props.dismissPopover)}
                     data={this.state.floor1} clickHandle={this.isFloorClicked} openFloor={this.state.isFloorClicked[0]} datakey={0}
-                    hoverHandle={this.isFloorHovered} hoverFloor={this.state.isFloorHovered[0]}></PagodaPopover>
+                    hoverHandle={this.isFloorHovered} hoverFloor={this.state.isFloorHovered[0]} position={floor1Position} isVisible={this.state.isFloorVisible[0]}></PagodaPopover>
+
                 <PagodaPopover id={"scene-floor2"} visible={this.props.visible} src={PagodaFloor2} srcHover={PagodaFloor2Hover} isOpen={(this.props.visible && !this.props.dismissPopover)}
                     data={this.state.floor2} clickHandle={this.isFloorClicked} openFloor={this.state.isFloorClicked[1]} datakey={1}
-                    hoverHandle={this.isFloorHovered} hoverFloor={this.state.isFloorHovered[1]}></PagodaPopover>
+                    hoverHandle={this.isFloorHovered} hoverFloor={this.state.isFloorHovered[1]} position={floor2Position} isVisible={this.state.isFloorVisible[1]}></PagodaPopover>
+
                 <PagodaPopover id={"scene-floor3"} visible={this.props.visible} src={PagodaFloor3} srcHover={PagodaFloor3Hover} isOpen={(this.props.visible && !this.props.dismissPopover)}
                     data={this.state.floor3} clickHandle={this.isFloorClicked} openFloor={this.state.isFloorClicked[2]} datakey={2}
-                    hoverHandle={this.isFloorHovered} hoverFloor={this.state.isFloorHovered[2]}></PagodaPopover>
+                    hoverHandle={this.isFloorHovered} hoverFloor={this.state.isFloorHovered[2]} position={floor3Position} isVisible={this.state.isFloorVisible[2]}></PagodaPopover>
+
                 <PagodaPopover id={"scene-floor4"} visible={this.props.visible} src={PagodaFloor4} srcHover={PagodaFloor4Hover} isOpen={(this.props.visible && !this.props.dismissPopover)}
                     data={this.state.floor4} clickHandle={this.isFloorClicked} openFloor={this.state.isFloorClicked[3]} datakey={3}
-                    hoverHandle={this.isFloorHovered} hoverFloor={this.state.isFloorHovered[3]}></PagodaPopover>
-                <img src={PagodaFloor} alt={"scene-floor-structure"} id={"scene-floor-structure"} style={{ visibility: this.props.visible ? "visible" : "hidden" }} />
+                    hoverHandle={this.isFloorHovered} hoverFloor={this.state.isFloorHovered[3]} position={floor4Position} isVisible={this.state.isFloorVisible[3]}></PagodaPopover>
+
+                <img src={PagodaFloor} alt={"scene-floor-structure"} id={"scene-floor-structure"}
+                    style={
+                        { 
+                            visibility: this.props.visible ? "visible" : "hidden",
+                            height:floorPosition.height,
+                            width:floorPosition.width,
+                            top:floorPosition.top,
+                            left:floorPosition.left
+                        }
+                    } />
             </Fragment>
         );
     }

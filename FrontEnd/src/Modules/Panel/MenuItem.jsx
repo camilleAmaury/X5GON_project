@@ -16,18 +16,15 @@ export default class MenuItem extends Component {
             iconPositionGap:{
                 leftGap:0,
                 topGap:0
+            },
+            iconPosition:{
+                width:58,
+                height:58
             }
         }
     }
 
     componentDidMount = () => {
-        let icon = document.getElementById("logo_" + this.props.alt);
-        this.setState({
-            iconPositionGap:{
-                leftGap:Math.floor(icon.offsetWidth * (1 - this.props.ratio)),
-                topGap:Math.floor(icon.offsetHeight * (1 - this.props.ratio))
-            }
-        });
     }
 
     changeImage = event => {
@@ -43,8 +40,8 @@ export default class MenuItem extends Component {
                 }
                 circle.classList.add("hover-cursor");
                 let coord = getDivPosition(image);
-                circle.style.left = (coord.left - 10) + 'px';
-                circle.style.top = (coord.top - 10) + 'px';
+                circle.style.left = (coord.left - Math.floor(12*this.props.ratio)) + 'px';
+                circle.style.top = (coord.top - Math.floor(12*this.props.ratio)) + 'px';
 
             } else {
                 if (!this.props.isLoading && !this.props.isNotification) {
@@ -58,20 +55,28 @@ export default class MenuItem extends Component {
 
     render() {
         let iconPosition = {
-            left:this.props.toriPosition.left + this.props.left - this.state.iconPositionGap.leftGap,
-            top:this.props.toriPosition.top + this.props.top - this.state.iconPositionGap.topGap
+            left:this.props.toriPosition.left + this.props.left,
+            top:this.props.toriPosition.top + this.props.top,
+            width:Math.floor(this.state.iconPosition.width*this.props.ratio),
+            height:Math.floor(this.state.iconPosition.height*this.props.ratio),
         }
         return (
             <div data-key={this.props.data} id={this.props.id} className={"list-item"} onMouseMove={this.hover} onMouseEnter={this.changeImage} onMouseLeave={this.changeImage} 
                 onClick={this.props.handleClick} style={
                     {
                         left:iconPosition.left,
-                        top:iconPosition.top,
+                        top:iconPosition.top
                     }
                 }>
 
                 <img data-key={this.props.data} id={"logo_" + this.props.alt} className={"list-item-logo-container"} 
-                    src={this.props.isLoading ? LoadingGif : this.props.isNotification ? notificationIcon : this.props.image} alt={this.props.alt} />
+                    src={this.props.isLoading ? LoadingGif : this.props.isNotification ? notificationIcon : this.props.image} alt={this.props.alt}
+                    style={
+                        {
+                            width:iconPosition.width,
+                            height:iconPosition.height
+                        }
+                    } />
 
                 <Popover id={"list-item-popover"} data-key={this.props.data} placement={this.props.placement} isOpen={this.state.hover} target={this.props.id} >
                     <PopoverHeader>{this.props.title}</PopoverHeader>

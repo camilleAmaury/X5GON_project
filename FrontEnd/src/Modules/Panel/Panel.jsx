@@ -81,7 +81,6 @@ export default class Panel extends Component {
     }
 
     responiveResizing = () => {
-        console.log("appeled")
         let container = document.getElementById("container-panel");
         this.setState({
             windowSize:{
@@ -107,7 +106,7 @@ export default class Panel extends Component {
             this.setState({
                 toriPosition:{
                     left:(this.state.windowSize.width - toriWidth) / 2,
-                    top:(this.state.windowSize.height - toriHeight) - 30,
+                    top:(this.state.windowSize.height - toriHeight) - Math.floor(30 * this.state.windowSize.ratio),
                     height:toriHeight,
                     width:toriWidth
                 },
@@ -160,9 +159,8 @@ export default class Panel extends Component {
                 });
             }, 1700);
         });
-
-
     }
+
     animation_close = (change, id) => {
         let scene_animation = document.getElementById("scene-animation");
         let scene_background = document.getElementById("scene-background");
@@ -183,16 +181,13 @@ export default class Panel extends Component {
                             scene_animation.style.visibility = "hidden";
                             this.setState({
                                 closeAnimationExec: false,
-                                gif_number: Math.random()
+                                gif_number: Math.random(),
+                                isOpenedIcon: [false, false, false, false]
                             }, () => {
                                 if (change) {
                                     setTimeout(() => {
                                         this.animation_open(id);
                                     }, 750);
-                                } else {
-                                    this.setState({
-                                        isOpenedIcon: [false, false, false, false]
-                                    });
                                 }
                             });
                         }, 300);
@@ -203,15 +198,15 @@ export default class Panel extends Component {
     }
 
     handleLoadingIcon = (id) => {
-        let loadingIcon = this.state.isLoadingIcon;
+        let loadingIcon = {...this.state.isLoadingIcon};
         loadingIcon[id] = true;
         this.setState({
             isLoadingIcon: loadingIcon
         });
     }
     handleNotificationIcon = (id) => {
-        let notifIcon = this.state.isNotificationIcon;
-        let loadingIcon = this.state.isLoadingIcon;
+        let notifIcon = {...this.state.isNotificationIcon};
+        let loadingIcon = {...this.state.isLoadingIcon};
         loadingIcon[id] = false;
         notifIcon[id] = !notifIcon[id];
         this.setState({
@@ -249,7 +244,7 @@ export default class Panel extends Component {
                     isNotification={this.state.isNotificationIcon[i]} id={item.id} placement={"right"} left={item.left} top={item.top} 
                     toriPosition={this.state.toriPosition} ratio={this.state.windowSize.ratio}></MenuItem>)}
 
-                <Cursor cursorLoaded={this.cursorLoaded}>></Cursor>
+                <Cursor cursorLoaded={this.cursorLoaded} ratio={this.state.windowSize.ratio} windowSize={this.state.windowSize}></Cursor>
             </div>
         );
     }

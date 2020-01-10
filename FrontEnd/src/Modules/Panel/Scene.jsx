@@ -57,9 +57,6 @@ export default class Scene extends Component {
     cursorManagement = (div) => {
         if(this.props.cursorLoaded){
             let cursor = document.getElementById("cursor-circle");
-            console.log(this.props.mousePosition)
-            console.log(div)
-            console.log(intersects(this.props.mousePosition, div))
             if(intersects(this.props.mousePosition, div)){
                 cursor.style.zIndex = 1;
             }else{
@@ -73,7 +70,7 @@ export default class Scene extends Component {
         let sceneHeight = Math.floor(this.state.innerScenePosition.height * this.props.ratio);
         let scenePosition = {
             left: isNaN((this.props.windowSize.width - sceneWidth) / 2) ? 0 : (this.props.windowSize.width - sceneWidth) / 2,
-            top: isNaN((this.props.windowSize.height - sceneHeight) - 100) ? 0 : (this.props.windowSize.height - sceneHeight) - 100,
+            top: isNaN((this.props.windowSize.height - sceneHeight) - 100) ? 0 : (this.props.windowSize.height - sceneHeight) - Math.floor(100 * this.props.ratio),
             width: sceneWidth,
             height: sceneHeight
         };
@@ -104,13 +101,16 @@ export default class Scene extends Component {
                     } />
 
                 <SceneScholar data={1} handleLoading={this.props.handleLoading} handleNotification={this.props.handleNotification} visible={this.props.opened[1]}
-                    notification={this.props.notification[1]} dismissPopover={this.props.dismissPopover} mousePosition={this.props.mousePosition}></SceneScholar>
+                    notification={this.props.notification[1]} dismissPopover={this.props.dismissPopover} mousePosition={this.props.mousePosition}
+                    ratio={this.props.ratio} innerScenePosition={this.state.innerScenePosition}></SceneScholar>
 
 
                 <SceneKnowledge data={0} handleLoading={this.props.handleLoading} handleNotification={this.props.handleNotification} visible={this.props.opened[0]}
-                    notification={this.props.notification[0]} dismissPopover={this.props.dismissPopover}></SceneKnowledge>
+                    notification={this.props.notification[0]} dismissPopover={this.props.dismissPopover} ratio={this.props.ratio} 
+                    innerScenePosition={this.state.innerScenePosition}></SceneKnowledge>
 
-                <ScenePagoda data={2} visible={this.props.opened[2]} dismissPopover={this.props.dismissPopover}></ScenePagoda>
+                <ScenePagoda data={2} visible={this.props.opened[2]} dismissPopover={this.props.dismissPopover} 
+                    ratio={this.props.ratio} innerScenePosition={this.state.innerScenePosition}></ScenePagoda>
             </div>
         );
     }
