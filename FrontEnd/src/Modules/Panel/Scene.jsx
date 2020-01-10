@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 import './Scene.scss';
 
@@ -7,7 +7,7 @@ import intersects from '../../Functions/Position/intersects';
 import SceneScholar from './Scene/SceneScholar';
 import SceneKnowledge from './Scene/SceneKnowledge';
 import ScenePagoda from './Scene/ScenePagoda';
-// import Document from './Scene/Document';
+import Document from './Scene/Document';
 
 import sceneImage from '../../assets/Scene/scene_openPNG.png';
 import sceneImageClose from '../../assets/Scene/scene_closePNG.png';
@@ -78,40 +78,44 @@ export default class Scene extends Component {
         let condOpen = (!this.props.isOpened && !this.props.closeAnimationExec) || (this.props.isOpened && this.props.openAnimationExec && !this.props.closeAnimationExec);
         let condClose = (this.props.isOpened && !this.props.openAnimationExec) || (!this.props.isOpened && !this.props.openAnimationExec && this.props.closeAnimationExec);
         return (
-            <div id={"scene"} style={{ left: scenePosition.left, top: scenePosition.top }} onMouseOver={this.changeCursor}
-                onMouseLeave={this.changeCursor2}>
+            <Fragment>
                 {/* Temporaire */}
-                {/* <Document></Document> */}
+                <Document ratio={this.props.ratio} windowSize={this.props.windowSize}></Document>
                 {/* Temporaire */}
 
-                <img id={"scene-background"} src={this.props.isOpened ? sceneImage : sceneImageClose} alt={"scene-background"} style={
-                    {
-                        width: scenePosition.width,
-                        height: scenePosition.height
-                    }
-                } />
+                <div id={"scene"} style={{ left: scenePosition.left, top: scenePosition.top }} onMouseOver={this.changeCursor}
+                    onMouseLeave={this.changeCursor2}>
 
-                <img src={(condOpen ? openSceneAnimation : (condClose ? closeSceneAnimation : "")) + "?id=" + this.props.number}
-                    alt={"scene-animation"} id={"scene-animation"}
-                    style={
+                    <img id={"scene-background"} src={this.props.isOpened ? sceneImage : sceneImageClose} alt={"scene-background"} style={
                         {
                             width: scenePosition.width,
                             height: scenePosition.height
                         }
                     } />
 
-                <SceneScholar data={1} handleLoading={this.props.handleLoading} handleNotification={this.props.handleNotification} visible={this.props.opened[1]}
-                    notification={this.props.notification[1]} dismissPopover={this.props.dismissPopover} mousePosition={this.props.mousePosition}
-                    ratio={this.props.ratio} innerScenePosition={this.state.innerScenePosition}></SceneScholar>
+                    <img src={(condOpen ? openSceneAnimation : (condClose ? closeSceneAnimation : "")) + "?id=" + this.props.number}
+                        alt={"scene-animation"} id={"scene-animation"}
+                        style={
+                            {
+                                width: scenePosition.width,
+                                height: scenePosition.height
+                            }
+                        } />
+
+                    <SceneScholar data={1} handleLoading={this.props.handleLoading} handleNotification={this.props.handleNotification} visible={this.props.opened[1]}
+                        notification={this.props.notification[1]} dismissPopover={this.props.dismissPopover} mousePosition={this.props.mousePosition}
+                        ratio={this.props.ratio} innerScenePosition={this.state.innerScenePosition}></SceneScholar>
 
 
-                <SceneKnowledge data={0} handleLoading={this.props.handleLoading} handleNotification={this.props.handleNotification} visible={this.props.opened[0]}
-                    notification={this.props.notification[0]} dismissPopover={this.props.dismissPopover} ratio={this.props.ratio} 
-                    innerScenePosition={this.state.innerScenePosition}></SceneKnowledge>
+                    <SceneKnowledge data={0} handleLoading={this.props.handleLoading} handleNotification={this.props.handleNotification} visible={this.props.opened[0]}
+                        notification={this.props.notification[0]} dismissPopover={this.props.dismissPopover} ratio={this.props.ratio} 
+                        innerScenePosition={this.state.innerScenePosition}></SceneKnowledge>
 
-                <ScenePagoda data={2} visible={this.props.opened[2]} dismissPopover={this.props.dismissPopover} 
-                    ratio={this.props.ratio} innerScenePosition={this.state.innerScenePosition}></ScenePagoda>
-            </div>
+                    <ScenePagoda data={2} visible={this.props.opened[2]} dismissPopover={this.props.dismissPopover} 
+                        ratio={this.props.ratio} innerScenePosition={this.state.innerScenePosition}></ScenePagoda>
+                </div>
+            </Fragment>
+                
         );
     }
 }

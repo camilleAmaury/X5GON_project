@@ -76,8 +76,8 @@ export default class SceneKnowledge extends Component {
             }, () => {
                 axios.get('http://185.157.246.81:5000/search/' + questionValue)
                 .then( request => {
-                    // let documents = request.data;
-                    
+                    let documents = request.data;
+                    console.log(documents)
                     let data = this.state.data;
                     // for(let i = 0; i < documents.length; i++){
                     //     data.push({id:documents[i][0], title:documents[i][1], author:documents[i][2], keywords:documents[i][3]})
