@@ -30,9 +30,15 @@
     background-repeat: repeat-y;
     border: none;
     border-radius: 0px;
+    overflow-wrap:break-word;
+    overflow-y: hidden;
+    padding-top:30px;
+    padding-left:20px;
+    padding-right:20px;
 }
 
-#lower_scroll{
-    transition: 2s top;
+#scroll-text{
+    position:relative;
+    font-size:14px;
 }
 

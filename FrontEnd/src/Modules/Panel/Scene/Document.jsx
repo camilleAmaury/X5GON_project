@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 import './Document.scss';
 
+import axios from "axios";
+
 
 export default class Document extends Component {
     constructor(props) {
@@ -34,19 +36,33 @@ export default class Document extends Component {
                 backgroundY: 789,
                 backgroundPositionY: 0
             },
-            isOpen: false
+            textPosition:{
+                top:0
+            },
+            isOpen: false,
+            content:""
         }
     }
 
     componentDidMount = () => {
-        document.getElementById("upper_scroll").addEventListener('click', ()=>{this.handleScroll()});
-        document.getElementById("lower_scroll").addEventListener('click', ()=>{this.handleScroll()});
+        let documentId = 39642;
+        axios.get(`https://platform.x5gon.org/api/v1/oer_materials/${documentId}/contents/`)
+        .then( request => {
+            let content = request.data.oer_contents[0].value.value;
+            document.getElementById("upper_scroll").addEventListener('click', ()=>{this.handleScroll()});
+            document.getElementById("lower_scroll").addEventListener('click', ()=>{this.handleScroll()});
+            this.setState({content:content});
+        })
+        .catch( error => { 
+            console.log("this doesn't work");
+        });
+
     }
 
     handleScroll = () => {
-        console.log(this.state.isOpen)
         document.getElementById("upper_scroll").removeEventListener('click', this.handleScroll);
         document.getElementById("lower_scroll").removeEventListener('click', this.handleScroll);
+        document.getElementById("lower_scroll").style.transition = "2s top";
         document.getElementById("lower_scroll_texture").style.transition = "2s background-position-y";
         document.getElementById("scroll_center").style.transition = "2s height";
         
@@ -66,13 +82,13 @@ export default class Document extends Component {
                 backgroundPositionY: this.state.lowerScrollTexture.backgroundPositionY + bgY
             }
         }, () => {
-            
             setTimeout(() => {
                 this.setState({
                     isOpen: !this.state.isOpen
                 }, () => {
                     document.getElementById("upper_scroll").addEventListener('click', this.handleScroll);
                     document.getElementById("lower_scroll").addEventListener('click', this.handleScroll);
+                    document.getElementById("lower_scroll").style.transition = "none";
                     document.getElementById("lower_scroll_texture").style.transition = "none";
                     document.getElementById("scroll_center").style.transition = "none";
                 });
@@ -85,19 +101,31 @@ export default class Document extends Component {
     scroll = event => {
 
         // get scrolling speed
-        let speed = event.deltaY / 20;
+        let speed = event.deltaY / 10;
         // scrolling textures
-        this.setState({
-            upperScrollTexture: {
-                backgroundPositionY: this.state.upperScrollTexture.backgroundPositionY - speed
-            },
-            lowerScrollTexture: {
-                backgroundPositionY: this.state.lowerScrollTexture.backgroundPositionY - speed
-            },
-            centerScrollPosition: {
-                backgroundPositionY: this.state.centerScrollPosition.backgroundPositionY - speed
-            }
-        });
+        let textdiv = document.getElementById('scroll-text');
+        let condUp = Math.abs(this.state.textPosition.top) > 0;
+        let condDown = textdiv.offsetHeight >= Math.abs(this.state.textPosition.top) + this.state.centerScrollPosition.height /2;
+        let condfinal = (condUp && condDown) || (condUp && Math.sign(speed) == -1) || (condDown && Math.sign(speed) == 1);
+        if(condfinal){
+            this.setState({
+                upperScrollTexture: {
+                    backgroundPositionY: this.state.upperScrollTexture.backgroundPositionY + speed
+                },
+                lowerScrollTexture: {
+                    backgroundPositionY: this.state.lowerScrollTexture.backgroundPositionY + speed
+                },
+                centerScrollPosition: {
+                    width: this.state.centerScrollPosition.width,
+                    height: this.state.centerScrollPosition.height,
+                    backgroundY: this.state.centerScrollPosition.backgroundY,
+                    backgroundPositionY: this.state.centerScrollPosition.backgroundPositionY - speed
+                },
+                textPosition:{
+                    top:this.state.textPosition.top - speed
+                }
+            });
+        }
     }
 
     render() {
@@ -159,7 +187,11 @@ export default class Document extends Component {
                         backgroundPositionY: this.state.centerScrollPosition.backgroundPositionY
                     }
                 }>
-
+                    <span id={"scroll-text"} style={
+                        {
+                            top:this.state.textPosition.top
+                        }
+                    }>{this.state.content}</span>
                 </div>
 
                 {/* Upper scroll */}

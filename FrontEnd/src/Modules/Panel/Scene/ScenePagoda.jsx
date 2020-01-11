@@ -2,8 +2,6 @@ import React, { Component, Fragment } from 'react';
 
 import './ScenePagoda.scss';
 
-import axios from "axios";
-
 import PagodaPopover from './PagodaPopover';
 
 import PagodaBehind from '../../../assets/Scene/knowledge/Pagoda/scenePagodaBehind.png';
@@ -62,15 +60,6 @@ export default class ScenePagoda extends Component {
     }
 
     componentDidMount = () => {
-        let documentId = 39642;
-        axios.get(`https://platform.x5gon.org/api/v1/oer_materials/${documentId}/contents/`)
-        .then( request => {
-            let content = request.data;
-            console.log(content);
-        })
-        .catch( error => { 
-            console.log("this doesn't work");
-        });
         // fecth data from server with an id
         let data = [
             [
