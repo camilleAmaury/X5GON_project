@@ -43,7 +43,7 @@ class SearchDocument(Resource):
             ngramRet = ngramRet+ngram
             return [x for x in ngramRet if len(x) >= mi]
             
-        def getPertinentDocument(keywords, m):
+        def getPertinentDocument(keywords, m, offset):
             sparql = SPARQLWrapper(server_URL)
             ngrams = generate_ngrams(keywords, 4)
             ngramsRet = []
@@ -58,9 +58,9 @@ class SearchDocument(Resource):
                 union += gram+"|"
             union = union[:-1]+")"
 
-            queryExact = "PREFIX dcterms: <http://purl.org/dc/terms/> \nSELECT DISTINCT ?id ?title ?format (group_concat(?key;separator=',') AS ?keys) \nWHERE {\n{?doc dcterms:subject ?key; \ndcterms:title ?title; \ndcterms:identifier ?id; \ndcterms:format ?format. \nfilter regex(?title, '"+union+"', 'i')\nfilter regex(?format, '(docx|html|ods|odt|pdf|txt)', 'i')}} \nGROUP BY ?title ?id ?format"+("\nLIMIT "+str(m) if m != -1 else "")
-            query = "PREFIX dcterms: <http://purl.org/dc/terms/> \nSELECT DISTINCT ?id ?title ?format (group_concat(?key;separator=',') AS ?keys) (COUNT(?id) as ?score) \nWHERE {\n{?doc dcterms:subject ?key; \ndcterms:title ?title; \ndcterms:identifier ?id; \ndcterms:format ?format. \nfilter regex(?key, '"+union+"', 'i')\nfilter regex(?format, '(docx|html|ods|odt|pdf|txt)', 'i')}} \nGROUP BY ?title ?id ?format\nORDER BY DESC(?score)"+("\nLIMIT "+str(m) if m != -1 else "")
-            print(type(queryExact))
+            queryExact = "PREFIX dcterms: <http://purl.org/dc/terms/> SELECT DISTINCT ?id ?title ?format (group_concat(?key;separator=',') AS ?keys) WHERE{ ?doc dcterms:identifier ?id; dcterms:subject ?key. { SELECT DISTINCT ?id ?title ?format WHERE { {?doc dcterms:title ?title; dcterms:identifier ?id; dcterms:format ?format. filter regex(?title, '"+union+"', 'i') filter regex(?format, '(docx|html|ods|odt|pdf|txt)', 'i') } } GROUP BY ?title ?id ?format "+("\nLIMIT "+str(m)+" OFFSET "+str(int(offset)*m) if m != -1 else "")+" } } GROUP BY ?title ?id ?format"
+            query = "PREFIX dcterms: <http://purl.org/dc/terms/> \nSELECT DISTINCT ?id ?title ?format (group_concat(?key;separator=',') AS ?keys) (COUNT(?id) as ?score) \nWHERE {\n{?doc dcterms:subject ?key; \ndcterms:title ?title; \ndcterms:identifier ?id; \ndcterms:format ?format. \nfilter regex(?key, '"+union+"', 'i')\nfilter regex(?format, '(docx|html|ods|odt|pdf|txt)', 'i')}} \nGROUP BY ?title ?id ?format\nORDER BY DESC(?score)"+("\nLIMIT "+str(m)+" OFFSET "+str(int(offset)*m) if m != -1 else "")
+            print(queryExact)
             resExact = execQuery(sparql, queryExact)['results']['bindings']
             
             res = execQuery(sparql, query)['results']['bindings']
@@ -90,4 +90,4 @@ class SearchDocument(Resource):
             
             return(json.dumps(list(resR[:m])))
                 
-        return getPertinentDocument(keywords, 100)
+        return getPertinentDocument(keywords, 100, 0)

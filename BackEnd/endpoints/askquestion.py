@@ -202,6 +202,8 @@ class AskQuestion(Resource):
         def askQuestionToBERT(question):
             start = time.time()
             corpusPertinent = getPertinentDocument(question)
+            end2 = time.time()
+            print(str((end2 - start)/60)+" min")
             #print(len(corpusPertinent))
             #print(corpusPertinent)
             fileContent = "{\"version\": \"v2.0\",\"data\": [{\"title\": \"your_title\",\"paragraphs\": [{\"qas\": [{\"question\": \"<question>\",\"id\": \"0\",\"is_impossible\": \"\"}],\"context\": \"<content>\"}]}]}"
@@ -225,9 +227,10 @@ class AskQuestion(Resource):
                 --do_train=False \
                 --max_query_length=30  \
                 --do_predict=True \
+                --vmodule=xla_compilation_cache=1 \
                 --predict_file="+os.path.abspath("endpoints/data/input_file.json")+" \
                 --predict_batch_size=8 \
-                --n_best_size=3 \
+                --n_best_size=1 \
                 --max_seq_length=384 \
                 --doc_stride=128 \
                 --output_dir="+os.path.abspath("endpoints/data/output/"))

@@ -7,6 +7,7 @@ import pandas as pd
 import math
 import numpy as np
 import requests
+import json
 
 
 api = Namespace('prerequisites', description='All prerequisites')
@@ -30,11 +31,7 @@ class SearchDocument(Resource):
             sparql.setQuery(query)
             sparql.setReturnFormat(JSON)
             results = sparql.query().convert()
-            return results
-
-        # function which create
-
-        
+            return results        
         
         allIds = list()
         string_constructor = "PREFIX dcterms: <http://purl.org/dc/terms/>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX dbr: <http://dbpedia.org/resource/>\nPREFIX dbo: <http://dbpedia.org/ontology/>\n\nSELECT ?id WHERE {\n  ?doc dcterms:identifier ?id.\n}"
@@ -54,75 +51,7 @@ class SearchDocument(Resource):
                 res = results['results']['bindings'][0]['abs']['value']
             return res
             
-        def recAddBeVertices(uriConcept, abstract, add, l):
-            #print(uriConcept)
-            #get rdf:type
-            string_constructor = "PREFIX dcterms: <http://purl.org/dc/terms/>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX dbr: <http://dbpedia.org/resource/>\nPREFIX dbo: <http://dbpedia.org/ontology/>\n\nSELECT ?type ?label WHERE {\nSERVICE <http://dbpedia.org/sparql> {\n <"+uriConcept+"> rdf:type ?type.\n<"+uriConcept+"> rdfs:label ?label.\n}\nFILTER LANGMATCHES(LANG(?label), 'EN')\n}"
-            
-            sparql.setQuery(string_constructor)
-            sparql.setReturnFormat(JSON)
-
-
-            results = sparql.query().convert()
-            res = []
-            #print(results['results']['bindings'])
-            if(len(results['results']['bindings']) > 0):
-                for j in range(len(results['results']['bindings'])):
-                    res.append(results['results']['bindings'][j]['type']['value'])
-                corpus = [getAbstract(concept) for concept in res] #very greedy !! TO REPLACE BY A BIG REQUEST
-              #print(corpus)
-
-              
-
-                concept_to_know = [re.sub('[0-9]+', '', re.findall('[A-Za-z0-9]+$', concept)[0]) for concept in res]
-
-                if(''.join(corpus) != ''):
-                    if(sum([1 if text!='' else 0 for text in corpus]) > 1):
-                        label = results['results']['bindings'][0]['label']['value']
-                        tf = [abstract.count(label)/len(abstract.split()) for abstract in corpus]
-                        c = sum([1 if label in abstract else 0 for abstract in corpus])
-                        idf = 0
-                        if c > 0:
-                            idf = log(len(corpus))
-                        tfidf = [t*idf for t in tf]
-                        objet = concept_to_know[np.argmax(tfidf)]
-                        if(objet != "Thing"):
-                            if(add):
-                                string_con = "PREFIX x5gonbjk: <http://x5gon/bjk/>\nINSERT DATA{\n <"+uriConcept+"> x5gonbjk:is "+objet+".\n}"
-                                execQuery(sparql, string_con)
-                            print("3- "+res[np.argmax(tfidf)])
-                            l.append(res[np.argmax(tfidf)])
-                            return(recAddBeVertices(res[np.argmax(tfidf)], corpus[np.argmax(tfidf)], add, l))
-                            
-                            #print("run query")
-                    else:
-                        tf = [abstract.count(concept)/len(abstract.split()) for concept in concept_to_know]
-                        idf = 1
-                        objet = concept_to_know[np.argmax(tf)]
-                        if(objet != "Thing"):
-                            if(add):
-                                string_con = "PREFIX x5gonbjk: <http://x5gon/bjk/>\nINSERT DATA{\n <"+uriConcept+"> x5gonbjk:is \""+objet+"\".\n}"
-                                execQuery(sparql, string_con)
-                            print("1- "+res[np.argmax(tf)])
-                            l.append(res[np.argmax(tf)])
-                            print(l)
-                            return(l)
-                        #print("run query")
-                        #print(string_con)
-                else:
-                    tf = [abstract.count(concept)/len(abstract.split()) for concept in concept_to_know]
-                    idf = 1
-                    objet = concept_to_know[np.argmax(tf)]
-                    if(objet != "Thing"):
-                        if(add):
-                            string_con = "PREFIX x5gonbjk: <http://x5gon/bjk/>\nINSERT DATA{\n <"+uriConcept+"> x5gonbjk:is \""+objet+"\".\n}"
-                            execQuery(sparql, string_con)
-                        print("2- "+res[np.argmax(tf)])
-                        l.append(res[np.argmax(tf)])
-                        print(l)
-                        return(l)
-                        #print("run query")
-                        #print(string_con)
+ 
                         
         PLATFORM_URL = "https://platform.x5gon.org/api/v1"
 
@@ -134,7 +63,6 @@ class SearchDocument(Resource):
 
             sparql.setQuery(string_constructor_enrich)
             sparql.setReturnFormat(JSON)
-
             results = sparql.query().convert()
             res = results['results']['bindings']
             for j in range(len(res)):
@@ -154,30 +82,26 @@ class SearchDocument(Resource):
 
               # convert the json response to a Python dictionary object for further processing
             r_json = response.json()
-            #print(r_json["oer_contents"][0]["value"]["value"])
+              #print(r_json["oer_contents"][0]["value"]["value"])
 
-            concept_abstract = [getAbstract(concept) for concept in concept_init] #very greedy !! TO REPLACE BY A BIG REQUEST
+              #concept_abstract = [getAbstract(concept) for concept in concept_init] #very greedy !! TO REPLACE BY A BIG REQUEST
             print("If you want to read \""+results['results']['bindings'][j]['title']['value']+"\" be sure to understand these concepts :")
-            res = list()
-            l = list()
-            if(''.join(concept_abstract) != ''):
-                for concept in concept_init:
-                    res_rec = recAddBeVertices(concept, r_json["oer_contents"][0]["value"]["value"], memorize, l)
-                    res = res + ([] if res_rec is None else res_rec)
-
-            for concept in concept_init:
-                res.append(concept)
+            res = requests.get("http://api.dbpedia-spotlight.org/en/annotate?text="+r_json["oer_contents"][0]["value"]["value"][:2000]+"&confidence=0.5&support=50", headers = {'Accept': 'application/json'}).json()
+            resFormat = {}
+            for r in res['Resources']:
+                if(r['@URI'] in list(resFormat.keys())):
+                    resFormat[r['@URI']] = max(r['@similarityScore'], resFormat[r['@URI']])
+                else:
+                    resFormat[r['@URI']] = r['@similarityScore']
+            l = list()              
+            if(len(resFormat) >= 8):
+                l = list(dict(sorted(resFormat.items(), key=operator.itemgetter(1),reverse=True)))[:8]
+            else:
+                l = list(dict(sorted(resFormat.items(), key=operator.itemgetter(1),reverse=True)))+concept_init[:8-len(resFormat)]
                 
-            retour = {}
-            con = []
-            k = 0
-            for c in res:
-                if(c not in con):
-                    concept = c.split('/')
-                    retour[k] = [concept[len(concept)-1].replace("_", " "), c]
-                    con.append(c)
-                    k+=1
-                
-            return(retour)
+            resRet = []
+            for el in l:
+                resRet.append([el.split('/')[len(el.split('/'))-1].replace('_', ' '), el.replace('http://dbpedia.org/resource/', 'https://en.wikipedia.org/wiki/')])
+            return resRet
 
         return checkKnowledgeBeforeRead(id, False)
