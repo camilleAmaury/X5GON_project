@@ -8,14 +8,20 @@ export default class Cursor extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            cursorInitSize:{
+                width:81,
+                height:81
+            },
+            cursorPosition:{
+                top:0,
+                left:0
+            }
         }
     }
 
     componentDidMount = () => {
-        document.addEventListener("mousemove", this.movement);
-        let circle = document.getElementById("cursor-circle");
-        circle.style.left = 0 + 'px';
-        circle.style.top = 0 + 'px';
+        window.addEventListener("mousemove", this.movement)
+        this.props.cursorLoaded();
     }
 
     movement = event => {
@@ -26,24 +32,43 @@ export default class Cursor extends Component {
             let pos = getMousePosition(event);
             setTimeout(() => {
                 if (!classList.contains("hover-cursor") && !classList.contains("hover-out-cursor")) {
-                    let left = (pos.x - circle.offsetWidth / 2);
-                    let right = (pos.y - circle.offsetHeight / 2);
-                    if((pos.x + circle.offsetWidth / 2) >= document.documentElement.clientWidth){
-                        left -=  (pos.x + circle.offsetWidth / 2) - document.documentElement.clientWidth;
+                    let width = Math.floor(this.state.cursorInitSize.width*this.props.ratio);
+                    let height = Math.floor(this.state.cursorInitSize.height*this.props.ratio);
+                    let left = (pos.x - width / 2);
+                    let top = (pos.y - this.state.cursorPosition.height / 2);
+                    if((pos.x + width / 2) >= this.props.windowSize.width){
+                        left -=  (pos.x + width / 2) - this.props.windowSize.width;
                     }
-                    if((pos.y + circle.offsetHeight / 2) >= document.documentElement.clientHeight){
-                        right -= (pos.y + circle.offsetHeight / 2) - document.documentElement.clientHeight;
+                    if((pos.y + height / 2) >= this.props.windowSize.height){
+                        top -= (pos.y + height / 2) - this.props.windowSize.height;
                     }
-                    circle.style.left = left + 'px';
-                    circle.style.top = right + 'px';
+                    this.setState({
+                        cursorPosition:{
+                            width:width,
+                            height:height,
+                            top:top,
+                            left:left
+                        }
+                    });
                 }
             }, 100);
         }
     }
 
     render() {
+        let cursorCircle = {
+            width:Math.floor(this.state.cursorInitSize.width*this.props.ratio),
+            height:Math.floor(this.state.cursorInitSize.height*this.props.ratio),
+            top:this.state.cursorPosition.top || 0,
+            left:this.state.cursorPosition.left || 0
+        }
         return (
-            <div id={"cursor-circle"} className={"base-color"}></div>
+            <div id={"cursor-circle"} className={"base-color"} style={{
+                width:cursorCircle.width,
+                height:cursorCircle.height,
+                top:cursorCircle.top,
+                left:cursorCircle.left
+            }}></div>
         );
     }
 }

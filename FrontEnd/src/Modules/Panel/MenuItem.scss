@@ -1,0 +1,23 @@
+.list-item-logo-container{
+    height:50px;
+    width: 50px;
+}
+
+.list-item-text-container{
+    display: flex;
+    align-items: center;
+    height:100%;
+    width: auto;
+    color:grey;
+}
+
+.list-item{
+    position: absolute;
+    z-index:13;
+}
+
+#list-item-popover .popover-body{
+    background-color: #E75B40;
+    font-size: 16px;
+    color:white
+}

@@ -1,9 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 
-import './SceneScholar.scss';
+import axios from "axios";
 
-import getDivPosition from '../../../Functions/Position/DivPosition';
+import './SceneScholar.scss';
 
 import ScholarBehind from '../../../assets/Scene/scholar/sceneScholarBehind.png';
 import ScholarCharacter from '../../../assets/Scene/scholar/sceneScholarCharacter.png';
@@ -19,22 +19,17 @@ export default class SceneScholar extends Component {
             clickedCharacter: false,
             waitingData: false,
             isAnswering: false,
-            answerText: ""
+            answerText: "",
+            hoverBlockPosition:{
+                top:138,
+                left:144,
+                width:172,
+                height:228
+            }
         }
     }
 
     componentDidMount = () => {
-        // position the character hover block at the right position
-        let blockhover = document.getElementById("scene-scholar-block-character");
-        let scene = document.getElementById("scene");
-        let pos = getDivPosition(scene);
-        blockhover.style.left = pos.left + 138 + "px";
-        blockhover.style.top = pos.top + 144 + "px";
-        // this.setState({hoveringCharacter:true});
-    }
-
-    handleSubmit = event => {
-        event.preventDefault();
     }
 
     hoverCharacter = () => {
@@ -62,43 +57,96 @@ export default class SceneScholar extends Component {
 
     askQuestion = () => {
         // pass to a thinking state --> waiting for data
-        this.setState({
-            waitingData: true,
-            isAnswering: false,
-            clickedCharacter: false,
-            hoveringCharacter: true
-        }, () => {
+        let question = document.getElementById('question-scholar');
+        let questionValue = question.value;
+        if(!(questionValue === null || questionValue === undefined || questionValue === "")){
             this.props.handleLoading(this.props.data);
-            setTimeout(() => {
-                this.setState({
-                    waitingData: false,
-                    clickedCharacter: false,
-                    hoveringCharacter: false,
-                    isAnswering: true,
-                    answerText: "No server response - error"
-                }, () => {
-                    this.props.handleNotification(this.props.data);
+            this.setState({
+                waitingData: true,
+                isAnswering: false,
+                clickedCharacter: false,
+                hoveringCharacter: true
+            }, () => {
+                axios.get('http://185.157.246.81:5000/askquestion/' + question.value)
+                .then( request => {
+                    this.setState({
+                        waitingData: false,
+                        clickedCharacter: false,
+                        hoveringCharacter: true,
+                        isAnswering: true,
+                        answerText: <span>Well it was hard to find out : <span style={{fontWeight:"bold"}}>{JSON.parse(request.data)[0]}</span></span>
+                    }, () => {
+                        this.props.handleNotification(this.props.data);
+                    });
+                })
+                .catch( error => {
+                    this.setState({
+                        waitingData: false,
+                        clickedCharacter: false,
+                        hoveringCharacter: true,
+                        isAnswering: true,
+                        answerText: <span style={{fontWeight:"bold"}}>Error from server</span>
+                    }, () => {
+                        this.props.handleNotification(this.props.data);
+                    });
                 });
-            }, 10000);
-        });
+            });
+        }
     }
 
     render() {
+        let sceneWidth = Math.floor(this.props.innerScenePosition.width * this.props.ratio);
+        let sceneHeight = Math.floor(this.props.innerScenePosition.height * this.props.ratio);
+        let hoverBlockPosition = {
+            top:Math.floor(this.state.hoverBlockPosition.top * this.props.ratio),
+            left:Math.floor(this.state.hoverBlockPosition.left * this.props.ratio),
+            width:Math.floor(this.state.hoverBlockPosition.width * this.props.ratio),
+            height:Math.floor(this.state.hoverBlockPosition.height * this.props.ratio)
+        }
         return (
             <Fragment>
                 <img src={ScholarBehind}
-                    alt={"scene-scholar-behind"} id={"scene-scholar-behind"} style={{visibility:this.props.visible ? "visible" : "hidden"}} />
+                    alt={"scene-scholar-behind"} id={"scene-scholar-behind"} 
+                    style={
+                        {
+                            width:sceneWidth,
+                            height:sceneHeight,
+                            visibility:this.props.visible ? "visible" : "hidden"
+                        }
+                    }/>
 
-                <img src={ScholarHover} style={{visibility:(this.props.visible && this.state.hoveringCharacter) ? "visible" : "hidden"}}
-                    alt={"scene-scholar-hover-character"} id={"scene-scholar-hover-character"} />
+                <img src={ScholarHover}
+                    alt={"scene-scholar-hover-character"} id={"scene-scholar-hover-character"} 
+                    style={
+                        {
+                            width:sceneWidth,
+                            height:sceneHeight,
+                            visibility:(this.props.visible && this.state.hoveringCharacter) ? "visible" : "hidden"
+                        }
+                    }/>
 
                 <img src={this.state.waitingData ? ScholarSeeking : this.state.isAnswering ? ScholarAnswer : ScholarCharacter}
-                    alt={"scene-scholar-character"} id={"scene-scholar-character"} style={{visibility:this.props.visible ? "visible" : "hidden"}} />
+                    alt={"scene-scholar-character"} id={"scene-scholar-character"}
+                    style={
+                        {
+                            width:sceneWidth,
+                            height:sceneHeight,
+                            visibility:this.props.visible ? "visible" : "hidden"
+                        }
+                    }/>
 
-                <div id={"scene-scholar-block-character"} onMouseEnter={this.hoverCharacter} onMouseLeave={this.leaveCharacter} style={{visibility:this.props.visible ? "visible" : "hidden"}}
-                    onClick={this.state.waitingData ? () => { } : (this.state.isAnswering ? () => { this.setState({ isAnswering: false }); } : this.clickCharacter)}>
+                <div id={"scene-scholar-block-character"} onMouseEnter={this.hoverCharacter} onMouseLeave={this.leaveCharacter}
+                    onClick={this.state.waitingData ? () => { } : (this.state.isAnswering ? () => { this.setState({ isAnswering: false }); } : this.clickCharacter)}
+                    style={
+                        {
+                            top:hoverBlockPosition.top,
+                            left:hoverBlockPosition.left,
+                            width:hoverBlockPosition.width,
+                            height:hoverBlockPosition.height,
+                            visibility:this.props.visible ? "visible" : "hidden"
+                        }
+                    }></div>
 
-                </div>
                 <Popover id={"scene-scholar-block-character-popover"} placement={this.state.clickedCharacter ? "top" : "right"} isOpen={(!this.props.dismissPopover && this.props.visible && this.state.hoveringCharacter)} target={"scene-scholar-block-character"}>
                     <PopoverHeader>{"Scholar"}</PopoverHeader>
                     <PopoverBody>
@@ -106,7 +154,7 @@ export default class SceneScholar extends Component {
                             "I need to find inner peace in order to answer you."
                             :
                             this.state.isAnswering ?
-                                "Well it was hard to find out : " + this.state.answerText
+                                this.state.answerText
                                 :
                                 "Ask me a question. I've been gathering knowledge since my childhood."
                         }
@@ -116,7 +164,7 @@ export default class SceneScholar extends Component {
                     <PopoverHeader>{"Scholar"}</PopoverHeader>
                     <PopoverBody>
                         <div>
-                            <textarea id={"question-scholar"} placeholder={"Your question goes here ..."}></textarea>
+                            <textarea id={"question-scholar"} className={"question-scholar"} placeholder={"Your question goes here ..."}></textarea>
                             <button onClick={this.askQuestion}>ask</button>
                         </div>
                     </PopoverBody>

@@ -1,10 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 import './Scene.scss';
+
+import intersects from '../../Functions/Position/intersects';
 
 import SceneScholar from './Scene/SceneScholar';
 import SceneKnowledge from './Scene/SceneKnowledge';
 import ScenePagoda from './Scene/ScenePagoda';
+import Document from './Scene/Document';
 
 import sceneImage from '../../assets/Scene/scene_openPNG.png';
 import sceneImageClose from '../../assets/Scene/scene_closePNG.png';
@@ -15,16 +18,21 @@ export default class Scene extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            leaveScene:false,
-            hovering: false
+            innerScenePosition: {
+                width: 848,
+                height: 480
+            },
+            leaveScene: false,
+            hovering: false,
+            scenePosition: {
+                width: 0,
+                height: 0
+            },
+            sceneTop: 0
         }
     }
 
     componentDidMount = () => {
-    }
-
-    handleSubmit = event => {
-        event.preventDefault();
     }
 
     changeCursor = () => {
@@ -46,26 +54,68 @@ export default class Scene extends Component {
         });
     }
 
+    cursorManagement = (div) => {
+        if(this.props.cursorLoaded){
+            let cursor = document.getElementById("cursor-circle");
+            if(intersects(this.props.mousePosition, div)){
+                cursor.style.zIndex = 1;
+            }else{
+                cursor.style.zIndex = 12;
+            }
+        }
+    }
+
     render() {
+        let sceneWidth = Math.floor(this.state.innerScenePosition.width * this.props.ratio);
+        let sceneHeight = Math.floor(this.state.innerScenePosition.height * this.props.ratio);
+        let scenePosition = {
+            left: isNaN((this.props.windowSize.width - sceneWidth) / 2) ? 0 : (this.props.windowSize.width - sceneWidth) / 2,
+            top: isNaN((this.props.windowSize.height - sceneHeight) - 100) ? 0 : (this.props.windowSize.height - sceneHeight) - Math.floor(100 * this.props.ratio),
+            width: sceneWidth,
+            height: sceneHeight
+        };
+        this.cursorManagement(scenePosition);
         let condOpen = (!this.props.isOpened && !this.props.closeAnimationExec) || (this.props.isOpened && this.props.openAnimationExec && !this.props.closeAnimationExec);
         let condClose = (this.props.isOpened && !this.props.openAnimationExec) || (!this.props.isOpened && !this.props.openAnimationExec && this.props.closeAnimationExec);
         return (
-            <div id={"scene"}>
-                <img id={"scene-background"} src={this.props.isOpened ? sceneImage : sceneImageClose} alt={"scene-background"} onMouseOver={this.changeCursor}
-                    onMouseLeave={this.changeCursor2} />
+            <Fragment>
+                {/* Temporaire */}
+                <Document ratio={this.props.ratio} windowSize={this.props.windowSize}></Document>
+                {/* Temporaire */}
 
-                <img src={(condOpen ? openSceneAnimation : (condClose ? closeSceneAnimation : "")) + "?id=" + this.props.number}
-                    alt={"scene-animation"} id={"scene-animation"} />
+                <div id={"scene"} style={{ left: scenePosition.left, top: scenePosition.top }} onMouseOver={this.changeCursor}
+                    onMouseLeave={this.changeCursor2}>
 
-                <SceneKnowledge data={0} handleLoading={this.props.handleLoading} handleNotification={this.props.handleNotification} visible={this.props.opened[0]} 
-                    notification={this.props.notification[0]} dismissPopover={this.props.dismissPopover}></SceneKnowledge>
+                    <img id={"scene-background"} src={this.props.isOpened ? sceneImage : sceneImageClose} alt={"scene-background"} style={
+                        {
+                            width: scenePosition.width,
+                            height: scenePosition.height
+                        }
+                    } />
 
-                <SceneScholar data={1} handleLoading={this.props.handleLoading} handleNotification={this.props.handleNotification} visible={this.props.opened[1]} 
-                    notification={this.props.notification[1]} dismissPopover={this.props.dismissPopover}></SceneScholar>
+                    <img src={(condOpen ? openSceneAnimation : (condClose ? closeSceneAnimation : "")) + "?id=" + this.props.number}
+                        alt={"scene-animation"} id={"scene-animation"}
+                        style={
+                            {
+                                width: scenePosition.width,
+                                height: scenePosition.height
+                            }
+                        } />
 
-                <ScenePagoda data={2} visible={this.props.opened[2]} dismissPopover={this.props.dismissPopover}></ScenePagoda>
+                    <SceneScholar data={1} handleLoading={this.props.handleLoading} handleNotification={this.props.handleNotification} visible={this.props.opened[1]}
+                        notification={this.props.notification[1]} dismissPopover={this.props.dismissPopover} mousePosition={this.props.mousePosition}
+                        ratio={this.props.ratio} innerScenePosition={this.state.innerScenePosition}></SceneScholar>
 
-            </div>
+
+                    <SceneKnowledge data={0} handleLoading={this.props.handleLoading} handleNotification={this.props.handleNotification} visible={this.props.opened[0]}
+                        notification={this.props.notification[0]} dismissPopover={this.props.dismissPopover} ratio={this.props.ratio} 
+                        innerScenePosition={this.state.innerScenePosition}></SceneKnowledge>
+
+                    <ScenePagoda data={2} visible={this.props.opened[2]} dismissPopover={this.props.dismissPopover} 
+                        ratio={this.props.ratio} innerScenePosition={this.state.innerScenePosition}></ScenePagoda>
+                </div>
+            </Fragment>
+                
         );
     }
 }

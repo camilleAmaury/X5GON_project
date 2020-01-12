@@ -5,179 +5,21 @@ html, body{
     background: radial-gradient(#3c495a, #272e34);
     z-index: 0;
 }
+body{
+    background-image: url('../../assets/background.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
 #container-panel{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
     width: 100vw;
     height: 100vh;
     z-index: 0;
 }
 
-/* -----------------------> Horizontal GRID (Title/content) <-------------------------- */
-
-.space-container{
-    height:5vh;
-}
-.presentation-container{
-    width: 100%;
-    max-height: 20vh;
-    height:30vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    z-index: 1;
-}
-
-/* --------------> Title section <---------------- */
-
-.presentation-title{
-    height:100%;
-}
-.presentation-container-title{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-}
-.title{
-    text-align: center;
-    font-size:60px;
-    color:lightgray;
-}
-
-.pre-title{
-    text-align: center;
-    font-size:30px;
-    color:grey;
-}
-
-.presentation-container-title-text{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    margin-left:75px;
-    margin-right: 75px;
-}
-
-.presentation-title-gif{
-    height:150px;
-    width: 150px;
-}
-
-/* --------------> Panel section <---------------- */
-
-.panel-container{
-    width: 100%;
-    height:70vh;
-    max-height:80vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
-}
-
-.space-panel-container{
-    width:5%;
-}
-
-
-/* ---------> Side panel content <------- */
-.right-panel-container{
-    width:20%;
-    height: 100%;
-    text-align: left;
-    margin-left:20px;
-}
-
-.right-panel-container:hover{
-    background-image:linear-gradient( 0.25turn, rgba(255,255,255,0.05), rgba(39,46,52,0.05));
-}
-.left-panel-container:hover{
-    background-image:linear-gradient( 0.25turn, rgba(39,46,52,0.05), rgba(255,255,255,0.05));
-}
-
-.left-panel-container{
-    width:20%;
-    height: 100%;
-    text-align: right;
-    margin-right:20px;
-}
-.side-panel-container-title{
-    height: 10%;
-    color:white;
-    font-size: 20px;
-    font-weight: bold;
-}
-.side-panel-container-list-container{
-    height: 80%;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-}
-.right-list-container{
-    align-items: flex-start;
-    padding-left: 5px;
-}
-.left-list-container{
-    align-items: flex-end;
-    padding-right: 5px;
-}
-
-.side-panel-container-list-item{
-    height: 10%;
-    margin-bottom: 40px;
-    width: auto;
-    display: flex;
-    align-items: center;
-}
-.right-list-item{
-    justify-content: flex-start;
-    padding-left: 5px;
-}
-.left-list-item{
-    justify-content: flex-end;
-    padding-right: 5px;
-}
-
-.list-item-logo-container{
-    height:50px;
-    width: 50px;
-}
-
-.list-item-text-container{
-    display: flex;
-    align-items: center;
-    height:100%;
-    width: auto;
-    color:grey;
-}
-.left-list-text-item{
-    justify-content: flex-end;
-    margin-right: 20px;
-}
-.right-list-text-item{
-    justify-content: flex-start;
-    margin-left: 20px;
-}
-// modal which pops when hovering an icon
-#itempopover .popover-body{
-    background-color: #E75B40;
-    font-size: 14px;
-}
-
-/* -------> scene panel content <------- */
-
-.center-panel-container{
-    width:50%;
-    min-width: 848px;
-    height: 100%;
-    min-height: 480px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index:1;
+#tori{
+    z-index: 12;
+    position: absolute;
+    pointer-events: none;
+    width:1572px;
+    height:767px;
 }

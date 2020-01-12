@@ -1,18 +1,18 @@
 #scene{
     display: flex;
+    position: absolute;
+    z-index: 3;
 }
 
 #scene-background{
-    width:848px;
-    height: 480px;
     position: relative;
-    z-index: 4;
+    z-index: 5;
 }
 
 #scene-animation{
-    width:848px;
-    height: 480px;
     position: absolute;
-    z-index: 5;
+    z-index: 6;
     visibility: hidden;
 }
+
+

@@ -1,34 +1,22 @@
 #scene-scholar-behind{
-    width:848px;
-    height: 480px;
     position: absolute;
     z-index: 1;
 }
 
 #scene-scholar-character{
-    width:848px;
-    height: 480px;
     position: absolute;
     z-index: 3;
 }
 
 #scene-scholar-hover-character{
-    width:848px;
-    height: 480px;
     position: absolute;
     z-index: 2;
     visibility: hidden;
 }
 
 #scene-scholar-block-character{
-    width:172px;
-    height: 228px;
     position: absolute;
-    z-index: 6;
-    // border:1px solid white;
-}
-#scene-scholar-block-character:hover{
-    // background:rgba(0,0,0,0.5);
+    z-index: 7;
 }
 
 // popover
@@ -39,6 +27,9 @@
     background-color: #E75B40;
     font-size: 18px;
     color:white
+}
+#scene-scholar-block-character-popover .popover-body span{
+    font-size: 18px;
 }
 #scene-scholar-block-character-popover{
     width:250px;

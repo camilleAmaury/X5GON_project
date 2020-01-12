@@ -8,10 +8,11 @@ import documentIm from '../../assets/icons/iconDocument.png';
 import documentHover from '../../assets/icons/iconDocumentHover.png';
 import knowledge from '../../assets/icons/iconKnowledge.png';
 import knowledgeHover from '../../assets/icons/iconKnowledgeHover.png';
-import account from '../../assets/icons/iconAccount.png';
-import accountHover from '../../assets/icons/iconAccountHover.png';
+// import account from '../../assets/icons/iconAccount.png';
+// import accountHover from '../../assets/icons/iconAccountHover.png';
+import tori from '../../assets/tori.png';
 
-import ListItem from './Listitem';
+import MenuItem from './MenuItem';
 import Cursor from '../cursor/cursor';
 import Scene from './Scene';
 
@@ -19,8 +20,30 @@ export default class Panel extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            listitems_right: [],
-            listitems_left: [],
+            mousePosition:{
+                left:0,
+                top:0
+            },
+            windowSize:{
+                left:0,
+                top:0,
+                ratio:1
+            },
+            toriPosition:{
+                left:0,
+                top:0,
+                height:0,
+                width:0
+            },
+            toriInit:{
+                height:767,
+                width:1572
+            },
+            listItemsInit:{
+                left:275,
+                top:[300,400,500]
+            },
+            listitems: [],
             isOpenedIcon: [],
             isLoadingIcon: [],
             isNotificationIcon: [],
@@ -29,29 +52,67 @@ export default class Panel extends Component {
             isOpened: false,
             closeAnimationExec: false,
             dismissPopover: false,
-            gif_number: 0
+            gif_number: 0,
+            cursorLoaded:false
         }
     }
+
     componentDidMount = () => {
-        let listitems_left = [
-            { image: documentIm, imageHover: documentHover, alt: "knowledge", title: "Find a Knowledge", details: "As an apprentice, you should learn to new knowledge in order to improve yourself. Just ask for some documents to the librarian !" },
-            { image: scholar, imageHover: scholarHover, alt: "scholar", title: "Ask the scholar", details: "Sometimes, those who wrote books also forgot to explain basic context to begginners. Just ask the scholar what you want to know !" }
-        ];
-        let listitems_right = [
-            { image: knowledge, imageHover: knowledgeHover, alt: "rank", title: "Improvement", details: "As an apprentice, you would probably like to see your progression since the begginning of your studies. Just click here !" },
-            { image: account, imageHover: accountHover, alt: "account", title: "Apprentice Papers", details: "Quite boring stuff, but it is really important to have an identity !" }
-        ];
+        // handle responsive resizing
+        window.addEventListener('resize', this.responiveResizing);
+        window.addEventListener('mousemove', this.movemouse);
+        let tab_bool = [false, false, false, false];
         this.setState({
-            listitems_right: listitems_right,
-            listitems_left: listitems_left,
-            isOpenedIcon: [false, false, false, false],
-            isLoadingIcon: [false, false, false, false],
-            isNotificationIcon: [false, false, false, false]
+            isOpenedIcon: tab_bool,
+            isLoadingIcon: tab_bool,
+            isNotificationIcon: tab_bool
+        }, () => {
+            this.responiveResizing();
         });
     }
 
-    handleSubmit = event => {
-        event.preventDefault();
+    movemouse = event => {
+        this.setState({
+            mousePosition:{
+                left:event.x,
+                top:event.y
+            },
+        })
+    }
+
+    responiveResizing = () => {
+        let container = document.getElementById("container-panel");
+        this.setState({
+            windowSize:{
+                width:container.offsetWidth,
+                height:container.offsetHeight,
+                ratio:container.offsetWidth / 2304
+            }
+        }, () =>{
+            let left_pos = Math.floor(this.state.windowSize.ratio*this.state.listItemsInit.left);
+            let listitems = [
+                { image: documentIm, imageHover: documentHover, alt: "knowledge", title: "Find a Knowledge", details: "As an apprentice, you should learn to new knowledge in order to improve yourself. Just ask for some documents to the librarian !" 
+                , id:"knowledge-icon", left:left_pos, top:Math.floor(this.state.windowSize.ratio*this.state.listItemsInit.top[0])},
+                { image: scholar, imageHover: scholarHover, alt: "scholar", title: "Ask the scholar", details: "Sometimes, those who wrote books also forgot to explain basic context to begginners. Just ask the scholar what you want to know !" 
+                , id:"scholar-icon", left:left_pos, top:Math.floor(this.state.windowSize.ratio*this.state.listItemsInit.top[1])},
+                { image: knowledge, imageHover: knowledgeHover, alt: "rank", title: "Improvement", details: "As an apprentice, you would probably like to see your progression since the begginning of your studies. Just click here !" 
+                , id:"improvement-icon", left:left_pos, top:Math.floor(this.state.windowSize.ratio*this.state.listItemsInit.top[2])},
+                // { image: account, imageHover: accountHover, alt: "account", title: "Apprentice Papers", details: "Quite boring stuff, but it is really important to have an identity !" 
+                //  , id:""}
+            ];
+            // set tori position
+            let toriWidth =  Math.floor(this.state.windowSize.ratio*this.state.toriInit.width);
+            let toriHeight = Math.floor(this.state.windowSize.ratio*this.state.toriInit.height);
+            this.setState({
+                toriPosition:{
+                    left:(this.state.windowSize.width - toriWidth) / 2,
+                    top:(this.state.windowSize.height - toriHeight) - Math.floor(30 * this.state.windowSize.ratio),
+                    height:toriHeight,
+                    width:toriWidth
+                },
+                listitems: listitems
+            });
+        });
     }
 
     handleClickOnIcon = event => {
@@ -98,9 +159,8 @@ export default class Panel extends Component {
                 });
             }, 1700);
         });
-
-
     }
+
     animation_close = (change, id) => {
         let scene_animation = document.getElementById("scene-animation");
         let scene_background = document.getElementById("scene-background");
@@ -121,16 +181,13 @@ export default class Panel extends Component {
                             scene_animation.style.visibility = "hidden";
                             this.setState({
                                 closeAnimationExec: false,
-                                gif_number: Math.random()
+                                gif_number: Math.random(),
+                                isOpenedIcon: [false, false, false, false]
                             }, () => {
                                 if (change) {
                                     setTimeout(() => {
                                         this.animation_open(id);
                                     }, 750);
-                                } else {
-                                    this.setState({
-                                        isOpenedIcon: [false, false, false, false]
-                                    });
                                 }
                             });
                         }, 300);
@@ -141,15 +198,15 @@ export default class Panel extends Component {
     }
 
     handleLoadingIcon = (id) => {
-        let loadingIcon = this.state.isLoadingIcon;
+        let loadingIcon = {...this.state.isLoadingIcon};
         loadingIcon[id] = true;
         this.setState({
             isLoadingIcon: loadingIcon
         });
     }
     handleNotificationIcon = (id) => {
-        let notifIcon = this.state.isNotificationIcon;
-        let loadingIcon = this.state.isLoadingIcon;
+        let notifIcon = {...this.state.isNotificationIcon};
+        let loadingIcon = {...this.state.isLoadingIcon};
         loadingIcon[id] = false;
         notifIcon[id] = !notifIcon[id];
         this.setState({
@@ -158,47 +215,36 @@ export default class Panel extends Component {
         });
     }
 
+    cursorLoaded = () => {
+        this.setState({
+            cursorLoaded:true
+        })
+    }
+
     render() {
         return (
             <div id={"container-panel"}>
-                <div className={"space-container"}></div>
-                <div className={"presentation-container"}>
-                    <div className={"presentation-container-pre-title"}>
 
-                    </div>
-                    <div className={"presentation-container-title"}>
-                        <div className={"presentation-container-title-text"}>
-                            <span className={"pre-title"}>A X5GON project</span>
-                            <span className={"title"}>Knowledge's Recipe</span>
-                        </div>
-                    </div>
+                <img id={"tori"} src={tori} alt={"tori"} style={
+                    {
+                        top:this.state.toriPosition.top, 
+                        left:this.state.toriPosition.left,
+                        height:this.state.toriPosition.height,
+                        width:this.state.toriPosition.width
+                    }
+                }></img>
 
-                </div>
-                <div className={"space-container"}></div>
-                <div className={"panel-container"}>
-                    <div className={"left-panel-container"}>
-                        <div className={"side-panel-container-title"}>Actions</div>
-                        <div className={"side-panel-container-list-container left-list-container"}>
-                            {this.state.listitems_left.map((item, i) => <ListItem key={i} image={item.image} imageHover={item.imageHover} alt={item.alt} left={true} title={item.title}
-                                details={item.details} detailsTitle={item.detailsTitle} handleClick={this.handleClickOnIcon} data={i} isLoading={this.state.isLoadingIcon[i]}
-                                isNotification={this.state.isNotificationIcon[i]}></ListItem>)}
-                        </div>
-                    </div>
-                    <div className={"center-panel-container"}>
-                        <Scene opened={this.state.isOpenedIcon} isOpened={this.state.isOpened} number={this.state.gif_number} handleNotification={this.handleNotificationIcon}
-                            openAnimationExec={this.state.openAnimationExec} closeAnimationExec={this.state.closeAnimationExec} handleLoading={this.handleLoadingIcon}
-                            notification={this.state.isNotificationIcon} dismissPopover={this.state.dismissPopover}></Scene>
-                    </div>
-                    <div className={"right-panel-container"}>
-                        <div className={"side-panel-container-title"}>Apprentice's Information</div>
-                        <div className={"side-panel-container-list-container right-list-container"}>
-                            {this.state.listitems_right.map((item, i) => <ListItem key={i} image={item.image} imageHover={item.imageHover} alt={item.alt} left={false} title={item.title}
-                                details={item.details} detailsTitle={item.detailsTitle} handleClick={this.handleClickOnIcon} data={this.state.listitems_left.length + i}
-                                isLoading={this.state.isLoadingIcon[this.state.listitems_left.length + i]} isNotification={this.state.isNotificationIcon[this.state.listitems_left.length + i]}></ListItem>)}
-                        </div>
-                    </div>
-                </div>
-                <Cursor></Cursor>
+                <Scene opened={this.state.isOpenedIcon} isOpened={this.state.isOpened} number={this.state.gif_number} handleNotification={this.handleNotificationIcon}
+                    openAnimationExec={this.state.openAnimationExec} closeAnimationExec={this.state.closeAnimationExec} handleLoading={this.handleLoadingIcon}
+                    notification={this.state.isNotificationIcon} dismissPopover={this.state.dismissPopover} windowSize={this.state.windowSize}
+                    ratio={this.state.windowSize.ratio} mousePosition={this.state.mousePosition} cursorLoaded={this.state.cursorLoaded}></Scene>
+
+                {this.state.listitems.map((item, i) => <MenuItem key={i} image={item.image} imageHover={item.imageHover} alt={item.alt} title={item.title}
+                    details={item.details} detailsTitle={item.detailsTitle} handleClick={this.handleClickOnIcon} data={i} isLoading={this.state.isLoadingIcon[i]}
+                    isNotification={this.state.isNotificationIcon[i]} id={item.id} placement={"right"} left={item.left} top={item.top} 
+                    toriPosition={this.state.toriPosition} ratio={this.state.windowSize.ratio}></MenuItem>)}
+
+                <Cursor cursorLoaded={this.cursorLoaded} ratio={this.state.windowSize.ratio} windowSize={this.state.windowSize}></Cursor>
             </div>
         );
     }

@@ -1,0 +1,44 @@
+#document_open{
+    position: absolute;
+    z-index: 13;
+    height: auto;
+}
+
+.scroll{
+    position: absolute;
+    background-image: url('../../../assets/Scene/knowledge/Document/Rouleau.png');
+    background-repeat: no-repeat;
+}
+
+.scroll_texture{
+    position: absolute;
+    background-image: url('../../../assets/Scene/knowledge/Document/parchemin2.png');
+    background-repeat: repeat-y;
+    border-radius: 5px;
+}
+
+#lower_scroll_texture{
+    background-position-y: 50px;
+}
+
+#scroll_center{
+    position: absolute;
+    width: 470px;
+    height: 74px;
+    background-image: url('../../../assets/Scene/knowledge/Document/parchemin.png');
+    background-size: 470px 789px;
+    background-repeat: repeat-y;
+    border: none;
+    border-radius: 0px;
+    overflow-wrap:break-word;
+    overflow-y: hidden;
+    padding-top:30px;
+    padding-left:20px;
+    padding-right:20px;
+}
+
+#scroll-text{
+    position:relative;
+    font-size:14px;
+}
+
