@@ -3,6 +3,7 @@ from flask_restplus import Namespace, Resource, fields
 from SPARQLWrapper import SPARQLWrapper, JSON
 import re
 import operator
+import json
 
 api = Namespace('search', description='Research document')
 
@@ -49,16 +50,19 @@ class SearchDocument(Resource):
             ngramsRet += keywords.lower().split()
             ids = {}
             title = {}
+            keys = {}
+            format = {}
             union = "("
             ngramsList = list(set(ngramsRet+ngrams))
             for gram in ngramsList:
                 union += gram+"|"
             union = union[:-1]+")"
 
-            queryExact = "PREFIX dcterms: <http://purl.org/dc/terms/> \nSELECT DISTINCT ?id ?title \nWHERE {\n{?doc dcterms:subject ?key; \ndcterms:title ?title; \ndcterms:identifier ?id. \nfilter regex(?title, '"+union+"', 'i')}}"+("\nLIMIT "+str(m) if m != -1 else "")
-            query = "PREFIX dcterms: <http://purl.org/dc/terms/> \nSELECT DISTINCT ?id ?title (COUNT(?id) as ?score) \nWHERE {\n{?doc dcterms:subject ?key; \ndcterms:title ?title; \ndcterms:identifier ?id. \nfilter regex(?key, '"+union+"', 'i')}} \nGROUP BY ?title ?id\nORDER BY DESC(?score)"+("\nLIMIT "+str(m) if m != -1 else "")
+            queryExact = "PREFIX dcterms: <http://purl.org/dc/terms/> \nSELECT DISTINCT ?id ?title ?format (group_concat(?key;separator=',') AS ?keys) \nWHERE {\n{?doc dcterms:subject ?key; \ndcterms:title ?title; \ndcterms:identifier ?id; \ndcterms:format ?format. \nfilter regex(?title, '"+union+"', 'i')\nfilter regex(?format, '(docx|html|ods|odt|pdf|txt)', 'i')}} \nGROUP BY ?title ?id ?format"+("\nLIMIT "+str(m) if m != -1 else "")
+            query = "PREFIX dcterms: <http://purl.org/dc/terms/> \nSELECT DISTINCT ?id ?title ?format (group_concat(?key;separator=',') AS ?keys) (COUNT(?id) as ?score) \nWHERE {\n{?doc dcterms:subject ?key; \ndcterms:title ?title; \ndcterms:identifier ?id; \ndcterms:format ?format. \nfilter regex(?key, '"+union+"', 'i')\nfilter regex(?format, '(docx|html|ods|odt|pdf|txt)', 'i')}} \nGROUP BY ?title ?id ?format\nORDER BY DESC(?score)"+("\nLIMIT "+str(m) if m != -1 else "")
+            print(type(queryExact))
             resExact = execQuery(sparql, queryExact)['results']['bindings']
-
+            
             res = execQuery(sparql, query)['results']['bindings']
             
             print(res)
@@ -66,6 +70,8 @@ class SearchDocument(Resource):
             for i in range(len(resExact)):
                 ids[resExact[i]['id']['value']] = sum([7/len(keywords.split())+3 if ngram in resExact[i]['title']['value'] else 0 for ngram in ngramsRet])
                 title[resExact[i]['id']['value']] = resExact[i]['title']['value']
+                keys[resExact[i]['id']['value']] = resExact[i]['keys']['value']
+                format[resExact[i]['id']['value']] = resExact[i]['format']['value']
             for j in range(len(res)):
                 identifier = res[j]['id']['value']
                 if(identifier in ids):
@@ -74,12 +80,14 @@ class SearchDocument(Resource):
                     ids[identifier] = int(res[j]['score']['value'])
                     
                 title[identifier] = res[j]['title']['value']
+                keys[identifier] = res[j]['keys']['value']
+                format[identifier] = res[j]['format']['value']
             resR = [x for x in sorted(ids.items(), key=operator.itemgetter(1),reverse=True)]
             
             for i in range(len(resR)):
                 print(resR[i])
-                resR[i] = [resR[i][0], title[resR[i][0]]]
+                resR[i] = [resR[i][0], title[resR[i][0]], keys[resR[i][0]], format[resR[i][0]]]
             
-            return(list(resR[:m]))
+            return(json.dumps(list(resR[:m])))
                 
         return getPertinentDocument(keywords, 100)
