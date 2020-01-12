@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-import LoadingAnimation from './loadinganimation';
 import SwitchingForm from '../Form/Forms/switchingform';
 
 import './Login.scss';
@@ -26,9 +25,7 @@ export default class Login extends Component {
 
     render() {
         return (
-            <LoadingAnimation isLoading={this.state.isLoading} size={[200, 200]} else={
-                <SwitchingForm onSubmit={this.handleSubmit}></SwitchingForm>
-            }></LoadingAnimation>
+            <SwitchingForm onSubmit={this.handleSubmit}></SwitchingForm>
         );
     }
 }

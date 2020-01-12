@@ -10,16 +10,16 @@ export default class Document extends Component {
         super(props);
         this.state = {
             scrollPosition: {
-                width: 724,
-                height: 74
+                width: 1082,
+                height: 95
             },
             scrollTexturePosition: {
-                width: 492,
-                height: 62,
-                backgroundY: 825
+                width: 738,
+                height: 93,
+                backgroundY: 1238
             },
             lowerScrollPosition: {
-                top: 74
+                top: 111
             },
             upperScrollTexture: {
                 backgroundPositionY: 0
@@ -28,12 +28,12 @@ export default class Document extends Component {
                 backgroundPositionY: 150
             },
             documentContainerPosition: {
-                width: 800
+                width: 1200
             },
             centerScrollPosition: {
-                width: 470,
-                height: 74,
-                backgroundY: 789,
+                width: 705,
+                height: 111,
+                backgroundY: 1184,
                 backgroundPositionY: 0
             },
             textPosition:{
@@ -45,8 +45,7 @@ export default class Document extends Component {
     }
 
     componentDidMount = () => {
-        let documentId = 39642;
-        axios.get(`https://platform.x5gon.org/api/v1/oer_materials/${documentId}/contents/`)
+        axios.get(`https://platform.x5gon.org/api/v1/oer_materials/${this.props.idDocument}/contents/`)
         .then( request => {
             let content = request.data.oer_contents[0].value.value;
             document.getElementById("upper_scroll").addEventListener('click', ()=>{this.handleScroll()});
@@ -54,6 +53,7 @@ export default class Document extends Component {
             this.setState({content:content});
         })
         .catch( error => { 
+            console.log(error)
             console.log("this doesn't work");
         });
 
@@ -70,12 +70,12 @@ export default class Document extends Component {
         let bgY = this.state.isOpen ? -500 : 500;
         this.setState({
             lowerScrollPosition: {
-                top: (this.state.isOpen ? 74 : (this.props.windowSize.height + Math.floor(800 * this.props.ratio)) / 2)
+                top: (this.state.isOpen ? 111 : (this.props.windowSize.height + Math.floor(800 * this.props.ratio)) / 2)
             },
             centerScrollPosition: {
-                width: 470,
-                height: (this.state.isOpen ? 74 : (this.props.windowSize.height + Math.floor(800 * this.props.ratio)) / 2),
-                backgroundY: 789,
+                width: 705,
+                height: (this.state.isOpen ? 111 : (this.props.windowSize.height + Math.floor(800 * this.props.ratio)) / 2),
+                backgroundY: 1184,
                 backgroundPositionY: 0
             },
             lowerScrollTexture: {
@@ -106,7 +106,7 @@ export default class Document extends Component {
         let textdiv = document.getElementById('scroll-text');
         let condUp = Math.abs(this.state.textPosition.top) > 0;
         let condDown = textdiv.offsetHeight >= Math.abs(this.state.textPosition.top) + this.state.centerScrollPosition.height /2;
-        let condfinal = (condUp && condDown) || (condUp && Math.sign(speed) == -1) || (condDown && Math.sign(speed) == 1);
+        let condfinal = (condUp && condDown) || (condUp && Math.sign(speed) === -1) || (condDown && Math.sign(speed) === 1);
         if(condfinal){
             this.setState({
                 upperScrollTexture: {

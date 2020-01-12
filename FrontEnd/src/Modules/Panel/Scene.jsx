@@ -28,7 +28,8 @@ export default class Scene extends Component {
                 width: 0,
                 height: 0
             },
-            sceneTop: 0
+            sceneTop: 0,
+            selectedDocument:0
         }
     }
 
@@ -65,6 +66,14 @@ export default class Scene extends Component {
         }
     }
 
+    secondKnowledgePanel = (document) => {
+        this.setState({
+            selectedDocument:document
+        }, () => {
+            this.props.animation_close(true, 3);
+        });
+    }
+
     render() {
         let sceneWidth = Math.floor(this.state.innerScenePosition.width * this.props.ratio);
         let sceneHeight = Math.floor(this.state.innerScenePosition.height * this.props.ratio);
@@ -79,10 +88,7 @@ export default class Scene extends Component {
         let condClose = (this.props.isOpened && !this.props.openAnimationExec) || (!this.props.isOpened && !this.props.openAnimationExec && this.props.closeAnimationExec);
         return (
             <Fragment>
-                {/* Temporaire */}
-                <Document ratio={this.props.ratio} windowSize={this.props.windowSize}></Document>
-                {/* Temporaire */}
-
+                {this.props.opened[3] ? <Document idDocument={this.state.selectedDocument} ratio={this.props.ratio} windowSize={this.props.windowSize}></Document> : ""}
                 <div id={"scene"} style={{ left: scenePosition.left, top: scenePosition.top }} onMouseOver={this.changeCursor}
                     onMouseLeave={this.changeCursor2}>
 
@@ -109,10 +115,13 @@ export default class Scene extends Component {
 
                     <SceneKnowledge data={0} handleLoading={this.props.handleLoading} handleNotification={this.props.handleNotification} visible={this.props.opened[0]}
                         notification={this.props.notification[0]} dismissPopover={this.props.dismissPopover} ratio={this.props.ratio} 
-                        innerScenePosition={this.state.innerScenePosition}></SceneKnowledge>
+                        innerScenePosition={this.state.innerScenePosition} secondKnowledgePanel={this.secondKnowledgePanel}></SceneKnowledge>
 
-                    <ScenePagoda data={2} visible={this.props.opened[2]} dismissPopover={this.props.dismissPopover} 
-                        ratio={this.props.ratio} innerScenePosition={this.state.innerScenePosition}></ScenePagoda>
+                    {this.props.opened[3] ? 
+                    <ScenePagoda data={3} visible={this.props.opened[3]} dismissPopover={this.props.dismissPopover} 
+                        ratio={this.props.ratio} innerScenePosition={this.state.innerScenePosition} idDocument={this.state.selectedDocument}></ScenePagoda> : ""}
+
+                    
                 </div>
             </Fragment>
                 

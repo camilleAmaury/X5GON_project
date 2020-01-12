@@ -27,32 +27,35 @@ export default class Cursor extends Component {
     movement = event => {
         event.preventDefault();
         let circle = document.getElementById("cursor-circle");
-        let classList = circle.classList;
-        if (!classList.contains("hover-cursor") && !classList.contains("hover-out-cursor")) {
-            let pos = getMousePosition(event);
-            setTimeout(() => {
-                if (!classList.contains("hover-cursor") && !classList.contains("hover-out-cursor")) {
-                    let width = Math.floor(this.state.cursorInitSize.width*this.props.ratio);
-                    let height = Math.floor(this.state.cursorInitSize.height*this.props.ratio);
-                    let left = (pos.x - width / 2);
-                    let top = (pos.y - this.state.cursorPosition.height / 2);
-                    if((pos.x + width / 2) >= this.props.windowSize.width){
-                        left -=  (pos.x + width / 2) - this.props.windowSize.width;
-                    }
-                    if((pos.y + height / 2) >= this.props.windowSize.height){
-                        top -= (pos.y + height / 2) - this.props.windowSize.height;
-                    }
-                    this.setState({
-                        cursorPosition:{
-                            width:width,
-                            height:height,
-                            top:top,
-                            left:left
+        if(circle !== undefined && circle !== null){
+            let classList = circle.classList;
+            if (!classList.contains("hover-cursor") && !classList.contains("hover-out-cursor")) {
+                let pos = getMousePosition(event);
+                setTimeout(() => {
+                    if (!classList.contains("hover-cursor") && !classList.contains("hover-out-cursor")) {
+                        let width = Math.floor(this.state.cursorInitSize.width*this.props.ratio);
+                        let height = Math.floor(this.state.cursorInitSize.height*this.props.ratio);
+                        let left = (pos.x - width / 2);
+                        let top = (pos.y - this.state.cursorPosition.height / 2);
+                        if((pos.x + width / 2) >= this.props.windowSize.width){
+                            left -=  (pos.x + width / 2) - this.props.windowSize.width;
                         }
-                    });
-                }
-            }, 100);
+                        if((pos.y + height / 2) >= this.props.windowSize.height){
+                            top -= (pos.y + height / 2) - this.props.windowSize.height;
+                        }
+                        this.setState({
+                            cursorPosition:{
+                                width:width,
+                                height:height,
+                                top:top,
+                                left:left
+                            }
+                        });
+                    }
+                }, 100);
+            }
         }
+        
     }
 
     render() {

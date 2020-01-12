@@ -47,14 +47,14 @@ export default class PagodaPopover extends Component {
                 
                 {this.props.data.length >= 1 ?
                 <PopoverList className={""} id={"scene-pagoda-popover-" + this.props.id} placement={"left"} isOpen={this.props.isOpen && this.props.openFloor} target={this.props.id}
-                    title={this.props.data[0].title} content={this.props.data[0].documents.map((item, i) => <li key={i}><a href="#"><span className={"list-document-title"}>{item.title}</span><span className={"list-document-author"}>{item.author}</span><span className={"list-document-keywords"}>{item.keywords.join(" ")}</span></a></li>)}
+                    title={this.props.data[0].title} content={<li key={0}><a href={this.props.data[0].link} target="_blank" rel="noopener noreferrer"><span className={"list-document-title"}>{this.props.data[0].link}</span></a></li>}
                     isAnswering={true} waitingData={false}></PopoverList>
                 :
                 ""
                 }
                 {this.props.data.length >= 2 ?
                 <PopoverList className={""} id={"scene-pagoda-popover-" + this.props.id} placement={"right"} isOpen={this.props.isOpen  && this.props.openFloor} target={this.props.id}
-                    title={this.props.data[1].title} content={this.props.data[1].documents.map((item, i) => <li key={i}><a href="#"><span className={"list-document-title"}>{item.title}</span><span className={"list-document-author"}>{item.author}</span><span className={"list-document-keywords"}>{item.keywords.join(" ")}</span></a></li>)}
+                    title={this.props.data[1].title} content={<li key={0}><a href={this.props.data[1].link} target="_blank" rel="noopener noreferrer"><span className={"list-document-title"}>{this.props.data[1].link}</span></a></li>}
                     isAnswering={true} waitingData={false}></PopoverList>
                 :
                 ""
