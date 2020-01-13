@@ -3,14 +3,13 @@ html, body{
     margin: 0;
     height: 100%;
     background: radial-gradient(#3c495a, #272e34);
+    background-image: url('../../assets/background.png');
     z-index: 0;
 }
-body{
-    background-image: url('../../assets/background.png');
+#container-panel{
+    
     background-repeat: no-repeat;
     background-size: cover;
-}
-#container-panel{
     width: 100vw;
     height: 100vh;
     z-index: 0;

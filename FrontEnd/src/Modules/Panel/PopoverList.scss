@@ -39,8 +39,6 @@
 }
     
 .list-document a:before{
-    content: counter(li);
-    counter-increment: li;
     position: absolute;
     left: -1.3em;
     top: 50%;

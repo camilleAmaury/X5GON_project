@@ -22,12 +22,12 @@ export default class App extends Component {
       <Router>
         <Switch>
           {/* default route */}
-          {/* <Route exact path="/" component={Login} /> */}
-          <Route exact path="/connexion" component={Login} />
-          <Route exact path="/connection" component={Login} />
+          <Route exact path="/" component={Login} />
+          {/* <Route exact path="/connexion" component={Login} />
+          <Route exact path="/connection" component={Login} /> */}
 
           {/* Panel */}
-          <Route exact path="/" component={Panel} />
+          <Route exact path="/Panel" component={Panel} />
         </Switch>
       </Router>
     );

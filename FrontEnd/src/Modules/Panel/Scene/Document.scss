@@ -1,12 +1,12 @@
 #document_open{
     position: absolute;
-    z-index: 13;
+    z-index: 15;
     height: auto;
 }
 
 .scroll{
     position: absolute;
-    background-image: url('../../../assets/Scene/knowledge/Document/Rouleau.png');
+    background-image: url('../../../assets/Scene/knowledge/Document/Rouleau2.png');
     background-repeat: no-repeat;
 }
 
@@ -32,13 +32,14 @@
     border-radius: 0px;
     overflow-wrap:break-word;
     overflow-y: hidden;
-    padding-top:30px;
+    padding-top:40px;
     padding-left:20px;
     padding-right:20px;
 }
 
 #scroll-text{
     position:relative;
-    font-size:14px;
+    font-size:18px;
+    font-weight: 500;
 }
 

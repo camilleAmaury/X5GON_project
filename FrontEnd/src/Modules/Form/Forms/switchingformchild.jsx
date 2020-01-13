@@ -1,8 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import sha256 from 'js-sha256';
 
 import './switchingform.scss';
 
 import ThreeDButton from '../Button/3dbutton';
+
 
 export default class SwitchingForm extends Component {
     constructor(props) {
@@ -27,9 +29,21 @@ export default class SwitchingForm extends Component {
         });
     }
 
-    handleSubmit = event => {
-        event.preventDefault();
-        console.log("lol");
+    handleSubmit = () => {
+        let obj = {};
+        if(!this.props.isSignIn){
+            let name = document.getElementById('name-field').value;
+            let identifier = document.getElementById('identifier-field').value;
+            let email = document.getElementById('email-field').value;
+            let pwd = document.getElementById('password-field').value;
+            let year = parseInt(document.getElementById('year-field').value);
+            obj.name = name; obj.username = identifier; obj.pwd = sha256(pwd); obj.year = year; obj.email = email;
+        }else{
+            let identifier = document.getElementById('identifier-field-log').value;
+            let pwd = document.getElementById('password-field-log').value;
+            obj.username = identifier; obj.pwd = sha256(pwd);
+        }
+        this.props.onSubmit(obj);
         this.setState({ isLoading: true });
     }
 
@@ -39,13 +53,25 @@ export default class SwitchingForm extends Component {
                 <form>
                     <h1>{this.props.title}</h1>
                     <span className={"space"}></span>
-                    <span>{this.props.text}</span>
-                    {this.props.isSignIn ? "" : <input type={"text"} placeholder={"Name"} />}
-                    <input type={"email"} placeholder={"Email"} />
-                    <input type={"password"} placeholder={"Password"} />
-                    {this.props.isSignIn ? <a href={"#"}>Forgot your password?</a> : "" }
+                    <span className={"error-message"}>{this.props.text}</span>
+                    {
+                        !this.props.isSignIn ?
+                        <Fragment>
+                            <input type={"text"} placeholder={"Name"} id={"name-field"} required/>
+                            <input type={"email"} placeholder={"Email"} id={"email-field"} required/>
+                            <input type={"username"} placeholder={"Username"} id={"identifier-field"} required/>
+                            <input type={"password"} placeholder={"Password"} id={"password-field"} required/>
+                            <span className={"space"}></span>
+                            <input type={"number"} placeholder={"Number of studied Year after baccalaureate"} id={"year-field"} required/>
+                        </Fragment>
+                        :
+                        <Fragment>
+                            <input type={"text"} placeholder={"Username"} id={"identifier-field-log"} required/>
+                            <input type={"password"} placeholder={"Password"} id={"password-field-log"} required/>
+                        </Fragment>
+                    }
                     <span className={"space"}></span>
-                    <ThreeDButton text={this.props.buttonText} onSubmit={this.props.onSubmit} number={this.props.number}></ThreeDButton>
+                    <ThreeDButton text={this.props.buttonText} onSubmit={this.handleSubmit} number={this.props.number}></ThreeDButton>
                 </form>
             </div>
         );

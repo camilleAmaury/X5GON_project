@@ -6,8 +6,8 @@ import scholar from '../../assets/icons/iconScholar.png';
 import scholarHover from '../../assets/icons/iconScholarHover.png';
 import documentIm from '../../assets/icons/iconDocument.png';
 import documentHover from '../../assets/icons/iconDocumentHover.png';
-import knowledge from '../../assets/icons/iconKnowledge.png';
-import knowledgeHover from '../../assets/icons/iconKnowledgeHover.png';
+// import knowledge from '../../assets/icons/iconKnowledge.png';
+// import knowledgeHover from '../../assets/icons/iconKnowledgeHover.png';
 // import account from '../../assets/icons/iconAccount.png';
 // import accountHover from '../../assets/icons/iconAccountHover.png';
 import tori from '../../assets/tori.png';
@@ -95,8 +95,8 @@ export default class Panel extends Component {
                 , id:"knowledge-icon", left:left_pos, top:Math.floor(this.state.windowSize.ratio*this.state.listItemsInit.top[0])},
                 { image: scholar, imageHover: scholarHover, alt: "scholar", title: "Ask the scholar", details: "Sometimes, those who wrote books also forgot to explain basic context to begginners. Just ask the scholar what you want to know !" 
                 , id:"scholar-icon", left:left_pos, top:Math.floor(this.state.windowSize.ratio*this.state.listItemsInit.top[1])},
-                { image: knowledge, imageHover: knowledgeHover, alt: "rank", title: "Improvement", details: "As an apprentice, you would probably like to see your progression since the begginning of your studies. Just click here !" 
-                , id:"improvement-icon", left:left_pos, top:Math.floor(this.state.windowSize.ratio*this.state.listItemsInit.top[2])},
+                // { image: knowledge, imageHover: knowledgeHover, alt: "rank", title: "Improvement", details: "As an apprentice, you would probably like to see your progression since the begginning of your studies. Just click here !" 
+                // , id:"improvement-icon", left:left_pos, top:Math.floor(this.state.windowSize.ratio*this.state.listItemsInit.top[2])},
                 // { image: account, imageHover: accountHover, alt: "account", title: "Apprentice Papers", details: "Quite boring stuff, but it is really important to have an identity !" 
                 //  , id:""}
             ];
@@ -237,7 +237,8 @@ export default class Panel extends Component {
                 <Scene opened={this.state.isOpenedIcon} isOpened={this.state.isOpened} number={this.state.gif_number} handleNotification={this.handleNotificationIcon}
                     openAnimationExec={this.state.openAnimationExec} closeAnimationExec={this.state.closeAnimationExec} handleLoading={this.handleLoadingIcon}
                     notification={this.state.isNotificationIcon} dismissPopover={this.state.dismissPopover} windowSize={this.state.windowSize}
-                    ratio={this.state.windowSize.ratio} mousePosition={this.state.mousePosition} cursorLoaded={this.state.cursorLoaded}></Scene>
+                    ratio={this.state.windowSize.ratio} mousePosition={this.state.mousePosition} cursorLoaded={this.state.cursorLoaded}
+                    animation_close={this.animation_close}></Scene>
 
                 {this.state.listitems.map((item, i) => <MenuItem key={i} image={item.image} imageHover={item.imageHover} alt={item.alt} title={item.title}
                     details={item.details} detailsTitle={item.detailsTitle} handleClick={this.handleClickOnIcon} data={i} isLoading={this.state.isLoadingIcon[i]}
