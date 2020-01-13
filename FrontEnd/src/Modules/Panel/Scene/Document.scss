@@ -43,3 +43,23 @@
     font-weight: 500;
 }
 
+.lantern{
+    background-image: url("../../../assets/Scene/knowledge/Document/lantern.png");
+    background-size: 15px 30px;
+    width: 15px;
+    height: 30px;
+}
+
+.lantern-activate{
+    background-image: url("../../../assets/Scene/knowledge/Document/lanternHover.png");
+    background-size: 15px 30px;
+    width: 15px;
+    height: 30px;
+}
+
+.lantern-rating{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+}

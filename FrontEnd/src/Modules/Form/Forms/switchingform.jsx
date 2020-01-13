@@ -44,7 +44,7 @@ export default class SwitchingForm extends Component {
                 });
             }
             else{
-                localStorage.setItem("isConnected", obj.username);
+                localStorage.setItem("isConnected", {username:obj.username, password:obj.pwd});
                 this.setState({
                     isLogged:true
                 });
@@ -63,7 +63,7 @@ export default class SwitchingForm extends Component {
         axios.get(`http://185.157.246.81:5000/login/${obj.username}/${obj.pwd}`)
         .then(request => {
             if(request.data){
-                localStorage.setItem("isConnected", obj.username);
+                localStorage.setItem("isConnected", {username:obj.username, password:obj.pwd});
                 this.setState({
                     isLogged:true
                 });
@@ -82,10 +82,16 @@ export default class SwitchingForm extends Component {
             });
         });
     }
+    isConnected = () => {
+        if(localStorage.getItem("isConnected") !== null && localStorage.getItem("isConnected") !== undefined){
+            return <Redirect to='/Panel'/>;
+        }
+    }
 
     render() {
         return (
             <div className={"container-init"} id={"container"}>
+                {this.isConnected()}
                 <SwitchingFormChild className={"form-container sign-up-container"} title={"Create Account"} text={this.state.errorSignIn}
                     isSignIn={false} onSubmit={this.handleSubmitSignUp} buttonText={"Sign Up"} number={"zero"}></SwitchingFormChild>
                 <SwitchingFormChild className={"form-container sign-in-container"} title={"Sign in"} text={this.state.errorLogIn}

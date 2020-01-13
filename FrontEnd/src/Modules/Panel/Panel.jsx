@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router';
 
 import './Panel.scss';
 
@@ -78,6 +79,12 @@ export default class Panel extends Component {
                 top:event.y
             },
         })
+    }
+
+    isConnected = () => {
+        if(localStorage.getItem("isConnected") === null || localStorage.getItem("isConnected") === undefined){
+            return <Redirect to='/'/>;
+        }
     }
 
     responiveResizing = () => {
@@ -224,7 +231,7 @@ export default class Panel extends Component {
     render() {
         return (
             <div id={"container-panel"}>
-
+                {this.isConnected()}
                 <img id={"tori"} src={tori} alt={"tori"} style={
                     {
                         top:this.state.toriPosition.top, 

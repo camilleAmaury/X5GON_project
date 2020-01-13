@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
+import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 
 import './Document.scss';
 
 import axios from "axios";
 
+import Lantern from '../../../assets/Scene/knowledge/Document/lantern.png';
+import LanternActivate from '../../../assets/Scene/knowledge/Document/lanternHover.png';
 
 export default class Document extends Component {
     constructor(props) {
@@ -39,6 +42,11 @@ export default class Document extends Component {
             textPosition:{
                 top:0
             },
+            rateDocument:false,
+            ratingInterestHover:[false,false,false,false,false],
+            ratingDifficultyHover:[false,false,false,false,false],
+            ratingInterestDone:false,
+            ratingDifficultyDone:false,
             isOpen: false,
             content:""
         }
@@ -84,7 +92,8 @@ export default class Document extends Component {
         }, () => {
             setTimeout(() => {
                 this.setState({
-                    isOpen: !this.state.isOpen
+                    rateDocument:this.state.isOpen,
+                    isOpen: !this.state.isOpen,
                 }, () => {
                     document.getElementById("upper_scroll").addEventListener('click', this.handleScroll);
                     document.getElementById("lower_scroll").addEventListener('click', this.handleScroll);
@@ -101,7 +110,7 @@ export default class Document extends Component {
     scroll = event => {
 
         // get scrolling speed
-        let speed = event.deltaY / 10;
+        let speed = event.deltaY;
         // scrolling textures
         let textdiv = document.getElementById('scroll-text');
         let condUp = Math.abs(this.state.textPosition.top) > 0;
@@ -124,6 +133,58 @@ export default class Document extends Component {
                 textPosition:{
                     top:this.state.textPosition.top - speed
                 }
+            });
+        }
+    }
+
+    handleHoverRating = event => {
+        let tab = [false, false, false, false, false];
+        for(let i = 0; i <= event.target.dataset.key; i++){
+            tab[i] = true;
+        }
+        if(event.target.classList[1] === "lantern-interest"){
+            this.setState({
+                ratingInterestHover:tab
+            });
+        }else{
+            this.setState({
+                ratingDifficultyHover:tab
+            });
+        }
+    }
+
+    handleNonHoverRating = event => {
+        let tab = [false, false, false, false, false];
+        if(event.target.classList[1] === "lantern-interest"){
+            this.setState({
+                ratingInterestHover:tab
+            });
+        }else{
+            this.setState({
+                ratingDifficultyHover:tab
+            });
+        }
+    }
+
+    handleRating = event => {
+        let tab = [false, false, false, false, false];
+        for(let i = 0; i <= event.target.dataset.key; i++){
+            tab[i] = true;
+        }
+        let arr = document.getElementsByClassName(event.target.classList[1]);
+        for(let i = 0; i < arr.length; i++){
+            arr[i].removeEventListener("mouseenter", this.handleHoverRating, true);
+            arr[i].removeEventListener("mouseleave", this.handleNonHoverRating, true);
+        }
+        if(event.target.classList[1] === "lantern-interest"){
+            this.setState({
+                ratingInterestHover:tab,
+                ratingInterestDone:true
+            });
+        }else{
+            this.setState({
+                ratingDifficultyHover:tab,
+                ratingDifficultyDone:true
             });
         }
     }
@@ -238,7 +299,20 @@ export default class Document extends Component {
                     }></div>
                 </div>
 
-
+                <Popover id={"RateDocument"} className={"RateDocument"} placement={"bottom"} isOpen={this.state.rateDocument} target={"lower_scroll"}>
+                    <PopoverHeader>Rate this content</PopoverHeader>
+                    <PopoverBody>
+                        
+                        <span>Have you found this document interesting ?</span>
+                        <div className={"lantern-rating"}>
+                            {this.state.ratingInterestHover.map((bool, i) => <img key={i} className={"lantern lantern-interest"} src={bool ? LanternActivate : Lantern} alt={"lantern"} data-key={i} onMouseEnter={this.state.ratingInterestDone ? () => {} : this.handleHoverRating} onMouseLeave={this.state.ratingInterestDone ? () => {} : this.handleNonHoverRating} onClick={this.state.ratingInterestDone ? () => {} : this.handleRating} />)}
+                        </div>
+                        <span>Was it hard to understand ?</span>
+                        <div className={"lantern-rating"}>
+                            {this.state.ratingDifficultyHover.map((bool, i) => <img key={i} className={"lantern lantern-difficulty"} src={bool ? LanternActivate : Lantern} alt={"lantern"} data-key={i} onMouseEnter={this.state.ratingDifficultyDone ? () => {} : this.handleHoverRating} onMouseLeave={this.state.ratingDifficultyDone ? () => {} : this.handleNonHoverRating} onClick={this.state.ratingDifficultyDone ? () => {} : this.handleRating}  />)}
+                        </div>
+                    </PopoverBody>
+                </Popover>
             </div>
         );
     }
