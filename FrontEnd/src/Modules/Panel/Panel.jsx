@@ -82,7 +82,7 @@ export default class Panel extends Component {
     }
 
     isConnected = () => {
-        if(localStorage.getItem("isConnected") === null || localStorage.getItem("isConnected") === undefined){
+        if(localStorage.getItem("username") === null || localStorage.getItem("username") === undefined){
             return <Redirect to='/'/>;
         }
     }

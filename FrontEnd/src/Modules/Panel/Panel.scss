@@ -4,12 +4,12 @@ html, body{
     height: 100%;
     background: radial-gradient(#3c495a, #272e34);
     background-image: url('../../assets/background.png');
+
+    background-repeat: no-repeat;
+    background-size: cover;
     z-index: 0;
 }
 #container-panel{
-    
-    background-repeat: no-repeat;
-    background-size: cover;
     width: 100vw;
     height: 100vh;
     z-index: 0;

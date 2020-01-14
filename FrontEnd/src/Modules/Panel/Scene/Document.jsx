@@ -53,12 +53,14 @@ export default class Document extends Component {
     }
 
     componentDidMount = () => {
+        
         axios.get(`https://platform.x5gon.org/api/v1/oer_materials/${this.props.idDocument}/contents/`)
         .then( request => {
             let content = request.data.oer_contents[0].value.value;
             document.getElementById("upper_scroll").addEventListener('click', ()=>{this.handleScroll()});
             document.getElementById("lower_scroll").addEventListener('click', ()=>{this.handleScroll()});
             this.setState({content:content});
+
         })
         .catch( error => { 
             console.log(error)
@@ -110,7 +112,7 @@ export default class Document extends Component {
     scroll = event => {
 
         // get scrolling speed
-        let speed = event.deltaY;
+        let speed = event.deltaY/20;
         // scrolling textures
         let textdiv = document.getElementById('scroll-text');
         let condUp = Math.abs(this.state.textPosition.top) > 0;
@@ -171,6 +173,7 @@ export default class Document extends Component {
         for(let i = 0; i <= event.target.dataset.key; i++){
             tab[i] = true;
         }
+        let number = event.target.dataset.key + 1;
         let arr = document.getElementsByClassName(event.target.classList[1]);
         for(let i = 0; i < arr.length; i++){
             arr[i].removeEventListener("mouseenter", this.handleHoverRating, true);
@@ -180,6 +183,22 @@ export default class Document extends Component {
             this.setState({
                 ratingInterestHover:tab,
                 ratingInterestDone:true
+            }, () => {
+                let content = {
+                    username:localStorage.getItem("username"),
+                    pwd:localStorage.getItem("pwd"),
+                    docId:this.props.idDocument,
+                    mark:number
+                };
+                console.log(content)
+                axios.post(`http://185.157.246.81:5000/like/like`, {params:content})
+                .then(request => {
+                    
+                })
+                .catch(error => {
+                    console.log(error)
+                    console.log("this doesn't work");
+                });
             });
         }else{
             this.setState({
