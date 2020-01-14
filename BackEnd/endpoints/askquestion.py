@@ -1,12 +1,11 @@
 from flask_restplus import Namespace, Resource, fields
-
 from SPARQLWrapper import SPARQLWrapper, JSON
 import re
+#from .fastTextVectors import vectors
 import os
 import operator
 import datetime
 import json
-import os
 import pprint
 import random
 import string
@@ -23,6 +22,8 @@ from collections import Counter
 import en_core_web_sm
 import shlex
 import subprocess
+import copy
+
 
 api = Namespace('askquestion', description='Ask a question to a ML Model')
 
@@ -34,6 +35,7 @@ doc = api.model('Answer', {
 @api.param('question', 'Any question. You can try : Who is Barack Obama ? or In what year was Jazz invented ? or When was PHP developed ?')
 @api.response(404, 'Documents not found')
 class AskQuestion(Resource):
+
     #@api.marshal_list_with(doc)
     def get(self, question):
         server_URL = "http://localhost:3030/x5gon/"
@@ -44,6 +46,7 @@ class AskQuestion(Resource):
         SIZE_CHUNK = 500
         document = 5
         
+        #vec = copy.deepcopy(vectors)
         
         def splitTextByChunk(text_divide, s):
             chunk = [[]]
@@ -114,6 +117,14 @@ class AskQuestion(Resource):
                   # just grab the text up to contents as stated in question
                 intro = '\n'.join([ para.text for para in paragraphs])
                 return(intro)
+                
+        def euclidian_distance(a, b):
+            sum = 0
+            if(len(a) == len(b)):
+                for i in range(0, len(a)):
+                    sum = sum + math.pow(a[i] - b[i], 2)
+            return math.sqrt(sum)
+    
             
         def getContentDocument(id, PLATFORM_URL):
             # initialise the endpoint
@@ -134,6 +145,8 @@ class AskQuestion(Resource):
             
         # The objective is to get a subgraph of our KG which contains some documents using tfidf
         # return : concatenation of all of the document into the subgraph
+       
+    
         def getPertinentDocument(question):
             PLATFORM_URL = "https://platform.x5gon.org/api/v1"
             nlp = en_core_web_sm.load()
@@ -144,15 +157,15 @@ class AskQuestion(Resource):
             concatenationDocument = []
 
             for entity in allEntities:
-                queryDocumentOnDataset = "PREFIX dcterms: <http://purl.org/dc/terms/> SELECT ?idDocument WHERE {?doc dcterms:identifier ?idDocument. ?doc dcterms:concept "+entity+".}"
-                res = execQuery(sparql, queryDocumentOnDataset)['results']['bindings'][:document]
+                #queryDocumentOnDataset = "PREFIX dcterms: <http://purl.org/dc/terms/> SELECT ?idDocument WHERE {?doc dcterms:identifier ?idDocument. ?doc dcterms:concept "+entity+".}"
+                #res = execQuery(sparql, queryDocumentOnDataset)['results']['bindings'][:document]
                 #print(res)
                 #print(len(res))
-                for j in range(len(res)):
+                #for j in range(len(res)):
                     #print(getContentDocument(int(res[j]['idDocument']['value']), PLATFORM_URL))
-                    doc = getContentDocument(int(res[j]['idDocument']['value']), PLATFORM_URL)
+                    #doc = getContentDocument(int(res[j]['idDocument']['value']), PLATFORM_URL)
                     #if("<?xml" not in doc):
-                    #    concatenationDocument.append(doc)
+                        #concatenationDocument.append(doc)
 
                 queryDocumentOnDbpedia = "PREFIX dbo: <http://dbpedia.org/ontology/> SELECT ?abstract WHERE {SERVICE <http://dbpedia.org/sparql> {"+entity+" dbo:abstract ?abstract.}FILTER LANGMATCHES(LANG(?abstract), 'EN')}"
                 res = execQuery(sparql, queryDocumentOnDbpedia)['results']['bindings'][:document]
@@ -178,25 +191,43 @@ class AskQuestion(Resource):
                         concatenationDocument.append(res[j]['abstract']['value'])
                         #concatenationDocument.append(getArticleContent("https://en.wikipedia.org/wiki/"+entity.replace('<http://dbpedia.org/resource/', '').replace('>', '')))
 
-            textDictio = {}
-            i = 0
-            t = " ".join(concatenationDocument)
-            if(len(t) >= 2*SIZE_CHUNK):
-                text = t.replace("\"", "").split()
-                for w in list(text):
-                    if(w not in list(textDictio.keys())):
-                        textDictio[w] = i
-                        i+=1
-                  
-                #print(text)
-                corpus = splitTextByChunk(text, SIZE_CHUNK)
-                #corpus = text
-                #print(corpus[0])
-                tfidf = TFIDF(textDictio, corpus)
-                
-                return corpus[getTheBestChunk(question, textDictio, tfidf)]
-            else:
-                return t
+            '''text = ' '.join(concatenationDocument).replace("[", "").replace("]", "").replace("\\", "").replace("/", "").lower()
+            corpus = splitTextByChunk(text.split(), 500)
+            documentRepresentation = []
+            key = list(vec.keys())
+            print(len(vec))
+            distance = 0
+            for doc in corpus:
+                words = []
+                for word in doc:
+                    if(word in key):
+                        v = list(vec[word])
+                        if(len(v) > 0):
+                            words.append(v)
+                documentRepresentation.append([float(sum(col))/len(col) for col in zip(*words)])
+            print(len(documentRepresentation))
+            print(len(documentRepresentation[0]))
+            print("doc")
+            questionRepresentation = []
+            for wQ in question.split():
+                if(wQ in key):
+                    v = list(vec[wQ])
+                    if(len(v) > 0):
+                        questionRepresentation.append(v)
+                        print(v)
+            print(len(questionRepresentation))
+            print(len(questionRepresentation[0]))
+            questionVector = [float(sum(col))/len(col) for col in zip(*questionRepresentation)]
+            print(len(questionVector))
+            print("question")
+            distance = []
+            for vecs in documentRepresentation:
+                #print(vec[:10])
+                #print(questionVector[:10])
+                distance.append(euclidian_distance(vecs, questionVector))
+            return distance, corpus[np.argmin(distance)]'''
+            return ' '.join(concatenationDocument).replace("[", "").replace("]", "").replace("\\", "").replace("/", "")
+            
             
 
         def askQuestionToBERT(question):
@@ -204,11 +235,12 @@ class AskQuestion(Resource):
             corpusPertinent = getPertinentDocument(question)
             end2 = time.time()
             print(str((end2 - start)/60)+" min")
+            #print(corpusPertinent)
             #print(len(corpusPertinent))
             #print(corpusPertinent)
             fileContent = "{\"version\": \"v2.0\",\"data\": [{\"title\": \"your_title\",\"paragraphs\": [{\"qas\": [{\"question\": \"<question>\",\"id\": \"0\",\"is_impossible\": \"\"}],\"context\": \"<content>\"}]}]}"
             fileContent = fileContent.replace("<question>", question, 1)
-            fileContent = fileContent.replace("<content>", u" ".join(corpusPertinent).replace("\"", ""), 1)
+            fileContent = fileContent.replace("<content>", corpusPertinent.replace("\"", ""), 1)
             myfile = "endpoints/data/input_file.json"
             #print(fileContent)
             with open(myfile, "wb+") as f:
@@ -227,10 +259,9 @@ class AskQuestion(Resource):
                 --do_train=False \
                 --max_query_length=30  \
                 --do_predict=True \
-                --vmodule=xla_compilation_cache=1 \
                 --predict_file="+os.path.abspath("endpoints/data/input_file.json")+" \
                 --predict_batch_size=8 \
-                --n_best_size=1 \
+                --n_best_size=3 \
                 --max_seq_length=384 \
                 --doc_stride=128 \
                 --output_dir="+os.path.abspath("endpoints/data/output/"))
@@ -242,5 +273,7 @@ class AskQuestion(Resource):
                 res = fin.read()
             end = time.time()
             print(str((end - start)/60)+" min")
+            #print((' '.join(corpusPertinent)).replace("\"", "").replace("\\", "").replace("/", ""))
+            #print(distance)
             return(res)
         return askQuestionToBERT(question)

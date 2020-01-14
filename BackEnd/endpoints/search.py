@@ -60,12 +60,12 @@ class SearchDocument(Resource):
 
             queryExact = "PREFIX dcterms: <http://purl.org/dc/terms/> SELECT DISTINCT ?id ?title ?format (group_concat(?key;separator=',') AS ?keys) WHERE{ ?doc dcterms:identifier ?id; dcterms:subject ?key. { SELECT DISTINCT ?id ?title ?format WHERE { {?doc dcterms:title ?title; dcterms:identifier ?id; dcterms:format ?format. filter regex(?title, '"+union+"', 'i') filter regex(?format, '(docx|html|ods|odt|pdf|txt)', 'i') } } GROUP BY ?title ?id ?format "+("\nLIMIT "+str(m)+" OFFSET "+str(int(offset)*m) if m != -1 else "")+" } } GROUP BY ?title ?id ?format"
             query = "PREFIX dcterms: <http://purl.org/dc/terms/> \nSELECT DISTINCT ?id ?title ?format (group_concat(?key;separator=',') AS ?keys) (COUNT(?id) as ?score) \nWHERE {\n{?doc dcterms:subject ?key; \ndcterms:title ?title; \ndcterms:identifier ?id; \ndcterms:format ?format. \nfilter regex(?key, '"+union+"', 'i')\nfilter regex(?format, '(docx|html|ods|odt|pdf|txt)', 'i')}} \nGROUP BY ?title ?id ?format\nORDER BY DESC(?score)"+("\nLIMIT "+str(m)+" OFFSET "+str(int(offset)*m) if m != -1 else "")
-            print(queryExact)
+            #print(queryExact)
             resExact = execQuery(sparql, queryExact)['results']['bindings']
             
             res = execQuery(sparql, query)['results']['bindings']
             
-            print(res)
+            #print(res)
 
             for i in range(len(resExact)):
                 ids[resExact[i]['id']['value']] = sum([7/len(keywords.split())+3 if ngram in resExact[i]['title']['value'] else 0 for ngram in ngramsRet])
@@ -85,7 +85,7 @@ class SearchDocument(Resource):
             resR = [x for x in sorted(ids.items(), key=operator.itemgetter(1),reverse=True)]
             
             for i in range(len(resR)):
-                print(resR[i])
+                #print(resR[i])
                 resR[i] = [resR[i][0], title[resR[i][0]], keys[resR[i][0]], format[resR[i][0]]]
             
             return(json.dumps(list(resR[:m])))

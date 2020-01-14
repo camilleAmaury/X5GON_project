@@ -1,5 +1,5 @@
 from flask_restplus import Api
-
+import io
 from .search import api as search_api
 from .askquestion import api as askquestion_api
 from .prerequisites import api as prerequisites_api
@@ -21,4 +21,3 @@ api.add_namespace(login_api)
 api.add_namespace(register_api)
 api.add_namespace(like_api)
 api.add_namespace(difficulty_api)
-
