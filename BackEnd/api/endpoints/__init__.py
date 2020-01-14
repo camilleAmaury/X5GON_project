@@ -5,6 +5,7 @@ from .dog import api as dog_api
 from .user import api as user_api
 from .authentication import api as anthentication_api
 from .authentication import authorizations
+from .document import api as document_api
 
 api = Api(
     title='Annimals API',
@@ -17,3 +18,6 @@ api.add_namespace(cat_api)
 api.add_namespace(dog_api)
 api.add_namespace(user_api)
 api.add_namespace(anthentication_api)
+api.add_namespace(document_api)
+
+vectors = None

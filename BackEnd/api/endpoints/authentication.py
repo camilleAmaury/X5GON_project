@@ -4,6 +4,7 @@ from functools import wraps
 import uuid
 from cryptography.fernet import Fernet
 
+from . import vectors
 from .user import user_schema
 from api.service.authentication import generate_auth_token, verify_auth_token
 from api.service.user import check_user_auth

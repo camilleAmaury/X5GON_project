@@ -3,6 +3,7 @@ from flask_restplus import Namespace, Resource, fields
 
 from api.utils import validator
 from api.service.user import get_user, get_all_users, create_user, update_user, delete_user
+from .document import document_schema
 
 import json
 
@@ -59,4 +60,46 @@ class UserRoute(Resource):
     })
     def delete(self, user_id):
         delete_user(user_id=user_id)
+        return '', 201
+
+@api.route("/<int:user_id>/knowledges")
+class UserKnowledgesRoute(Resource):
+    @api.marshal_with(document_schema, as_list=True)
+    @api.doc(responses={
+        200: 'Active user knowledges list',
+        409: 'Conflict, user not exist'
+    })
+    def get(self, user_id):
+        return get_knowledges(user_id)
+
+    @api.expect(document_schema, validate=True, envelope='json')
+    @api.doc(responses={
+        201: 'Knowledge successfully added to user',
+        409: 'Conflict, user not exist / document not exist / user allready know this document',
+        422: 'Validation Error'
+    })
+    def post(self, user_id):
+        validator.validate_payload(request.json, document_schema)
+        add_knowledge(user_id=user_id, document_id=request.json.get(document_id))
+        return '', 201
+
+@api.route("/<int:user_id>/knowledges/<int:document_id>")
+class UserKnowledgeRoute(Resource):
+
+    @api.marshal_with(document_schema)
+    @api.response(200, 'User info')
+    @api.doc(responses={
+        200: 'Knowledge info',
+        409: 'Conflict, user not exist / document not exist / user don\'t know this document',
+        422: 'Validation Error'
+    })
+    def get(self, user_id, document_id):
+        return get_knowledge(user_id=user_id, document_id=document_id)
+
+    @api.doc(responses={
+        201: 'User successfully deleted',
+        409: 'Conflict, user not exist / document not exist / user don\'t know this document',
+    })
+    def delete(self, user_id, document_id):
+        remove_knowledge(user_id=user_id, document_id=document_id)
         return '', 201
