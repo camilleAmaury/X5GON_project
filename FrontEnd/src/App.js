@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
-// Routes
-import Login from './Modules/LogIn/Login';
-import Panel from './Modules/Panel/Panel';
+import Panel from './Modules/Components/Scene/Panel';
+
+import './App.css';
 
 export default class App extends Component {
   constructor(props) {
@@ -13,7 +13,7 @@ export default class App extends Component {
   }
 
   componentDidMount = () => {
-    document.title="Knowlegde Recipe";
+    document.title = "Knowlegde Recipe";
   }
 
 
@@ -22,12 +22,7 @@ export default class App extends Component {
       <Router>
         <Switch>
           {/* default route */}
-          <Route exact path="/" component={Login} />
-          {/* <Route exact path="/connexion" component={Login} />
-          <Route exact path="/connection" component={Login} /> */}
-
-          {/* Panel */}
-          <Route exact path="/Panel" component={Panel} />
+          <Route exact path="/" component={Panel} />
         </Switch>
       </Router>
     );
