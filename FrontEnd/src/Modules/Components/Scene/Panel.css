@@ -4,3 +4,59 @@
     z-index: 0;
     overflow: hidden;
 }
+
+/* --------------------> Bottom component section <-------------------- */
+.bottom-pilar{
+    top:0px;
+    position: absolute;
+    background-color: #9F674E;
+}
+#bottom-pilars{
+    position: absolute;
+}
+#bottom-floor{
+    position: absolute;
+    top:0px;
+    left:0px;
+    background-color: #E09572;
+}
+#floor{
+    position: absolute;
+    left:0px;
+}
+#bottom-bottom{
+    position: absolute;
+    background-color: #8F573E;
+}
+
+/* --------------------> Scene component section <-------------------- */
+#scene-floor{
+    position: absolute;
+}
+
+
+/* --------------------> Top component section <-------------------- */
+.roof-pilar{
+    top:0px;
+    position: absolute;
+    background-color: #9F674E;
+}
+#roof-pilars{
+    top:0px;
+    left:0px;
+    position: absolute;
+    background-color: #F2B15F;
+}
+#roof-roof{
+    position: absolute;
+    left:0px;
+    background-color: #8F573E;
+}
+#roof{
+    position: absolute;
+    top:0px;
+}
+.door{
+    position: absolute;
+    background: url('../../../assets/Panel/door.png');
+}

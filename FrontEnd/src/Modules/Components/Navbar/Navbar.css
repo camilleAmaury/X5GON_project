@@ -1,3 +1,42 @@
-#Navbar{
-    border:1px solid white;
+@font-face {
+    font-family: 'Roboto-Medium';
+    src: local('Roboto'), url("../../../assets/Fonts/Roboto-Medium.ttf") format('ttf');
 }
+
+#Navbar{
+    top:0px;
+    left:0px;
+    position: absolute;
+    background-color: #AD5F39;
+}
+/* --------------------> Account-information section <-------------------- */
+#Account-information{
+    position: absolute;
+    top:0px;
+    left:0px;
+}
+#image-account{
+    position: absolute;
+}
+#username-text{
+    position: absolute;
+    font-size: 1.5vw;
+    font-family: "Roboto-Medium";
+    color:white;
+    text-align: center;
+}
+
+/* --------------------> Search-bar section <-------------------- */
+#Search-bar{
+    left:0px;
+    position: absolute;
+    border: 1px solid red;
+}
+
+/* --------------------> Icons section <-------------------- */
+#Icons{
+    left:0px;
+    position: absolute;
+    border: 1px solid white;
+}
+
