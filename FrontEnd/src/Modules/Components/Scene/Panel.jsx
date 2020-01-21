@@ -132,7 +132,6 @@ export default class Panel extends Component {
             width:doorwidth,
             height:doorheight
         }
-        console.log(doorheight)
         return obj;
     }
 
