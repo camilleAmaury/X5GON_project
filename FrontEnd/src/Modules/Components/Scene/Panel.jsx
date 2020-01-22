@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import Navbar from '../Navbar/Navbar';
+import Cursor from '../Cursor/Cursor';
 
 import './Panel.css';
 
@@ -139,6 +140,8 @@ export default class Panel extends Component {
         let styles = this.preparePositions();
         return (
             <div id={"Panel"}>
+                <Cursor windowSize={this.state.PanelBox}></Cursor>
+                <Navbar ratio={this.state.ratio} PanelBox={this.state.PanelBox} NavbarBox={styles.navbar}></Navbar> 
                 <div id={"floor"} style={
                     {
                         top: styles.floor.top,
@@ -254,7 +257,6 @@ export default class Panel extends Component {
                         }
                     }></div>
                 </div>
-                <Navbar ratio={this.state.ratio} PanelBox={this.state.PanelBox} NavbarBox={styles.navbar}></Navbar>
                 <div id={"left-door"} className={"door"} style={
                         {
                             top:styles.leftDoor.top,
