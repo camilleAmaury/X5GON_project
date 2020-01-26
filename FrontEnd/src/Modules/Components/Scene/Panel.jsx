@@ -128,7 +128,7 @@ export default class Panel extends Component {
         let doorheight = obj.floor.top - obj.roof.height;
         obj.leftDoor = {
             top: obj.roof.height,
-            left: this.state.isSceneOpen ? Math.floor(obj.navbar.width + -doorwidth + doorwidth / 10) : obj.navbar.width,
+            left: this.state.isSceneOpen ? Math.floor(obj.navbar.width - doorwidth + doorwidth / 10) : obj.navbar.width,
             width: doorwidth,
             height: doorheight
         }
@@ -142,8 +142,8 @@ export default class Panel extends Component {
         // right door
         obj.scene = {
             top: obj.roof.height,
-            left: this.state.isSceneOpen ? obj.leftDoor.left+obj.leftDoor.width : 0,
-            width: this.state.isSceneOpen ? obj.rightDoor.left-(obj.leftDoor.left+obj.leftDoor.width) : 0,
+            left: Math.floor(obj.navbar.width + doorwidth / 10),
+            width: Math.floor(2 * doorwidth + obj.navbar.width - doorwidth / 10) - (Math.floor(obj.navbar.width + doorwidth / 10)),
             height: doorheight - obj.bottombottom.height
         }
         return obj;
@@ -358,6 +358,7 @@ export default class Panel extends Component {
                         }
                     }></div>
                 </div>
+                <Scene style={styles.scene} ratio={this.state.ratio}></Scene>
                 <div id={"left-door"} className={"door"} style={
                     {
                         top: styles.leftDoor.top,
@@ -376,7 +377,7 @@ export default class Panel extends Component {
                         backgroundSize: styles.leftDoor.width + "px " + styles.leftDoor.height + "px"
                     }
                 }></div>
-                <Scene style={styles.scene}></Scene>
+                
             </div>
         );
     }

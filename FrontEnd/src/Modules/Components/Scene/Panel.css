@@ -60,4 +60,5 @@
 .door{
     position: absolute;
     background: url('../../../assets/Panel/door.png');
+    z-index: 1;
 }

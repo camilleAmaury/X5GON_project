@@ -7,10 +7,10 @@ html,body{
     position: absolute;
     z-index: 4;
     pointer-events: none;
-    border:2px solid #FFCEAE;
+    border:2px solid red;
 }
 
 .hover-cursor{
     background-image: radial-gradient( rgba(255,255,255,0.2), rgba(39,46,52,0.2));
-    border:2px solid rgb(211, 170, 142);
+    border:2px solid red;
 }

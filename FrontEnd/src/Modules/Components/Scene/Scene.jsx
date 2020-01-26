@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import Knowledge from './Scenes/Knowledge';
+
 import './Scene.css';
 
 export default class Panel extends Component {
@@ -34,7 +36,11 @@ export default class Panel extends Component {
                     height: styles.scene.height,
                     left:styles.scene.left
                 }
-            }></div>
+            }>
+                <Knowledge isOpen={true} scene={styles.scene} ratio={this.props.ratio}></Knowledge>
+
+
+            </div>
         );
     }
 }

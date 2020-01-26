@@ -32,7 +32,7 @@ export default class Cursor extends Component {
                 let width = this.state.cursorInitSize.width;
                 let height = this.state.cursorInitSize.height;
                 let left = (pos.x - width / 2);
-                let top = (pos.y - this.state.cursorPosition.height / 2);
+                let top = (pos.y - (this.state.cursorPosition.height) / 2);
                 if ((pos.x + width / 2) >= this.props.windowSize.width) {
                     left -= (pos.x + width / 2) - this.props.windowSize.width;
                 }
@@ -43,8 +43,8 @@ export default class Cursor extends Component {
                     cursorPosition: {
                         width: width,
                         height: height,
-                        top: top,
-                        left: left
+                        top: top-2,
+                        left: left-2
                     }
                 });
             }, 100);

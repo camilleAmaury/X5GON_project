@@ -1,0 +1,39 @@
+#knowledge{
+    width:100%;
+    height: 100%;
+    background-color: #FCDDA1;
+}
+
+#knowledge-chair, #bookshelf, .beam, #beam, .window, .railing, #librarian, #knowledge-lantern, #knowledge-hover{
+    position: absolute;
+}
+
+.beam{
+    background-color: #784027;
+}
+
+#beam{
+    width:100%;
+    height: 100%;
+}
+
+.window{
+    background-color: white;
+}
+
+.railing{
+    background-color: #282828;
+}
+
+.railing .vertical, #knowledge-lantern{
+    top:0;
+}
+
+.railing .horizontal{
+    left:0;
+}
+
+#knowledge-hover{
+    background-color:rgba(191,0,255,0.2);
+}
+
