@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import Navbar from '../Navbar/Navbar';
 import Cursor from '../Cursor/Cursor';
+import Scene from './Scene';
 
 import './Panel.css';
 
@@ -16,13 +17,18 @@ export default class Panel extends Component {
             FloorBox: {
                 height: 30
             },
-            NavbarBox:{
-                width:320
+            NavbarBox: {
+                width: 320
             },
-            DoorBox:{
-                width:800
+            DoorBox: {
+                width: 800
             },
-            ratio: 1
+            ratio: 1,
+            SceneOpened: [false, false, false, false, false],
+            isSceneOpen: false,
+            isAnimationOpenEnded: true,
+            isAnimationCloseEnded: true,
+            animationTime: 1500
         }
     }
 
@@ -61,8 +67,8 @@ export default class Panel extends Component {
         // bottom pilars
         obj.floorPilars = {
             top: pilarSize,
-            width:obj.floor.width,
-            height:pilarSize
+            width: obj.floor.width,
+            height: pilarSize
         };
         // bottom pilar
         obj.floorPilar = {
@@ -76,8 +82,8 @@ export default class Panel extends Component {
         obj.floorPilar.left2 = Math.floor((this.state.PanelBox.width - obj.floorPilar.width) / 4);
         // floor bottom
         obj.floorBottom = {
-            width:obj.floor.width,
-            height:pilarSize
+            width: obj.floor.width,
+            height: pilarSize
         };
         // navbar box
         obj.navbar = {
@@ -88,12 +94,12 @@ export default class Panel extends Component {
         obj.roof = {
             width: this.state.PanelBox.width - obj.navbar.width,
             height: pilarSize * 2,
-            left:obj.navbar.width,
+            left: obj.navbar.width,
         };
         // roof pilars
         obj.roofPilars = {
-            width:obj.roof.width,
-            height:pilarSize
+            width: obj.roof.width,
+            height: pilarSize
         };
         // roof pilar
         obj.roofPilar = {
@@ -102,38 +108,133 @@ export default class Panel extends Component {
             left1: 0
         };
         obj.roofPilar.left4 = obj.roofPilars.width - obj.roofPilar.width;
-        obj.roofPilar.left3 = Math.floor((obj.roofPilars.width - obj.roofPilar.width - pilarSize*2) / 2);
-        obj.roofPilar.left2 = Math.floor((obj.roofPilars.width - obj.roofPilar.width + pilarSize*2) / 2);
+        obj.roofPilar.left3 = Math.floor((obj.roofPilars.width - obj.roofPilar.width - pilarSize * 2) / 2);
+        obj.roofPilar.left2 = Math.floor((obj.roofPilars.width - obj.roofPilar.width + pilarSize * 2) / 2);
         // roof roof
         obj.roofRoof = {
-            top:pilarSize,
-            width:obj.roof.width,
-            height:pilarSize
+            top: pilarSize,
+            width: obj.roof.width,
+            height: pilarSize
         }
         // bottom bottom
         obj.bottombottom = {
-            top:obj.floor.top-pilarSize,
-            left:obj.navbar.width,
-            width:this.state.PanelBox.width - obj.navbar.width,
-            height:pilarSize
+            top: obj.floor.top - pilarSize,
+            left: obj.navbar.width,
+            width: this.state.PanelBox.width - obj.navbar.width,
+            height: pilarSize
         }
         // left door
-        let doorwidth = Math.floor(this.state.DoorBox.width * this.state.ratio);
+        let doorwidth = Math.ceil(this.state.DoorBox.width * this.state.ratio);
         let doorheight = obj.floor.top - obj.roof.height;
         obj.leftDoor = {
-            top:obj.roof.height,
-            left:obj.navbar.width,
-            width:doorwidth,
-            height:doorheight
+            top: obj.roof.height,
+            left: this.state.isSceneOpen ? Math.floor(obj.navbar.width + -doorwidth + doorwidth / 10) : obj.navbar.width,
+            width: doorwidth,
+            height: doorheight
         }
         // right door
         obj.rightDoor = {
-            top:obj.roof.height,
-            left:obj.leftDoor.width + obj.leftDoor.left,
-            width:doorwidth,
-            height:doorheight
+            top: obj.roof.height,
+            left: this.state.isSceneOpen ? Math.floor(2 * doorwidth + obj.navbar.width - doorwidth / 10) : doorwidth + obj.navbar.width,
+            width: doorwidth,
+            height: doorheight
+        }
+        // right door
+        obj.scene = {
+            top: obj.roof.height,
+            left: this.state.isSceneOpen ? obj.leftDoor.left+obj.leftDoor.width : 0,
+            width: this.state.isSceneOpen ? obj.rightDoor.left-(obj.leftDoor.left+obj.leftDoor.width) : 0,
+            height: doorheight - obj.bottombottom.height
         }
         return obj;
+    }
+
+    onIconClick = event => {
+        let iconClick = this.state.SceneOpened;
+        let iconNumber = event.currentTarget.dataset.key;
+        if (iconClick[iconNumber]) {
+            // close the door
+            iconClick = [false, false, false, false, false];
+            this.CloseScene(iconClick, null);
+        } else {
+            if (this.state.isSceneOpen) {
+                // close + open
+                iconClick = [false, false, false, false, false];
+                this.CloseScene(iconClick, iconNumber);
+            } else {
+                // open
+                iconClick = [false, false, false, false, false];
+                iconClick[iconNumber] = true;
+                this.OpenScene(iconClick);
+            }
+        }
+    }
+
+    OpenScene = (OpenScene) => {
+        // if open animation and close animation have already ended, everything's okay for animation
+        if (this.state.isAnimationOpenEnded && this.state.isAnimationCloseEnded) {
+            // add transition state (not in css to prevent resize left animation)
+            let transition = `left ${this.state.animationTime / 1000}s ease-in-out`;
+            document.getElementById("left-door").style.transition = transition;
+            document.getElementById("right-door").style.transition = transition;
+            this.setState({
+                SceneOpened: OpenScene,
+                isAnimationOpenEnded: false
+            }, () => {
+                setTimeout(() => {
+                    // after loading the content we can know animate
+                    this.setState({
+                        isSceneOpen: true
+                    }, () => {
+                        // waiting the animation time to re-give right to click on icons + load some future contents
+                        setTimeout(() => {
+                            this.setState({
+                                isAnimationOpenEnded: true
+                            }, () => {
+                                document.getElementById("left-door").style.transition = "none";
+                                document.getElementById("right-door").style.transition = "none";
+                            });
+                        }, this.state.animationTime);
+                    });
+                }, 500);
+
+            });
+        }
+    }
+
+    CloseScene = (openScene, key) => {
+        // if open animation and close animation have already ended, everything's okay for animation
+        if (this.state.isAnimationOpenEnded && this.state.isAnimationCloseEnded) {
+            // add transition state (not in css to prevent resize left animation)
+            let transition = `left ${this.state.animationTime / 1000}s ease-in-out`;
+            document.getElementById("left-door").style.transition = transition;
+            document.getElementById("right-door").style.transition = transition;
+            this.setState({
+                isAnimationCloseEnded: false
+            }, () => {
+                // after loading the content we can know animate
+                this.setState({
+                    isSceneOpen: false
+                }, () => {
+                    // waiting the animation time to re-give right to click on icons + load some future contents
+                    setTimeout(() => {
+                        this.setState({
+                            isAnimationCloseEnded: true,
+                            SceneOpened: openScene,
+                        }, () => {
+                            document.getElementById("left-door").style.transition = "none";
+                            document.getElementById("right-door").style.transition = "none";
+                            if (key !== null) {
+                                setTimeout(() => {
+                                    openScene[key] = true;
+                                    this.OpenScene(openScene);
+                                }, 500);
+                            }
+                        });
+                    }, this.state.animationTime);
+                });
+            });
+        }
     }
 
     render() {
@@ -141,7 +242,7 @@ export default class Panel extends Component {
         return (
             <div id={"Panel"}>
                 <Cursor windowSize={this.state.PanelBox}></Cursor>
-                <Navbar ratio={this.state.ratio} PanelBox={this.state.PanelBox} NavbarBox={styles.navbar}></Navbar> 
+                <Navbar ratio={this.state.ratio} PanelBox={this.state.PanelBox} NavbarBox={styles.navbar} clickIcon={this.onIconClick}></Navbar>
                 <div id={"floor"} style={
                     {
                         top: styles.floor.top,
@@ -152,8 +253,8 @@ export default class Panel extends Component {
                     <div id={"bottom-pilars"} style={
                         {
                             top: styles.floorPilars.top,
-                            height:styles.floorPilars.height,
-                            width:styles.floorPilars.width
+                            height: styles.floorPilars.height,
+                            width: styles.floorPilars.width
                         }
                     }>
                         <div className={"bottom-pilar"} style={
@@ -200,12 +301,12 @@ export default class Panel extends Component {
                     }></div>
                 </div>
                 <div id={"bottom-bottom"} style={
-                        {
-                            top:styles.bottombottom.top,
-                            left:styles.bottombottom.left,
-                            width:styles.bottombottom.width,
-                            height:styles.bottombottom.height
-                        }
+                    {
+                        top: styles.bottombottom.top,
+                        left: styles.bottombottom.left,
+                        width: styles.bottombottom.width,
+                        height: styles.bottombottom.height
+                    }
                 }></div>
                 <div id={"roof"} style={
                     {
@@ -216,65 +317,66 @@ export default class Panel extends Component {
                 }>
                     <div id={"roof-pilars"} style={
                         {
-                            height:styles.roofPilars.height,
-                            width:styles.roofPilars.width
+                            height: styles.roofPilars.height,
+                            width: styles.roofPilars.width
                         }
                     }>
                         <div className={"roof-pilar"} style={
                             {
                                 left: styles.roofPilar.left1,
-                                height:styles.roofPilar.height,
-                                width:styles.roofPilar.width
+                                height: styles.roofPilar.height,
+                                width: styles.roofPilar.width
                             }
                         }></div>
                         <div className={"roof-pilar"} style={
                             {
                                 left: styles.roofPilar.left2,
-                                height:styles.roofPilar.height,
-                                width:styles.roofPilar.width
+                                height: styles.roofPilar.height,
+                                width: styles.roofPilar.width
                             }
                         }></div>
                         <div className={"roof-pilar"} style={
                             {
                                 left: styles.roofPilar.left3,
-                                height:styles.roofPilar.height,
-                                width:styles.roofPilar.width
+                                height: styles.roofPilar.height,
+                                width: styles.roofPilar.width
                             }
                         }></div>
                         <div className={"roof-pilar"} style={
                             {
                                 left: styles.roofPilar.left4,
-                                height:styles.roofPilar.height,
-                                width:styles.roofPilar.width
+                                height: styles.roofPilar.height,
+                                width: styles.roofPilar.width
                             }
                         }></div>
                     </div>
                     <div id={"roof-roof"} style={
                         {
-                            top : styles.roofRoof.top,
+                            top: styles.roofRoof.top,
                             width: styles.roofRoof.width,
                             height: styles.roofRoof.height
                         }
                     }></div>
                 </div>
                 <div id={"left-door"} className={"door"} style={
-                        {
-                            top:styles.leftDoor.top,
-                            left:styles.leftDoor.left,
-                            width:styles.leftDoor.width,
-                            height:styles.leftDoor.height,
-                            backgroundSize:styles.leftDoor.width+"px "+styles.leftDoor.height + "px"
-                        }
+                    {
+                        top: styles.leftDoor.top,
+                        left: styles.leftDoor.left,
+                        width: styles.leftDoor.width,
+                        height: styles.leftDoor.height,
+                        backgroundSize: styles.leftDoor.width + "px " + styles.leftDoor.height + "px"
+                    }
                 }></div>
                 <div id={"right-door"} className={"door"} style={
-                        {
-                            top:styles.rightDoor.top,
-                            left:styles.rightDoor.left,
-                            width:styles.rightDoor.width,
-                            height:styles.rightDoor.height,
-                            backgroundSize:styles.leftDoor.width+"px "+styles.leftDoor.height + "px"
-                        }
+                    {
+                        top: styles.rightDoor.top,
+                        left: styles.rightDoor.left,
+                        width: styles.rightDoor.width,
+                        height: styles.rightDoor.height,
+                        backgroundSize: styles.leftDoor.width + "px " + styles.leftDoor.height + "px"
+                    }
                 }></div>
+                <Scene style={styles.scene}></Scene>
             </div>
         );
     }

@@ -27,7 +27,6 @@ export default class Cursor extends Component {
         event.preventDefault();
         let circle = document.getElementById("cursor-circle");
         if (circle !== undefined && circle !== null) {
-            let classList = circle.classList;
             let pos = getMousePosition(event);
             setTimeout(() => {
                 let width = this.state.cursorInitSize.width;

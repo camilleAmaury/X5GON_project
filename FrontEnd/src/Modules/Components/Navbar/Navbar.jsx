@@ -263,7 +263,7 @@ export default class Navbar extends Component {
                                     top: styles.icon.icons[i].top,
                                     left: styles.icon.icons[i].left
                                 }
-                            } onMouseEnter={this.HoverIcon} onMouseLeave={this.NonHoverIcon}>
+                            } onMouseEnter={this.HoverIcon} onMouseLeave={this.NonHoverIcon} onClick={this.props.clickIcon}>
                                 <img src={this.state.hoverIcon[i] ? icon.IconHover : icon.icon} alt={"Icon " + icon.text} className={"icon-image"} width={styles.icon.height} height={styles.icon.height}></img>
                                 <span className={"icon-text"} style={
                                     {
