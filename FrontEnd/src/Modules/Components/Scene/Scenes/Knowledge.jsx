@@ -310,8 +310,13 @@ export default class Knowledge extends Component {
                     }
                 }></img>
 
-                <Popover id={"librarian-dialog"} target={styles.librarian} ratio={1/2} side={"left"} size={{width:300, height:200}} 
-                    isOpen={this.state.isClicked && this.props.isOpen} title={"Librarian"}></Popover>
+                <Popover id={"librarian-dialog"} target={styles.librarian} ratio={1/2} side={"left"} size={{width:450, height:150}} 
+                    isOpen={this.state.isClicked && this.props.isOpen} title={"Librarian"}>
+                        <div>
+                            <textarea id={"question-knowledge"} placeholder={"Type keywords to look for documents"}></textarea>
+                            <button onClick={this.askQuestion}>ask</button>
+                        </div>
+                </Popover>
             </div>
         );
     }

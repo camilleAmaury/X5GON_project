@@ -59,15 +59,15 @@ export default class Popover extends Component {
                     {this.props.children}
                 </div>
                 <div className={"triangle"} style={
-                {
-                    left:styles.arrow.left,
-                    top:styles.arrow.top,
-                    borderLeft:this.props.side === "left" ? styles.arrow.width + "px solid " + this.state.color: "none",
-                    borderRight:this.props.side === "right" ? styles.arrow.width + "px solid " + this.state.color : "none",
-                    borderTop:styles.arrow.height + "px solid transparent",
-                    borderBottom:styles.arrow.height + "px solid transparent",
-                }
-            }></div>
+                    {
+                        left:styles.arrow.left,
+                        top:styles.arrow.top,
+                        borderLeft:this.props.side === "left" ? styles.arrow.width + "px solid " + this.state.color: "none",
+                        borderRight:this.props.side === "right" ? styles.arrow.width + "px solid " + this.state.color : "none",
+                        borderTop:styles.arrow.height + "px solid transparent",
+                        borderBottom:styles.arrow.height + "px solid transparent",
+                    }
+                }></div>
             </div>
         );
     }

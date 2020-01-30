@@ -38,34 +38,69 @@
 }
 
 /* popover dialog */
-
-#librarian-dialog .popover-header{
-    background-color: rgb(255, 255, 255);
-    padding: 0px;
-    margin: 0px;
-    height:30px;
-}
-#librarian-dialog .popover-body{
-    background-color: #E75B40;
-    font-size: 18px;
-    color:white;
-    height:170px;
-}
-.popover{
-    width: 300px;
-    height: 200px;
-    z-index: 3;
-}
-
-.popover-inner{
-    height: 100%;
-    width: 100%;
-}
-
-#librarian-dialog div{
-    background-color: #E75B40;
+#popover-librarian-dialog .popover-body div{
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
+#popover-librarian-dialog .popover-body textarea {
+    width: 300px;
+    height: 70px;
+	border: 5px solid lightgray;
+    color: #303030;
+	background-color: lightgray;
+	box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    border-radius: 25px 0 0 0;
+    font-size: 11pt;
+    line-height:70px;
+    text-align: center;
+    white-space: nowrap;
+    resize: none;
+    -ms-overflow-style: none;
+}
+#popover-librarian-dialog .popover-body textarea::-webkit-scrollbar {
+    display: none;
+}
+#popover-librarian-dialog .popover-body textarea:hover, #popover-librarian-dialog .popover-body textarea:active, #popover-librarian-dialog .popover-body textarea:focus{
+    outline:0px !important;
+    -webkit-appearance:none;
+    box-shadow: none !important;
+}
+
+#popover-librarian-dialog .popover-body button {
+	padding: 10px 0px;
+    margin-left:10px;
+    width: 70px;
+    height: 84px;
+	float: right;
+	border: none;
+	border: 1px solid lightgray;
+	background: lightgray;
+	box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+	font-size: 11pt;
+	text-align: center;
+	border-radius: 0 25px 25px 0;
+	color: #303030;
+}
+
+#popover-librarian-dialog .popover-body button:hover{
+	border-color: #ffffff;
+	background: #ffffff;
+	color: #303030;
+}
+
+#popover-librarian-dialog .popover-body button:active{
+	border-color: rgba(255,255,255,0.9);
+	background: rgba(255,255,255,0.9);
+	color: #303030;
+	box-shadow: none;
+	-webkit-transform: translateY(1px);
+	-moz-transform: translateY(1px);
+	-o-transform: translateY(1px);
+	-ms-transform: translateY(1px);
+	transform: translateY(1px);
 }
