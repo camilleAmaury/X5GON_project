@@ -37,3 +37,35 @@
     background-color:rgba(191,0,255,0.2);
 }
 
+/* popover dialog */
+
+#librarian-dialog .popover-header{
+    background-color: rgb(255, 255, 255);
+    padding: 0px;
+    margin: 0px;
+    height:30px;
+}
+#librarian-dialog .popover-body{
+    background-color: #E75B40;
+    font-size: 18px;
+    color:white;
+    height:170px;
+}
+.popover{
+    width: 300px;
+    height: 200px;
+    z-index: 3;
+}
+
+.popover-inner{
+    height: 100%;
+    width: 100%;
+}
+
+#librarian-dialog div{
+    background-color: #E75B40;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+}

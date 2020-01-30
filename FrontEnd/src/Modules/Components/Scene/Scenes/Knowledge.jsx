@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 
 import './Knowledge.css';
 
+import axios from "axios";
+
+import Popover from '../../Popover/Popover';
+
 import chair from '../../../../assets/Panel/Scene/Knowledge/chair.png';
 import bookshelf from '../../../../assets/Panel/Scene/Knowledge/bookshelf.png';
 import lantern from '../../../../assets/Panel/Scene/Knowledge/lantern.png';
@@ -39,7 +43,8 @@ export default class Knowledge extends Component {
                 width:138,
                 height:323
             },
-            isHovered:false
+            isHovered:false,
+            isClicked:false
         }
     }
 
@@ -162,12 +167,20 @@ export default class Knowledge extends Component {
         });
     }
 
+    handleClick = () => {
+        this.setState({
+            isClicked:!this.state.isClicked
+        }, () => {
+            console.log(this.state.isClicked)
+        });
+    }
+
     render() {
         let styles = this.preparePositions();
         return (
             <div id={"knowledge"} style={
                 {
-                    visible: this.props.isOpen
+                    visibility: this.props.isOpen ? "visible" : "hidden"
                 }
             }>
                 {/* Beams */}
@@ -288,7 +301,7 @@ export default class Knowledge extends Component {
                     }
                 }></div>
 
-                <img id={"librarian"} src={librarian} alt={"librarian"} onMouseEnter={this.hover} onMouseLeave={this.hover} style={
+                <img id={"librarian"} src={librarian} alt={"librarian"} onMouseEnter={this.hover} onMouseLeave={this.hover} onClick={this.handleClick} style={
                     {
                         top:styles.librarian.top,
                         left:styles.librarian.left,
@@ -296,6 +309,9 @@ export default class Knowledge extends Component {
                         height:styles.librarian.height,
                     }
                 }></img>
+
+                <Popover id={"librarian-dialog"} target={styles.librarian} ratio={1/2} side={"left"} size={{width:300, height:200}} 
+                    isOpen={this.state.isClicked && this.props.isOpen} title={"Librarian"}></Popover>
             </div>
         );
     }
