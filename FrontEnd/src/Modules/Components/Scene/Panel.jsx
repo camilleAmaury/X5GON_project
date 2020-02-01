@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import Navbar from '../Navbar/Navbar';
 import Cursor from '../Cursor/Cursor';
 import Scene from './Scene';
+import ScholarBubble from '../Popover/ScholarPopover';
 
 import './Panel.css';
 
@@ -377,7 +378,7 @@ export default class Panel extends Component {
                         backgroundSize: styles.leftDoor.width + "px " + styles.leftDoor.height + "px"
                     }
                 }></div>
-                
+                <ScholarBubble ratio={this.state.ratio} windowSize={this.state.PanelBox} NavbarBox={styles.navbar}></ScholarBubble>
             </div>
         );
     }

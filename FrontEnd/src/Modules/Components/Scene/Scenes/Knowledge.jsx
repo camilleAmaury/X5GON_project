@@ -173,7 +173,7 @@ export default class Knowledge extends Component {
     handleClick = () => {
         this.setState({
             isClicked: !this.state.isClicked,
-            librarianState:this.state.librarianState == 2 ? 0 : this.state.librarianState
+            librarianState:this.state.librarianState === 2 ? 0 : this.state.librarianState
         });
     }
 
@@ -372,7 +372,7 @@ export default class Knowledge extends Component {
                     }
                 }></div>
 
-                <img id={"librarian"} src={this.state.librarianState == 0 ? librarian : this.state.librarianState == 1 ? librarianSeeking : this.state.librarianState == 2 ? librarianAnswering : ""}
+                <img id={"librarian"} src={this.state.librarianState === 0 ? librarian : this.state.librarianState === 1 ? librarianSeeking : this.state.librarianState === 2 ? librarianAnswering : ""}
                     alt={"librarian"} onMouseEnter={this.hover} onMouseLeave={this.hover} onClick={this.handleClick} style={
                         {
                             top: styles.librarian.top,
@@ -383,7 +383,7 @@ export default class Knowledge extends Component {
                     }></img>
 
                 <Popover id={"librarian-dialog"} target={styles.librarian} ratio={1 / 2} side={"left"} size={{ width: 450, height: 150 }}
-                    isOpen={this.state.isClicked && this.props.isOpen && this.state.librarianState == 0} title={"Librarian"}>
+                    isOpen={this.state.isClicked && this.props.isOpen && this.state.librarianState === 0} title={"Librarian"}>
                     <div>
                         <textarea id={"question-knowledge"} placeholder={"Type keywords to look for documents"}></textarea>
                         <button onClick={this.askQuestion}>ask</button>
@@ -391,14 +391,14 @@ export default class Knowledge extends Component {
                 </Popover>
 
                 <Popover id={"librarian-waiting"} target={styles.librarian} ratio={1 / 2} side={"left"} size={{ width: 350, height: 90 }}
-                    isOpen={this.state.isClicked && this.props.isOpen && this.state.librarianState == 1} title={"Librarian"}>
+                    isOpen={this.state.isClicked && this.props.isOpen && this.state.librarianState === 1} title={"Librarian"}>
                     <div>
                         <span>Let me a little more time, I need to find what you're looking for ...</span>
                     </div>
                 </Popover>
 
                 <Popover id={"librarian-answering"} target={styles.librarian} ratio={1 / 2} side={"left"} size={{ width: 450, height: 300 }}
-                    isOpen={this.state.isClicked && this.props.isOpen && this.state.librarianState == 2} title={"Librarian"}>
+                    isOpen={this.state.isClicked && this.props.isOpen && this.state.librarianState === 2} title={"Librarian"}>
                     <div id={"librarian-answering-list"}>
                         {this.state.data.map((item, i) => 
                             <div className={"librarian-answering-item"} key={i} data-key={item.id}>
