@@ -105,7 +105,7 @@ export default class ScholarPopover extends Component {
             }
             obj.scrollSide.left = obj.scroll.width - obj.scrollSide.width + 1;
             // scrolling corpus
-            let scrollwritting = 50;
+            let scrollwritting = 80;
             obj.scrollingCorpus = {
                 width: obj.scrollSide.left - obj.scrollSide.width,
                 height: obj.scroll.height - Math.floor(obj.topScroll.height / 2) - scrollwritting

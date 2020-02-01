@@ -1,0 +1,74 @@
+#lectures{
+    width:100%;
+    height: 100%;
+    background-color: rgb(56, 19, 13);
+    position: absolute;
+    top:0;
+    left:0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.document-container{
+    width: 100%;
+    background-color: #C6A561;
+    overflow: hidden;
+}
+
+.document-separator{
+    width: 100%;
+    background-color: #8F573E;
+    position: absolute;
+    left:0;
+}
+
+.document-container .scrollSide{
+    position: absolute;
+}
+.document-container .scrollUpper{
+    position: absolute;
+    background-color: #BF1800;
+}
+.document-container .scrollTexture{
+    position: absolute;
+    background-size: 1500px 500px;
+    background: linear-gradient(rgb(194, 157, 112), rgb(226, 203, 169));
+    background-repeat: repeat-y;
+    top:0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.document-container .scrollTexture span{
+    font-family: 'Roboto';
+    font-size: 25px;
+}
+.document-container .scrollTexture2{
+    position: absolute;
+    background-size: 1500px 500px;
+    background-position-y:150px;
+    background-image: linear-gradient(rgb(194, 157, 112), rgb(226, 203, 169));
+    background-repeat: repeat-y;
+    top:0;
+}
+
+.document-container .scroll-center{
+    border: 1px solid black;
+    position: absolute;
+    background-size: 1500px 500px;
+    background-position-y:150px;
+    background-image: linear-gradient(rgb(223, 181, 130), rgb(252, 228, 192));
+}
+
+.document-container .side1{
+    position: absolute;
+    background: linear-gradient(-0.25turn, #B38959 66%, #5F3403 100%);
+    top:0;
+    left:0;
+}
+.document-container .side2{
+    position: absolute;
+    background: linear-gradient(0.25turn, #B38959 66%, #5F3403 100%);
+    top:0;
+}

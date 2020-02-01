@@ -2,6 +2,9 @@
     width:100%;
     height: 100%;
     background-color: #FCDDA1;
+    position: absolute;
+    top:0;
+    left:0;
 }
 
 #knowledge-chair, #bookshelf, .beam, #beam, .window, .railing, #librarian, #knowledge-lantern, #knowledge-hover{

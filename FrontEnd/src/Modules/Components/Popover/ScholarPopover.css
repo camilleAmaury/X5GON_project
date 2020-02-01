@@ -37,9 +37,9 @@
 #Scholar-scroll-side{
     position: absolute;
     background: linear-gradient(-0.25turn, #B38959 66%, #5F3403 100%);
-    background-color: red;
 }
 #Scholar-scroll-side-inv{
+    position: absolute;
     background: linear-gradient(0.25turn, #B38959 66%, #5F3403 100%);
 }
 
@@ -61,15 +61,17 @@
     color: #303030;
     resize: none;
     font-family: 'Roboto-Light';
+    font-size: 16px;
     font-style: italic;
     text-align: center;
     white-space: nowrap;
     overflow-x: scroll;
     -ms-overflow-style: none;
     border-radius: 20px;
-    height: 16px;
+    height: 50px;
     width: 75%;
-    border:10px solid lightgray;
+    border:5px solid lightgray;
+    line-height: 50px;
     box-shadow: 0px 0px 2px 1px rgba(0,0,0,0.2);
 }
 #Scholar-scroll-question::-webkit-scrollbar {
@@ -81,17 +83,17 @@
 }
 
 #Scholar-scroll-ask{
-    border-top:15px solid transparent; 
-    border-bottom:15px solid transparent; 
-    border-left:35px solid rgb(161, 26, 26); 
+    border-top:22px solid transparent; 
+    border-bottom:22px solid transparent; 
+    border-left:45px solid rgb(161, 26, 26); 
     width:0;
     height:0;
 }
 
 #Scholar-scroll-ask:hover{
-    border-top:15px solid transparent; 
-    border-bottom:15px solid transparent; 
-    border-left:35px solid rgb(230, 62, 62);
+    border-top:22px solid transparent; 
+    border-bottom:22px solid transparent; 
+    border-left:45px solid rgb(230, 62, 62);
 }
 
 .chat-container-own{

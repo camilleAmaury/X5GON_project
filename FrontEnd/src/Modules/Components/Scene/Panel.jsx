@@ -25,8 +25,8 @@ export default class Panel extends Component {
                 width: 800
             },
             ratio: 1,
-            SceneOpened: [false, false, false, false, false],
-            isSceneOpen: false,
+            SceneOpened: [false, false, false, false, true],
+            isSceneOpen: true,
             isAnimationOpenEnded: true,
             isAnimationCloseEnded: true,
             animationTime: 1500
@@ -359,7 +359,7 @@ export default class Panel extends Component {
                         }
                     }></div>
                 </div>
-                <Scene style={styles.scene} ratio={this.state.ratio}></Scene>
+                <Scene style={styles.scene} ratio={this.state.ratio} sceneOpened={this.state.SceneOpened}></Scene>
                 <div id={"left-door"} className={"door"} style={
                     {
                         top: styles.leftDoor.top,
