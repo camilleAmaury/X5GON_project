@@ -5,15 +5,17 @@
     position: absolute;
     top:0;
     left:0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
 }
-
+#lectures::-webkit-scrollbar { width: 0 !important }
 .document-container{
     width: 100%;
     background-color: #C6A561;
     overflow: hidden;
+    position: relative;
 }
 
 .document-separator{
@@ -32,13 +34,15 @@
 }
 .document-container .scrollTexture{
     position: absolute;
-    background-size: 1500px 500px;
-    background: linear-gradient(rgb(194, 157, 112), rgb(226, 203, 169));
+    background-size: 100%;
+    background-position-y:150px;
+    background-image: url('../../../../assets/Panel/Scene/Lectures/scrollTexture.png');
     background-repeat: repeat-y;
-    top:0;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.3);
+    border-radius: 10px;
 }
 .document-container .scrollTexture span{
     font-family: 'Roboto';
@@ -46,19 +50,36 @@
 }
 .document-container .scrollTexture2{
     position: absolute;
-    background-size: 1500px 500px;
-    background-position-y:150px;
-    background-image: linear-gradient(rgb(194, 157, 112), rgb(226, 203, 169));
+    background-size: 100%;
+    background-image: url('../../../../assets/Panel/Scene/Lectures/scrollTexture.png');
     background-repeat: repeat-y;
-    top:0;
+    box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.3);
+    border-radius: 10px;
 }
 
 .document-container .scroll-center{
-    border: 1px solid black;
+    box-shadow: 0px 0px 2px 1px rgba(0,0,0,0.3);
     position: absolute;
-    background-size: 1500px 500px;
-    background-position-y:150px;
-    background-image: linear-gradient(rgb(223, 181, 130), rgb(252, 228, 192));
+    background-color: rgb(236, 194, 143);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.document-container .scroll-center .lectures-corpus{
+    overflow-y:scroll;
+    border: 1px solid black;
+    scroll-behavior: auto;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+}
+.document-container .scroll-center .lectures-corpus::-webkit-scrollbar { width: 0 !important }
+
+.document-container .scroll-center .lectures-corpus span{
+    line-height: 26px;
+    font-size: 20px;
+    white-space: pre-line;
+    position: relative;
 }
 
 .document-container .side1{
