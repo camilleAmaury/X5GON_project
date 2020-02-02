@@ -153,12 +153,6 @@ export default class ScholarPopover extends Component {
                             sessionChat: chat,
                             scholarState: 2,
                             corpusHoverEvent:true
-                        }, () => {
-                            setTimeout(() => {
-                                // end scroll
-                                let corpus = document.getElementById('Scholar-scroll-corpus');
-                                corpus.scrollTop = corpus.scrollHeight;
-                            }, 300);
                         });
                     })
                     .catch(error => {
@@ -168,12 +162,6 @@ export default class ScholarPopover extends Component {
                             sessionChat: chat,
                             scholarState: 2,
                             corpusHoverEvent:true
-                        }, () => {
-                            setTimeout(() => {
-                                // end scroll
-                                let corpus = document.getElementById('Scholar-scroll-corpus');
-                                corpus.scrollTop = corpus.scrollHeight;
-                            }, 300);
                         });
                     });
             });

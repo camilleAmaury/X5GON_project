@@ -32,6 +32,40 @@ export default class Lectures extends Component {
     }
 
     componentDidMount = () => {
+        let document = [
+            {title:"A random title", id:"158493", content:`
+                dqzdqzdqz
+                dqzqdqdqzzzzzzzzzzzzzzzzzzz
+                dqzdqzqj jd jqjzd iqzjdioq jj j jqzd qz
+                d qz
+                d q
+                d
+                q
+                dqzdqzdqdqd qzd qdqz
+                dq dqzq dqdqffsfqfqf q dqzdqd qd qd
+                dqzdqzdqz
+                dqzqdqdqzzzzzzzzzzzzzzzzzzz
+                dqzdqzqj jd jqjzd iqzjdioq jj j jqzd qz
+                d qz
+                d q
+                d
+                q
+                dqzdqzdqdqd qzd qdqz
+                dq dqzq dqdqffsfqfqf q dqzdqd qd qd
+                dqzdqzdqz
+                dqzqdqdqzzzzzzzzzzzzzzzzzzz
+                dqzdqzqj jd jqjzd iqzjdioq jj j jqzd qz
+                d qz
+                d q
+                d
+                q
+                dqzdqzdqdqd qzd qdqz
+                dq dqzq dqdqffsfqfqf q dqzdqd qd qd
+            `, isScrolled:false}
+        ];
+        this.setState({
+            documents:document
+        });
         // request which asks for document still in reading states for the user
     }
 
@@ -85,6 +119,11 @@ export default class Lectures extends Component {
         return obj;
     }
 
+    scrollDocument = event => {
+        let nb = parseInt(event.currentTarget.dataset.key);
+        console.log(nb);
+    }
+
     render() {
         let styles = this.preparePositions();
         return (
@@ -92,141 +131,144 @@ export default class Lectures extends Component {
                 {
                     visibility: this.props.isOpen ? "visible" : "hidden"
                 }
-            }>
-                <div className={"document-container"} style={
-                    {
-                        height:this.state.documentContainerBox.height
-                    }
-                }>
-                    {/* center scroll */}
-                    <div className={"scroll-center"} style={
+            }>  
+                {this.state.documents.map((item, i) => 
+                    <div className={"document-container"} key={i} data-id={item.id} data-key={i} style={
                         {
-                            height:styles.center.height,
-                            width:styles.center.width,
-                            top:styles.center.top,
-                            left:styles.center.left
+                            height:this.state.documentContainerBox.height
                         }
                     }>
-                        {/* text */}
-
-                        {/* sides */}
-                        <div className={"side1"} style={
+                        {/* center scroll */}
+                        <div className={"scroll-center"} style={
                             {
-                                height:styles.side.height,
-                                width:styles.side.width,
+                                height:styles.center.height,
+                                width:styles.center.width,
+                                top:styles.center.top,
+                                left:styles.center.left
                             }
-                        }></div>
-                        <div className={"side2"} style={
+                        }>
+                            {/* text */}
+    
+                            {/* sides */}
+                            <div className={"side1"} style={
+                                {
+                                    height:styles.side.height,
+                                    width:styles.side.width,
+                                }
+                            }></div>
+                            <div className={"side2"} style={
+                                {
+                                    height:styles.side.height,
+                                    width:styles.side.width,
+                                    left:styles.side.left
+                                }
+                            }></div>
+                        </div>
+                    
+                        {/* top scroll */}
+                        <div className={"scrollUpper"} data-key={i} onClick={this.scrollDocument} style={
                             {
-                                height:styles.side.height,
-                                width:styles.side.width,
-                                left:styles.side.left
+                                height:styles.upper.height,
+                                width:styles.upper.width,
+                                top:styles.upper.top1,
+                                left:styles.upper.left,
+                            }
+                        }>
+                            <div className={"scrollTexture"} style={
+                                {
+                                    height:styles.texture.height,
+                                    width:styles.texture.width,
+                                    left:styles.texture.left,
+                                }
+                            }>
+                                <span>{item.title}</span>
+                                <div className={"side1"} style={
+                                    {
+                                        height:styles.sideTexture.height,
+                                        width:styles.sideTexture.width,
+                                    }
+                                }></div>
+                                <div className={"side2"} style={
+                                    {
+                                        height:styles.sideTexture.height,
+                                        width:styles.sideTexture.width,
+                                        left:styles.sideTexture.left
+                                    }
+                                }></div>
+                            </div>
+                        </div>
+                        <img className={"scrollSide"} src={leftsideScroll} alt={"side-scroll"} style={
+                            {
+                                height:styles.scrollSide.height,
+                                width:styles.scrollSide.width,
+                                top:styles.scrollSideTop,
+                                left:styles.scrollSide.left1,
+                            }
+                        }></img>
+                        <img className={"scrollSide"} src={rightsideScroll} alt={"side-scroll"} style={
+                            {
+                                height:styles.scrollSide.height,
+                                width:styles.scrollSide.width,
+                                top:styles.scrollSideTop,
+                                left:styles.scrollSide.left2,
+                            }
+                        }></img>
+                        {/* bottom scroll */}
+                        <div className={"scrollUpper"} data-key={i} onClick={this.scrollDocument} style={
+                            {
+                                height:styles.upper.height,
+                                width:styles.upper.width,
+                                top:styles.upper.top2,
+                                left:styles.upper.left,
+                            }
+                        }>
+                            <div className={"scrollTexture2"} style={
+                                {
+                                    height:styles.texture.height,
+                                    width:styles.texture.width,
+                                    left:styles.texture.left,
+                                }
+                            }>
+                                <div className={"side1"} style={
+                                    {
+                                        height:styles.sideTexture.height,
+                                        width:styles.sideTexture.width,
+                                    }
+                                }></div>
+                                <div className={"side2"} style={
+                                    {
+                                        height:styles.sideTexture.height,
+                                        width:styles.sideTexture.width,
+                                        left:styles.sideTexture.left
+                                    }
+                                }></div>
+                            </div>
+                        </div>
+                        <img className={"scrollSide"} src={leftsideScroll} alt={"side-scroll"} style={
+                            {
+                                height:styles.scrollSide.height,
+                                width:styles.scrollSide.width,
+                                top:styles.scrollSideBottom,
+                                left:styles.scrollSide.left1,
+                            }
+                        }></img>
+                        <img className={"scrollSide"} src={rightsideScroll} alt={"side-scroll"} style={
+                            {
+                                height:styles.scrollSide.height,
+                                width:styles.scrollSide.width,
+                                top:styles.scrollSideBottom,
+                                left:styles.scrollSide.left2,
+                            }
+                        }></img>
+                        <div className={"document-separator"} style={
+                            {
+                                height:this.state.documentSeparatorBox.height,
+                                top:this.state.documentContainerBox.height-this.state.documentSeparatorBox.height,
                             }
                         }></div>
                     </div>
+                )}
                 
-                    {/* top scroll */}
-                    <div className={"scrollUpper"} style={
-                        {
-                            height:styles.upper.height,
-                            width:styles.upper.width,
-                            top:styles.upper.top1,
-                            left:styles.upper.left,
-                        }
-                    }>
-                        <div className={"scrollTexture"} style={
-                            {
-                                height:styles.texture.height,
-                                width:styles.texture.width,
-                                left:styles.texture.left,
-                            }
-                        }>
-                            <span>A random document</span>
-                            <div className={"side1"} style={
-                                {
-                                    height:styles.sideTexture.height,
-                                    width:styles.sideTexture.width,
-                                }
-                            }></div>
-                            <div className={"side2"} style={
-                                {
-                                    height:styles.sideTexture.height,
-                                    width:styles.sideTexture.width,
-                                    left:styles.sideTexture.left
-                                }
-                            }></div>
-                        </div>
-                    </div>
-                    <img className={"scrollSide"} src={leftsideScroll} alt={"side-scroll"} style={
-                        {
-                            height:styles.scrollSide.height,
-                            width:styles.scrollSide.width,
-                            top:styles.scrollSideTop,
-                            left:styles.scrollSide.left1,
-                        }
-                    }></img>
-                    <img className={"scrollSide"} src={rightsideScroll} alt={"side-scroll"} style={
-                        {
-                            height:styles.scrollSide.height,
-                            width:styles.scrollSide.width,
-                            top:styles.scrollSideTop,
-                            left:styles.scrollSide.left2,
-                        }
-                    }></img>
-                    {/* bottom scroll */}
-                    <div className={"scrollUpper"} style={
-                        {
-                            height:styles.upper.height,
-                            width:styles.upper.width,
-                            top:styles.upper.top2,
-                            left:styles.upper.left,
-                        }
-                    }>
-                        <div className={"scrollTexture2"} style={
-                            {
-                                height:styles.texture.height,
-                                width:styles.texture.width,
-                                left:styles.texture.left,
-                            }
-                        }>
-                            <div className={"side1"} style={
-                                {
-                                    height:styles.sideTexture.height,
-                                    width:styles.sideTexture.width,
-                                }
-                            }></div>
-                            <div className={"side2"} style={
-                                {
-                                    height:styles.sideTexture.height,
-                                    width:styles.sideTexture.width,
-                                    left:styles.sideTexture.left
-                                }
-                            }></div>
-                        </div>
-                    </div>
-                    <img className={"scrollSide"} src={leftsideScroll} alt={"side-scroll"} style={
-                        {
-                            height:styles.scrollSide.height,
-                            width:styles.scrollSide.width,
-                            top:styles.scrollSideBottom,
-                            left:styles.scrollSide.left1,
-                        }
-                    }></img>
-                    <img className={"scrollSide"} src={rightsideScroll} alt={"side-scroll"} style={
-                        {
-                            height:styles.scrollSide.height,
-                            width:styles.scrollSide.width,
-                            top:styles.scrollSideBottom,
-                            left:styles.scrollSide.left2,
-                        }
-                    }></img>
-                    <div className={"document-separator"} style={
-                        {
-                            height:this.state.documentSeparatorBox.height,
-                            top:this.state.documentContainerBox.height-this.state.documentSeparatorBox.height,
-                        }
-                    }></div>
-                </div>
             </div>
         );
     }
