@@ -1,0 +1,133 @@
+@font-face {
+    font-family: 'Roboto-Medium';
+    font-style: normal;
+    font-weight: normal;
+    src: url("../../../assets/Fonts/Roboto-Medium.ttf");
+}
+@font-face {
+    font-family: 'Roboto-Light';
+    font-style:italic;
+    font-weight: normal;
+    src: url("../../../assets/Fonts/Roboto-LightItalic.ttf");
+}
+@font-face {
+    font-family: 'Roboto';
+    font-style:italic;
+    font-weight: bold;
+    src: url("../../../assets/Fonts/Roboto-BoldItalic.ttf");
+}
+@font-face {
+    font-family: 'Roboto';
+    font-style:normal;
+    font-weight: normal;
+    src: url("../../../assets/Fonts/Roboto-Regular.ttf");
+}
+
+#Navbar{
+    top:0px;
+    left:0px;
+    position: absolute;
+    background-color: #AD5F39;
+    z-index:4
+}
+
+.separation-bar{
+    position: absolute;
+    height: 1px;
+    border-radius: 1px;
+    background-color: white;
+    border: 1px solid white;
+}
+/* --------------------> Account-information section <-------------------- */
+#Account-information{
+    position: absolute;
+    top:0px;
+    left:0px;
+}
+#image-account{
+    position: absolute;
+}
+#username-text{
+    position: absolute;
+    font-size: 1.5vw;
+    font-family: "Roboto-Medium";
+    color:white;
+    text-align: center;
+}
+
+/* --------------------> Search-bar section <-------------------- */
+#Search-bar{
+    left:0px;
+    position: absolute;
+}
+
+#Search-bar-text{
+    position: absolute;
+    background-color: lightgray;
+    color: #303030;
+    resize: none;
+    font-family: 'Roboto-Light';
+    font-style: italic;
+    text-align: center;
+    white-space: nowrap;
+    overflow-x: scroll;
+    -ms-overflow-style: none;
+    border:10px solid lightgray;
+    z-index: 5;
+}
+#Search-bar-text::-webkit-scrollbar {
+    display: none;
+}
+#Search-bar-text:hover, #Search-bar-text:active, #Search-bar-text:focus{
+    outline:0px !important;
+    -webkit-appearance:none;
+    box-shadow: none !important;
+}
+
+/* --------------------> Icons section <-------------------- */
+#Icons{
+    left:0px;
+    position: absolute;
+}
+
+.icon-navbar{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.icon-image{
+    margin-right: 20px;
+    z-index: 5;
+}
+
+.icon-text{
+    font-family: 'Roboto';
+    font-style:italic;
+    font-weight: bold;
+    color:white;
+    z-index: 5;
+}
+
+.icon-scroll-body{
+    position: absolute;
+    background-color: #C4281E;
+    transition: left 0.6s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-scroll-body .hover-text{
+    font-family: 'Roboto';
+    color:white;
+}
+
+.icon-scroll-head{
+    position: absolute;
+    background-color: #99241C;
+    border-radius: 5px;
+    transition: left 0.6s ease-in-out;
+}
+

@@ -1,0 +1,240 @@
+#knowledge{
+    width:100%;
+    height: 100%;
+    background-color: #FCDDA1;
+    position: absolute;
+    top:0;
+    left:0;
+}
+
+#knowledge-chair, #bookshelf, .beam, #beam, .window, .railing, #librarian, #knowledge-lantern, #knowledge-hover{
+    position: absolute;
+}
+
+.beam{
+    background-color: #784027;
+}
+
+#beam{
+    width:100%;
+    height: 100%;
+}
+
+.window{
+    background-color: white;
+}
+
+.railing{
+    background-color: #282828;
+}
+
+.railing .vertical, #knowledge-lantern{
+    top:0;
+}
+
+.railing .horizontal{
+    left:0;
+}
+
+#knowledge-hover{
+    background-color:rgba(191,0,255,0.2);
+}
+
+/* popover dialog */
+#popover-librarian-dialog .popover-body div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
+#popover-librarian-dialog .popover-body textarea {
+    width: 300px;
+    height: 70px;
+	border: 5px solid lightgray;
+    color: #303030;
+	background-color: lightgray;
+	box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    border-radius: 25px 0 0 0;
+    font-size: 11pt;
+    line-height:70px;
+    text-align: center;
+    white-space: nowrap;
+    resize: none;
+    -ms-overflow-style: none;
+}
+#popover-librarian-dialog .popover-body textarea::-webkit-scrollbar {
+    display: none;
+}
+#popover-librarian-dialog .popover-body textarea:hover, #popover-librarian-dialog .popover-body textarea:active, #popover-librarian-dialog .popover-body textarea:focus{
+    outline:0px !important;
+    -webkit-appearance:none;
+    box-shadow: none !important;
+}
+
+#popover-librarian-dialog .popover-body button {
+	padding: 10px 0px;
+    margin-left:10px;
+    width: 70px;
+    height: 84px;
+	float: right;
+	border: none;
+	border: 1px solid lightgray;
+	background: lightgray;
+	box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+	font-size: 11pt;
+	text-align: center;
+	border-radius: 0 25px 25px 0;
+    color: #303030;
+    
+    outline: 0 none;
+}
+
+#popover-librarian-dialog .popover-body div button:hover{
+	border-color: #ffffff;
+	background: #ffffff;
+    color: #303030;
+}
+
+#popover-librarian-dialog .popover-body div button:active{
+	border-color: rgba(255,255,255,0.9);
+	background: rgba(255,255,255,0.9);
+	color: #303030;
+	box-shadow: none;
+	-webkit-transform: translateY(1px);
+	-moz-transform: translateY(1px);
+	-o-transform: translateY(1px);
+	-ms-transform: translateY(1px);
+	transform: translateY(1px);
+}
+
+/* popover waiting */
+#popover-librarian-waiting .popover-body div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
+#popover-librarian-waiting .popover-body div span{
+    margin-left: 15px;
+    color: white;
+    font-family: "Roboto";
+}
+
+/* popover answering */
+#librarian-answering-list{
+    color:white;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: calc(100% - 10px);
+    overflow-y: scroll;
+    overflow-x: hidden;
+    direction: rtl;
+    flex-direction: column;
+    padding-bottom: 10px;
+}
+
+.librarian-answering-item{
+    margin-top:20px;
+    direction: ltr;
+    width:350px;
+    height:auto;
+    display: flex;
+    flex-direction: row;
+    color:black;
+}
+
+.librarian-answering-item-number{
+    position: relative;
+    top:5px;
+    left:5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    font-family: 'Roboto';
+    font-weight: bold;
+    font-size: 16px;
+    overflow:hidden;
+    width: 30px;
+    height: 30px;
+    transition-property:color;
+    background-color: rgb(219, 114, 114);
+}
+
+.librarian-answering-item-info{
+    background-color: rgb(219, 114, 114);
+    height: auto;
+    width:275px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    transition-property:box-shadow, color;
+    transition-duration: 0.3s;
+}
+
+.librarian-answering-item-info span{
+    margin-left: 25px;
+    min-height: 5px;
+    max-width:225px;
+}
+
+.librarian-answering-item-info-title{
+    margin-top:5px;
+    font-size: 14px;
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: bold;
+}
+.librarian-answering-item-info-keywords{
+    margin-top:5px;
+    font-size: 12px;
+    font-family: 'Roboto-Light';
+    font-style: italic;
+}
+.librarian-answering-item-info-format{
+    margin-top:5px;
+    margin-bottom:5px;
+    font-size: 12px;
+    font-family: 'Roboto-Medium';
+}
+
+.librarian-answering-item-info:hover{
+    background-color: rgb(214, 165, 165);
+    box-shadow: 0px 0px 10px 5px rgba(0,0,0,0.4);
+}
+
+.librarian-answering-item-number:hover{
+    background-color: rgb(214, 165, 165);
+}
+
+#librarian-answering-list::-webkit-scrollbar-track
+{
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.9);
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.9);
+	border-radius: 10px;
+	background-color: transparent;
+}
+
+#librarian-answering-list::-webkit-scrollbar
+{
+	width: 12px;
+	background-color: rgba(255,255,255,0.2);
+}
+
+#librarian-answering-list::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	background-color: rgb(219, 114, 114);
+	background-image: -webkit-linear-gradient(90deg,
+											  transparent,
+											  rgba(0, 0, 0, 0.4) 50%,
+											  transparent,
+											  transparent)
+}

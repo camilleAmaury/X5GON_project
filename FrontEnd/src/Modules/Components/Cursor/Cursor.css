@@ -1,0 +1,16 @@
+html,body{
+    cursor:url('../../../assets/cursor.png') 5 5, pointer;
+}
+
+#cursor-circle{
+    border-radius: 25px;
+    position: absolute;
+    z-index: 4;
+    pointer-events: none;
+    border:2px solid red;
+}
+
+.hover-cursor{
+    background-image: radial-gradient( rgba(255,255,255,0.2), rgba(39,46,52,0.2));
+    border:2px solid red;
+}
