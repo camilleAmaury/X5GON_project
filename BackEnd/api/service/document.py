@@ -9,8 +9,9 @@ def build_document_schema(document):
     mod['graph_ref'] = document.graph_ref
     return mod
 
-def get_all_document_evaluations(document_id):
-    document = Document.query.get(document_id)
+def get_all_document_evaluations(graph_ref):
+    document = Document.query.filter_by(graph_ref=graph_ref).first()
+
     if not document:
         abort(make_response(jsonify({
             "errors":{

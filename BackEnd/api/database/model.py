@@ -16,7 +16,7 @@ class User(db.Model):
     password = db.Column(db.String())
     opened_documents = db.relationship("Document", secondary=user_opened_documents)
     scholar_questions = db.relationship('ScholarQuestion', backref='users', lazy=True)
-    document_evaluations = db.relationship('DocumentEvaluation', backref='users', lazy=True)
+    document_evaluations = db.relationship('Evaluation', backref='users', lazy=True)
 
     def __init__(self, username, password):
         self.username = username
@@ -66,7 +66,7 @@ class Document(db.Model):
 
     document_id = db.Column(db.Integer, primary_key=True)
     graph_ref = db.Column(db.String(), unique=True, nullable=False, index=True)
-    user_evaluations = db.relationship('DocumentEvaluation', backref='documents', lazy=True)
+    user_evaluations = db.relationship('Evaluation', backref='documents', lazy=True)
 
     def add_user_evaluation(self, user_evaluation):
         self.user_evaluations.append(user_evaluation)
@@ -85,11 +85,11 @@ class ScholarQuestion(db.Model):
     answer = db.Column(db.String())
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
 
-class DocumentEvaluation(db.Model):
-    __tablename__ = 'document_evaluations'
+class Evaluation(db.Model):
+    __tablename__ = 'evaluations'
 
     evaluation_id = db.Column(db.Integer, primary_key=True)
     comprehension_rating = db.Column(db.Integer)
     quality_rating = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    document_id = db.Column(db.Integer, db.ForeignKey('documents.document_id'))
+    document_ref = db.Column(db.Integer, db.ForeignKey('documents.graph_ref'))

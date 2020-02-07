@@ -1,7 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import gen_salt
 
-from .model import User, Document, user_opened_documents, ScholarQuestion, DocumentEvaluation
+from .model import User, Document, user_opened_documents, ScholarQuestion, Evaluation
 
 def db_admin(app, db):
 
@@ -9,7 +9,7 @@ def db_admin(app, db):
     def create_tables():
         engine = db.session.get_bind()
         ScholarQuestion.__table__.create(bind=engine, checkfirst=True)
-        DocumentEvaluation.__table__.create(bind=engine, checkfirst=True)
+        Evaluation.__table__.create(bind=engine, checkfirst=True)
         user_opened_documents.create(bind=engine, checkfirst=True)
         User.__table__.create(bind=engine, checkfirst=True)
         Document.__table__.create(bind=engine, checkfirst=True)
@@ -22,5 +22,5 @@ def db_admin(app, db):
         User.__table__.drop(bind=engine)
         Document.__table__.drop(bind=engine)
         ScholarQuestion.__table__.drop(bind=engine)
-        DocumentEvaluation.__table__.drop(bind=engine)
+        Evaluation.__table__.drop(bind=engine)
         db.session.commit()

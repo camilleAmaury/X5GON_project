@@ -8,21 +8,21 @@ from .evaluation import evaluation_schema
 api = Namespace('documents', description='Documents operations')
 
 document_schema = api.model('Document', {
-    'document_id': fields.Integer(required=False, description='ID of the document', readonly=True),
+    'graph_ref': fields.Integer(required=False, description='ID of the document', readonly=True),
     'graph_ref': fields.String(required=True, description='Reference of the document in graph')
 })
 
-@api.route("/<int:document_id>/evaluations")
+@api.route("/<string:graph_ref>/evaluations")
 class DocumentEvaluationsRoute(Resource):
     @api.marshal_with(evaluation_schema, as_list=True)
     @api.doc(responses={
         200: 'Active document evaluations list',
         409: 'Conflict, document not exist'
     })
-    def get(self, document_id):
-        return get_all_document_evaluations(document_id)
+    def get(self, graph_ref):
+        return get_all_document_evaluations(graph_ref)
 
-@api.route("/<int:document_id>/evaluations/<int:user_id>")
+@api.route("/<string:graph_ref>/evaluations/<int:user_id>")
 class DocumentEvaluationRoute(Resource):
 
     @api.marshal_with(evaluation_schema)
@@ -32,13 +32,13 @@ class DocumentEvaluationRoute(Resource):
         409: 'Conflict, this evaluation not exist',
         422: 'Validation Error'
     })
-    def get(self, document_id, user_id):
-        return get_evaluation(user_id=user_id, document_id=document_id)
+    def get(self, graph_ref, user_id):
+        return get_evaluation(user_id=user_id, document_ref=graph_ref)
 
     @api.doc(responses={
         201: 'Evaluation successfully deleted from document',
         409: 'Conflict, user not exist / document not exist / evaluation not exist',
     })
-    def delete(self, document_id, user_id):
-        remove_evaluation(user_id=user_id, document_id=document_id)
+    def delete(self, graph_ref, user_id):
+        remove_evaluation(user_id=user_id, document_ref=graph_ref)
         return '', 201

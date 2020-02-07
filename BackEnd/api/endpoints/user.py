@@ -41,8 +41,10 @@ class UsersRoute(Resource):
 class UserRoute(Resource):
 
     @api.marshal_with(user_schema)
-    @api.response(200, 'User info')
-    @api.doc()
+    @api.doc(responses={
+        200: 'User info',
+        409: 'Conflict, user not found'
+    })
     def get(self, user_id):
         return get_user(user_id)
 
@@ -81,10 +83,10 @@ class UserOpenedDocumentsRoute(Resource):
         409: 'Conflict, user not exist',
         422: 'Validation Error'
     })
+    @api.marshal_with(document_schema)
     def post(self, user_id):
         validator.validate_payload(request.json, document_schema)
-        add_opened_document(user_id=user_id, graph_ref=request.json.get('graph_ref'))
-        return '', 201
+        return add_opened_document(user_id=user_id, graph_ref=request.json.get('graph_ref')), 201
 
 @api.route("/<int:user_id>/opened_documents/<string:graph_ref>")
 class UserOpenedDocumentRoute(Resource):
@@ -123,10 +125,10 @@ class UserScholarQuestionsRoute(Resource):
         409: 'Conflict, user not exist',
         422: 'Validation Error'
     })
+    @api.marshal_with(scholar_question_schema)
     def post(self, user_id):
         validator.validate_payload(request.json, scholar_question_schema)
-        add_user_question(user_id=user_id, data=request.json)
-        return '', 201
+        return add_user_question(user_id=user_id, data=request.json), 201
 
 @api.route("/<int:user_id>/scholar_questions/<int:question_id>")
 class UserScholarQuestionRoute(Resource):
@@ -135,8 +137,7 @@ class UserScholarQuestionRoute(Resource):
     @api.response(200, 'User info')
     @api.doc(responses={
         200: 'Question info',
-        409: 'Conflict, user not exist / question not exist / user never ask this question',
-        422: 'Validation Error'
+        409: 'Conflict, user not exist / question not exist / user never ask this question'
     })
     def get(self, user_id, question_id):
         return get_user_question(user_id=user_id, question_id=question_id)
@@ -159,7 +160,7 @@ class UserEvaluationsRoute(Resource):
     def get(self, user_id):
         return get_all_user_evaluations(user_id)
 
-@api.route("/<int:user_id>/evaluations/<int:document_id>")
+@api.route("/<int:user_id>/evaluations/<string:document_ref>")
 class UserEvaluationRoute(Resource):
 
     @api.marshal_with(evaluation_schema)
@@ -169,13 +170,13 @@ class UserEvaluationRoute(Resource):
         409: 'Conflict, this evaluation not exist',
         422: 'Validation Error'
     })
-    def get(self, user_id, document_id):
-        return get_evaluation(user_id=user_id, document_id=document_id)
+    def get(self, user_id, document_ref):
+        return get_evaluation(user_id=user_id, document_ref=document_ref)
 
     @api.doc(responses={
         201: 'Evaluation successfully deleted from user',
         409: 'Conflict, user not exist / document not exist / evaluation not exist',
     })
-    def delete(self, user_id, document_id):
-        remove_evaluation(user_id=user_id, document_id=document_id)
+    def delete(self, user_id, document_ref):
+        remove_evaluation(user_id=user_id, document_ref=document_ref)
         return '', 201

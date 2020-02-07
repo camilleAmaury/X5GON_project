@@ -2,7 +2,7 @@ from flask import current_app, abort, jsonify, make_response
 from sqlalchemy import exc
 
 from api.database import db
-from api.database.model import User, Document, ScholarQuestion, DocumentEvaluation
+from api.database.model import User, Document, ScholarQuestion
 from .authentication import generate_auth_token
 from .document import build_document_schema
 from .scholar_question import build_scholar_question_schema
@@ -17,6 +17,13 @@ def build_user_schema(user):
 
 def get_user(user_id):
     user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found by the id"
+            },
+            "message":"User not found"
+        }), 409))
     return build_user_schema(user)
 
 def get_user_by_name(username):
@@ -174,7 +181,7 @@ def add_opened_document(user_id, graph_ref):
         user.add_opened_document(document)
         db.session.commit()
 
-    return True
+    return build_document_schema(document)
 
 def remove_opened_document(user_id, graph_ref):
     user = User.query.get(user_id)
@@ -267,7 +274,7 @@ def add_user_question(user_id, data):
     db.session.flush()
     db.session.commit()
 
-    return True
+    return build_scholar_question_schema(question)
 
 def remove_user_question(user_id, question_id):
     user = User.query.get(user_id)
