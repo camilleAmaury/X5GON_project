@@ -2,9 +2,11 @@ from flask import current_app, abort, jsonify, make_response
 from sqlalchemy import exc
 
 from api.database import db
-from api.database.model import User, Document
+from api.database.model import User, Document, ScholarQuestion, DocumentEvaluation
 from .authentication import generate_auth_token
 from .document import build_document_schema
+from .scholar_question import build_scholar_question_schema
+from .evaluation import build_evaluation_schema
 
 
 def build_user_schema(user):
@@ -107,7 +109,7 @@ def check_user_auth(username, password):
         }), 403))
     return generate_auth_token(user)
 
-def get_all_knowledges(user_id):
+def get_all_opened_documents(user_id):
     user = User.query.get(user_id)
     if not user:
         abort(make_response(jsonify({
@@ -117,14 +119,14 @@ def get_all_knowledges(user_id):
             "message":"User not found"
         }), 409))
 
-    arr_knowledges = []
-    knowledges = user.get_knowledges()
-    for knowledge in knowledges:
-        mod = build_document_schema(knowledge)
-        arr_knowledges.append(mod)
-    return arr_knowledges
+    arr_opened_documents = []
+    opened_documents = user.get_opened_documents()
+    for opened_document in opened_documents:
+        mod = build_document_schema(opened_document)
+        arr_opened_documents.append(mod)
+    return arr_opened_documents
 
-def get_knowledge(user_id, document_id):
+def get_opened_document(user_id, graph_ref):
     user = User.query.get(user_id)
     if not user:
         abort(make_response(jsonify({
@@ -133,7 +135,7 @@ def get_knowledge(user_id, document_id):
             },
             "message":"User not found"
         }), 409))
-    document = Document.query.get(document_id)
+    document = Document.query.filter_by(graph_ref=graph_ref).first()
     if not document:
         abort(make_response(jsonify({
             "errors":{
@@ -141,17 +143,17 @@ def get_knowledge(user_id, document_id):
             },
             "message":"Document not found"
         }), 409))
-    if not (document in user.get_knowledges()):
+    if not (document in user.get_opened_documents()):
         abort(make_response(jsonify({
             "errors":{
-                0:"User don't know this document"
+                0:"User don't have opened this document"
             },
-            "message":"User don't know this document"
+            "message":"User don't have opened this document"
         }), 409))
 
     return build_document_schema(document)
 
-def add_knowledge(user_id, document_id):
+def add_opened_document(user_id, graph_ref):
     user = User.query.get(user_id)
     if not user:
         abort(make_response(jsonify({
@@ -160,27 +162,21 @@ def add_knowledge(user_id, document_id):
             },
             "message":"User not found"
         }), 409))
-    document = Document.query.get(document_id)
+    document = Document.query.filter_by(graph_ref=graph_ref).first()
     if not document:
-        abort(make_response(jsonify({
-            "errors":{
-                0:"Document not found"
-            },
-            "message":"Document not found"
-        }), 409))
-    if document in user.get_knowledges():
-        abort(make_response(jsonify({
-            "errors":{
-                0:"User already know this document"
-            },
-            "message":"User already know this document"
-        }), 409))
+        document = Document(
+            graph_ref=graph_ref
+        )
+        db.session.add(document)
+        db.session.flush()
+        db.session.commit()
+    if not (document in user.get_opened_documents()):
+        user.add_opened_document(document)
+        db.session.commit()
 
-    user.add_knowledge(document)
-    db.session.commit()
     return True
 
-def remove_knowledge(user_id, document_id):
+def remove_opened_document(user_id, graph_ref):
     user = User.query.get(user_id)
     if not user:
         abort(make_response(jsonify({
@@ -189,7 +185,7 @@ def remove_knowledge(user_id, document_id):
             },
             "message":"User not found"
         }), 409))
-    document = Document.query.get(ducument_id)
+    document = Document.query.filter_by(graph_ref=graph_ref).first()
     if not document:
         abort(make_response(jsonify({
             "errors":{
@@ -197,14 +193,125 @@ def remove_knowledge(user_id, document_id):
             },
             "message":"Document not found"
         }), 409))
-    if not (document in user.get_knowledges()):
+    if not (document in user.get_opened_documents()):
         abort(make_response(jsonify({
             "errors":{
-                0:"User don't know this document"
+                0:"User never opened this document"
             },
-            "message":"User don't know this document"
+            "message":"User never opened this document"
         }), 409))
 
-    user.remove_knowledge(document)
+    user.remove_opened_document(document)
     db.session.commit()
     return True
+
+def get_all_user_questions(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+
+    arr_scholar_questions = []
+    scholar_questions = user.get_scholar_questions()
+    for scholar_question in scholar_questions:
+        mod = build_scholar_question_schema(scholar_question)
+        arr_scholar_questions.append(mod)
+    return arr_scholar_questions
+
+def get_user_question(user_id, question_id):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+    question = ScholarQuestion.query.get(question_id)
+    if not question:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"Question not found"
+            },
+            "message":"Question not found"
+        }), 409))
+    if not (question in user.get_scholar_questions()):
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User didn't ask this question"
+            },
+            "message":"User didn't ask this question"
+        }), 409))
+
+    return build_scholar_question_schema(question)
+
+def add_user_question(user_id, data):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+    question = ScholarQuestion(
+        question=data.get('question'),
+        answer=data.get('answer'),
+        user_id=user_id
+    )
+    db.session.add(question)
+    db.session.flush()
+    db.session.commit()
+
+    return True
+
+def remove_user_question(user_id, question_id):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+    question = ScholarQuestion.query.get(question_id)
+    if not question:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"Question not found"
+            },
+            "message":"Question not found"
+        }), 409))
+    if not (question in user.get_scholar_questions()):
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User never ask this question"
+            },
+            "message":"User never ask this question"
+        }), 409))
+
+    user.remove_scholar_question(question)
+    db.session.delete(question)
+    db.session.commit()
+    return True
+
+def get_all_user_evaluations(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+
+    arr_document_evaluations = []
+    document_evaluations = user.get_document_evaluations()
+    for document_evaluation in document_evaluations:
+        mod = build_evaluation_schema(document_evaluation)
+        arr_document_evaluations.append(mod)
+    return arr_document_evaluations
