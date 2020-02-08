@@ -1,12 +1,12 @@
 from flask_restplus import Api
 import io
-from .search import api as search_api
-from .askquestion import api as askquestion_api
-from .prerequisites import api as prerequisites_api
-from .register import api as register_api
-from .login import api as login_api
-from .like import api as like_api
-from .difficulty import api as difficulty_api
+from .graph.search import api as search_api
+from .graph.askquestion import api as askquestion_api
+from .graph.prerequisites import api as prerequisites_api
+from .graph.register import api as register_api
+from .graph.login import api as login_api
+from .graph.like import api as like_api
+from .graph.difficulty import api as difficulty_api
 
 api = Api(
     title='X5GON API',
