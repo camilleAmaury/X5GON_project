@@ -3,3 +3,10 @@ BackEnd/endpoints/__pycache__/
 BackEnd/endpoints/bert/
 BackEnd/endpoints/wwm_uncased_L-24_H-1024_A-16/
 BackEnd/endpoints/data/
+BackEnd/__pycache__/
+BackEnd/api/database/__pycache__/
+BackEnd/api/endpoints/__pycache__/
+BackEnd/api/endpoints/database/__pycache__/
+BackEnd/api/endpoints/graph/__pycache__/
+BackEnd/api/service/__pycache__/
+BackEnd/api/utils/__pycache__/
