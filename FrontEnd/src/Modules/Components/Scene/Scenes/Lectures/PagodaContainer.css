@@ -1,0 +1,57 @@
+/* Scrolling changing button */
+.changeButton-two{
+    position: absolute;
+    background-color: #F8725D;
+    border-radius: 0px 30px 30px 0px;
+    transition: top 1.5s;
+    -webkit-user-select: none;  /* Chrome all / Safari all */
+    -moz-user-select: none;     /* Firefox all */
+    -ms-user-select: none;      /* IE 10+ */
+    user-select: none; 
+    left:0
+}
+
+.changeButton-two:hover{
+    background-color: rgb(253, 138, 120);
+    box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.3);
+}
+
+.changeButton-two .img{
+    position: absolute;
+}
+
+
+/* pagoda container */
+.pagoda-container{
+    overflow: hidden;
+    position: absolute;
+    top:0;
+}
+
+.pagoda-container .verticalBeam{
+    position: absolute;
+    top:0;
+    background-color: #784027;
+}
+
+.pagoda-container .horizontalBeam{
+    position: absolute;
+    background-color: #784027;
+}
+
+.pagoda-container .table{
+    position: absolute;
+}
+
+.pagoda-container .encens{
+    position: absolute;
+}
+
+.pagoda-container .pagoda{
+    position: absolute;
+}
+
+.pagoda-container .floor{
+    position: absolute;
+}
+

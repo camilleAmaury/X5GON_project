@@ -1,0 +1,111 @@
+.document-container{
+    overflow: hidden;
+    position: absolute;
+    top:0;
+}
+
+.document-separator{
+    width: 100%;
+    background-color: #8F573E;
+    position: absolute;
+}
+
+.document-container .scrollSide{
+    position: absolute;
+}
+.document-container .scrollUpper{
+    position: absolute;
+    background-color: #BF1800;
+}
+.document-container .scrollTexture{
+    position: absolute;
+    background-size: 100%;
+    background-position-y:150px;
+    background-image: url('../../../../../assets/Panel/Scene/Lectures/scrollTexture.png');
+    background-repeat: repeat-y;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.3);
+    border-radius: 10px;
+}
+.document-container .scrollTexture span{
+    font-family: 'Roboto';
+    font-size: 25px;
+}
+.document-container .scrollTexture2{
+    position: absolute;
+    background-size: 100%;
+    background-image: url('../../../../../assets/Panel/Scene/Lectures/scrollTexture.png');
+    background-repeat: repeat-y;
+    box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.3);
+    border-radius: 10px;
+}
+
+.document-container .scroll-center{
+    box-shadow: 0px 0px 2px 1px rgba(0,0,0,0.3);
+    position: absolute;
+    background-color: rgb(236, 194, 143);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.document-container .scroll-center .lectures-corpus{
+    overflow-y:scroll;
+    border: 1px solid black;
+    scroll-behavior: auto;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+}
+.document-container .scroll-center .lectures-corpus::-webkit-scrollbar { width: 0 !important }
+
+.document-container .scroll-center .lectures-corpus span{
+    line-height: 26px;
+    font-size: 20px;
+    white-space: pre-line;
+    position: relative;
+}
+
+.document-container .side1{
+    position: absolute;
+    background: linear-gradient(-0.25turn, #B38959 66%, #5F3403 100%);
+    top:0;
+    left:0;
+}
+.document-container .side2{
+    position: absolute;
+    background: linear-gradient(0.25turn, #B38959 66%, #5F3403 100%);
+    top:0;
+}
+
+
+/* Scrolling changing button */
+.changeButton{
+    position: absolute;
+    background-color: #F8725D;
+    border-radius: 30px 0px 0px 30px;
+    transition: top 1.5s;
+    -webkit-user-select: none;  /* Chrome all / Safari all */
+    -moz-user-select: none;     /* Firefox all */
+    -ms-user-select: none;      /* IE 10+ */
+    user-select: none; 
+}
+
+.changeButton:hover{
+    background-color: rgb(253, 138, 120);
+    box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.3);
+}
+
+.changeButton .img{
+    position: absolute;
+}
+.changeButton .shadow{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top:0;
+    left: 0;
+    transition:background-color 1.5s;
+    border-radius: 30px 0px 0px 30px;
+}

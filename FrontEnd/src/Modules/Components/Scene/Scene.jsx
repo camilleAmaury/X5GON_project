@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import Knowledge from './Scenes/Knowledge';
-import Lectures from './Scenes/Lectures';
+import Lectures from './Scenes/Lectures/Lectures';
 
 import './Scene.css';
 
