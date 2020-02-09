@@ -20,9 +20,9 @@ export default class ScholarPopover extends Component {
                 height: 140
             },
             scrollTotalBox: {
-                width: 1250,
+                width: 1450,
                 height: 105,
-                topHeight: 90
+                topHeight: 75
             },
             scrollSideBox: {
                 width: 150,
@@ -82,22 +82,28 @@ export default class ScholarPopover extends Component {
             let gap = Math.floor(this.props.ratio * 40 / 2);
             obj.topScroll = {
                 width: obj.rightScroll.left - (obj.leftScroll.width + obj.leftScroll.left) + gap * 2,
-                height: Math.floor(this.props.ratio * this.state.scrollTotalBox.topHeight),
-                borderRadius: Math.floor(this.props.ratio * 35)
+                height: Math.floor(this.props.ratio * this.state.scrollTotalBox.topHeight)
             }
             obj.topScroll.top = obj.leftScroll.top + Math.floor((obj.leftScroll.height - obj.topScroll.height) / 2);
             obj.topScroll.left = obj.leftScroll.width + obj.leftScroll.left - gap;
+            // scroll texture
+            obj.topScrolltexture = {
+                width: Math.floor(obj.topScroll.width - 2*gap - obj.topScroll.width/10),
+                height: obj.topScroll.height + 10
+            }
+            obj.topScrolltexture.top = obj.topScroll.top - 5;
+            obj.topScrolltexture.left = Math.floor((obj.topScroll.width - obj.topScrolltexture.width)/2) + obj.topScroll.left;
         }
         // scroll corpus part
         if (true) {
             // corpus
             let gap = Math.floor(this.props.ratio * 80 / 2);
             obj.scroll = {
-                width: obj.topScroll.width - gap * 2,
+                width: obj.topScrolltexture.width - 2*gap,
                 height: Math.floor(this.props.ratio * this.state.scrollBox.height)
             }
             obj.scroll.top = obj.topScroll.top + Math.floor(obj.topScroll.height / 2);
-            obj.scroll.left = obj.topScroll.left + gap;
+            obj.scroll.left = obj.topScrolltexture.left + Math.floor((obj.topScrolltexture.width - obj.scroll.width)/2);
             // corpus side
             obj.scrollSide = {
                 width: Math.floor(this.props.ratio * this.state.scrollSideDecorationBox),
@@ -108,10 +114,10 @@ export default class ScholarPopover extends Component {
             let scrollwritting = 80;
             obj.scrollingCorpus = {
                 width: obj.scrollSide.left - obj.scrollSide.width,
-                height: obj.scroll.height - Math.floor(obj.topScroll.height / 2) - scrollwritting
+                height: obj.scroll.height - Math.floor(obj.topScroll.height / 2) - scrollwritting  - 20
             }
             obj.scrollingCorpus.left = obj.scrollSide.width;
-            obj.scrollingCorpus.top = Math.floor(obj.topScroll.height / 2);
+            obj.scrollingCorpus.top = Math.floor(obj.topScroll.height / 2) + 20;
             // writting corpus
             obj.writtingCorpus = {
                 width: obj.scrollingCorpus.width,
@@ -128,6 +134,8 @@ export default class ScholarPopover extends Component {
         this.setState({
             scholarState:0,
             corpusHoverEvent:false
+        }, () => {
+            document.getElementById("Scholar-scroll-ask").addEventListener("click", this.state.scholarState === 0 ? this.askQuestion : () => { });
         });
     }
 
@@ -138,12 +146,14 @@ export default class ScholarPopover extends Component {
             document.getElementById("Scholar-scroll-ask").removeEventListener("click", this.state.scholarState === 0 ? this.askQuestion : () => { });
             let chat = this.state.sessionChat;
             chat.push({ message: questionValue, scholar: "own" });
+            question.value = "";
             this.setState({
                 scholarState: 1,
                 sessionChat: chat
             }, () => {
                 axios.get(process.env.REACT_APP_SERVER + `askquestion/${question.value}`)
                     .then(request => {
+                        question.value = "";
                         let chat = this.state.sessionChat;
                         chat.push(
                             { message: "Well, it was a hard time to remember this ...", scholar: "scholar" },
@@ -156,6 +166,7 @@ export default class ScholarPopover extends Component {
                         });
                     })
                     .catch(error => {
+                        question.value = "";
                         let chat = this.state.sessionChat;
                         chat.push({ message: "I also have limits, I can clearly tell you that I don't know !", scholar: "scholar" });
                         this.setState({
@@ -165,6 +176,12 @@ export default class ScholarPopover extends Component {
                         });
                     });
             });
+        }
+    }
+
+    handleKeyEnter = event => {
+        if(event.key === 'Enter'){
+            this.askQuestion();
         }
     }
 
@@ -210,7 +227,7 @@ export default class ScholarPopover extends Component {
 
                 {this.state.isOpen ?
                     <Fragment>
-                        <div id={"Scholar-scroll"} onMouseOver={this.state.corpusHoverEvent ? this.isRead : () => {}} style={
+                        <div id={"Scholar-scroll"} onKeyPress={this.handleKeyEnter} onMouseOver={this.state.corpusHoverEvent ? this.isRead : () => {}} style={
                             {
                                 width: styles.scroll.width,
                                 height: styles.scroll.height,
@@ -265,8 +282,15 @@ export default class ScholarPopover extends Component {
                                 width: styles.topScroll.width,
                                 height: styles.topScroll.height,
                                 top: styles.topScroll.top,
-                                left: styles.topScroll.left,
-                                borderRadius: styles.topScroll.borderRadius + "px",
+                                left: styles.topScroll.left
+                            }
+                        }></div>
+                        <div id={"Scholar-scrollTop-texture"} style={
+                            {
+                                width: styles.topScrolltexture.width,
+                                height: styles.topScrolltexture.height,
+                                top: styles.topScrolltexture.top,
+                                left: styles.topScrolltexture.left
                             }
                         }></div>
                         <img className={"Scholar-scrollSide"} src={leftsideScroll} alt={"scroll-side"} style={

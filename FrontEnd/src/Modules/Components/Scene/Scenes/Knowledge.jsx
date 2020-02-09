@@ -48,7 +48,8 @@ export default class Knowledge extends Component {
             // 0 = asking, 1 = waiting, 2 = answering
             librarianState: 0,
             data: []
-        }
+        };
+        this.askQuestion = this.askQuestion.bind(this);
     }
 
     componentDidMount = () => {
@@ -173,77 +174,82 @@ export default class Knowledge extends Component {
     handleClick = () => {
         this.setState({
             isClicked: !this.state.isClicked,
-            librarianState:this.state.librarianState === 2 ? 0 : this.state.librarianState
+            librarianState: this.state.librarianState === 2 ? 0 : this.state.librarianState
         });
     }
 
-    askQuestion = () => {
+
+    ask = () => {
         // pass to a thinking state --> waiting for data
         let question = document.getElementById('question-knowledge');
         let questionValue = question.value.replace(" ", "%20").replace(",", "%20").replace(".", "%20").replace("\n", "%20");
         if (!(questionValue === null || questionValue === undefined || questionValue === "")) {
-            // this.props.handleLoading(this.props.data);
-            this.setState({
-                librarianState: 1,
-                data: []
-            }, () => {
-                axios.get(process.env.REACT_APP_SERVER + `search/${questionValue}`)
-                    .then(request => {
-                        let documents = JSON.parse(request.data);
-                        let data = this.state.data;
-                        let temp_data = [];
-                        for (let i = 0; i < documents.length; i++) {
-                            // check if the document exists in the API
-                            let documentId = documents[i][0];
-                            axios.get(`https://platform.x5gon.org/api/v1/oer_materials/${documentId}/contents/`)
-                                .then(request => {
-                                    if (request.status !== 204) {
-                                        temp_data.push({ id: documents[i][0], title: documents[i][1], format: documents[i][3], keywords: documents[i][2].split(",") });
-                                    }
-
-                                    if (i === documents.length - 1) {
-                                        this.setState({
-                                            data: temp_data
-                                        }, () => {
-                                            console.log(`${this.state.data.length} documents readables`)
-                                        });
-
-                                    }
-                                    if (i === documents.length - 1) {
-                                        this.setState({
-                                            data: temp_data,
-                                            count: this.state.count + 1
-                                        }, () => {
-                                            console.log(`${this.state.data.length} documents readables`)
-                                        });
-                                    }
-                                })
-                                .catch(error => {
-                                    console.log(error)
-                                    console.log("this doesn't work");
-                                });
-                        }
-                        this.setState({
-                            librarianState: 2,
-                            data: data
-                        }, () => {
-                            // this.props.handleNotification(this.props.data);
-                        });
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        let data = [
-                            { title: "No response for those keywords", author: "", keywords: [] }
-                        ];
-                        this.setState({
-                            librarianState: 2,
-                            data: data
-                        }, () => {
-                            // this.props.handleNotification(this.props.data);
-                        });
-                    });
-            });
+            this.askQuestion(questionValue);
         }
+    }
+    askQuestion = (value) => {
+        // this.props.handleLoading(this.props.data);
+        this.setState({
+            librarianState: 1,
+            data: [],
+            isClicked:true
+        }, () => {
+            axios.get(process.env.REACT_APP_SERVER + `search/${value}`)
+                .then(request => {
+                    let documents = JSON.parse(request.data);
+                    let data = this.state.data;
+                    let temp_data = [];
+                    for (let i = 0; i < documents.length; i++) {
+                        // check if the document exists in the API
+                        let documentId = documents[i][0];
+                        axios.get(`https://platform.x5gon.org/api/v1/oer_materials/${documentId}/contents/`)
+                            .then(request => {
+                                if (request.status !== 204) {
+                                    temp_data.push({ id: documents[i][0], title: documents[i][1], format: documents[i][3], keywords: documents[i][2].split(",") });
+                                }
+
+                                if (i === documents.length - 1) {
+                                    this.setState({
+                                        data: temp_data
+                                    }, () => {
+                                        console.log(`${this.state.data.length} documents readables`)
+                                    });
+
+                                }
+                                if (i === documents.length - 1) {
+                                    this.setState({
+                                        data: temp_data,
+                                        count: this.state.count + 1
+                                    }, () => {
+                                        console.log(`${this.state.data.length} documents readables`)
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.log(error)
+                                console.log("this doesn't work");
+                            });
+                    }
+                    this.setState({
+                        librarianState: 2,
+                        data: data
+                    }, () => {
+                        // this.props.handleNotification(this.props.data);
+                    });
+                })
+                .catch(error => {
+                    console.log(error)
+                    let data = [
+                        { title: "No response for those keywords", author: "", keywords: [] }
+                    ];
+                    this.setState({
+                        librarianState: 2,
+                        data: data
+                    }, () => {
+                        // this.props.handleNotification(this.props.data);
+                    });
+                });
+        });
     }
 
     render() {
@@ -386,7 +392,7 @@ export default class Knowledge extends Component {
                     isOpen={this.state.isClicked && this.props.isOpen && this.state.librarianState === 0} title={"Librarian"}>
                     <div>
                         <textarea id={"question-knowledge"} placeholder={"Type keywords to look for documents"}></textarea>
-                        <button onClick={this.askQuestion}>ask</button>
+                        <button onClick={this.ask}>ask</button>
                     </div>
                 </Popover>
 
@@ -400,7 +406,7 @@ export default class Knowledge extends Component {
                 <Popover id={"librarian-answering"} target={styles.librarian} ratio={1 / 2} side={"left"} size={{ width: 450, height: 300 }}
                     isOpen={this.state.isClicked && this.props.isOpen && this.state.librarianState === 2} title={"Librarian"}>
                     <div id={"librarian-answering-list"}>
-                        {this.state.data.map((item, i) => 
+                        {this.state.data.map((item, i) =>
                             <div className={"librarian-answering-item"} key={i} data-key={item.id}>
                                 <div className={"librarian-answering-item-number"}><span>{i}</span></div>
                                 <div className={"librarian-answering-item-info"}>

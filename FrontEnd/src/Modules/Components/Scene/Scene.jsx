@@ -38,7 +38,7 @@ export default class Scene extends Component {
                     left:styles.scene.left
                 }
             }>
-                <Knowledge isOpen={this.props.sceneOpened[1]} scene={styles.scene} ratio={this.props.ratio}></Knowledge>
+                <Knowledge isOpen={this.props.sceneOpened[1]} scene={styles.scene} ratio={this.props.ratio} setSearch={this.props.setSearch} ref={"knowledge"}></Knowledge>
                 <Lectures isOpen={this.props.sceneOpened[4]} scene={styles.scene} ratio={this.props.ratio}></Lectures>
 
             </div>

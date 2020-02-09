@@ -34,6 +34,8 @@ export default class Navbar extends Component {
             { text: "Lectures", icon: Icon5, IconHover: Icon5Hover, hover:"Retrieve Your document and improve yourself"  }];
         this.setState({
             icons: icons
+        }, () => {
+            document.getElementById("Navbar").addEventListener("keypress", this.askQuestion);
         });
     }
 
@@ -157,30 +159,27 @@ export default class Navbar extends Component {
         return obj;
     }
 
-    HoverIcon = event => {
-        let key = parseInt(event.target.dataset.key);
+    HoverIcon = (i, bool) => {
         let hover = [false, false, false, false, false];
-        hover[key] = true;
-        let circle = document.getElementById("cursor-circle");
-        if(!circle.classList.contains("hover-cursor")){
-            circle.classList.add("hover-cursor");
-        }
+        hover[i] = bool;
         this.setState({
             hoverIcon:hover
         });
     }
 
-    NonHoverIcon = event => {
-        let key = parseInt(event.target.dataset.key);
-        let hover = this.state.hoverIcon;
-        hover[key] = false;
-        let circle = document.getElementById("cursor-circle");
-        if(circle.classList.contains("hover-cursor")){
-            circle.classList.remove("hover-cursor");
+    askQuestion = event => {
+        if(event.key === 'Enter'){
+            let question = document.getElementById('Search-bar-text');
+            let questionValue = question.value.replace(" ", "%20").replace(",", "%20").replace(".", "%20").replace("\n", "%20");
+            if (!(questionValue === null || questionValue === undefined || questionValue === "")) {
+                this.props.knowledgeSearch(questionValue);
+                setTimeout(() => {
+                    question.value="";
+                },50);
+            }
+            
         }
-        this.setState({
-            hoverIcon:hover
-        });
+        
     }
 
     render() {
@@ -263,8 +262,18 @@ export default class Navbar extends Component {
                                     top: styles.icon.icons[i].top,
                                     left: styles.icon.icons[i].left
                                 }
-                            } onMouseEnter={this.HoverIcon} onMouseLeave={this.NonHoverIcon} onClick={this.props.clickIcon}>
-                                <img src={this.state.hoverIcon[i] ? icon.IconHover : icon.icon} alt={"Icon " + icon.text} className={"icon-image"} width={styles.icon.height} height={styles.icon.height}></img>
+                            } onMouseEnter={() => {this.HoverIcon(i, true)}} onMouseLeave={() => {this.HoverIcon(i, false)}} onClick={() => {this.props.clickIcon(i)}}>
+                                <div className={"icon-image"} 
+                                    width={styles.icon.height} height={styles.icon.height} style={
+                                        {
+                                            width: styles.icon.height,
+                                            height: styles.icon.height,
+                                            backgroundImage:`url('${this.state.hoverIcon[i] ? icon.IconHover : icon.icon}')`,
+                                            backgroundSize:"contain"
+                                        }
+                                }>
+
+                                </div>
                                 <span className={"icon-text"} style={
                                     {
                                         color:this.state.hoverIcon[i] ? "#c4c4c4":"white"

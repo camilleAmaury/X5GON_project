@@ -1,9 +1,9 @@
 #Scholar-layout, #ScholarBubble, .Scholar-scrollSide, #Scholar-scrollTop, #Scholar-scroll, #Scholar-scroll-side, #Scholar-scroll-side-inv, 
-#Scholar-scroll-corpus, #Scholar-scroll-corpus-write{
+#Scholar-scroll-corpus, #Scholar-scroll-corpus-write,#Scholar-scrollTop-texture{
     position: absolute;
 }
 
-#Scholar-layout, #ScholarBubble, .Scholar-scrollSide, #Scholar-scrollTop, #Scholar-scroll{
+#Scholar-layout, #ScholarBubble, .Scholar-scrollSide, #Scholar-scrollTop, #Scholar-scroll,#Scholar-scrollTop-texture{
     z-index: 5;
 }
 #Scholar-layout{
@@ -24,10 +24,20 @@
     background-color: rgb(243, 82, 82);
     box-shadow: 0 0 6px 3px rgba(0,0,0,0.6);
 }
-
+#Scholar-scrollTop-texture{
+    background-size: 100%;
+    background-position-y:150px;
+    background-image: url('../../../assets/Panel/Scene/Lectures/scrollTexture.png');
+    background-repeat: repeat-y;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.3);
+    border-radius: 10px;
+}
 
 #Scholar-scrollTop{
-    background-color: #C19F7B;
+    background-color: #BF1800;
 }
 #Scholar-scroll{
     background: linear-gradient(0.25turn, #D9B180, #FFE7C2, #D9B180);

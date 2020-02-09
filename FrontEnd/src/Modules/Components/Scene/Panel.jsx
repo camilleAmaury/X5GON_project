@@ -30,7 +30,7 @@ export default class Panel extends Component {
             isAnimationOpenEnded: true,
             isAnimationCloseEnded: true,
             animationTime: 1500
-        }
+        };
     }
 
     componentDidMount = () => {
@@ -150,10 +150,9 @@ export default class Panel extends Component {
         return obj;
     }
 
-    onIconClick = event => {
+    onIconClick = (i) => {
         let iconClick = this.state.SceneOpened;
-        let iconNumber = event.currentTarget.dataset.key;
-        if (iconClick[iconNumber]) {
+        if (iconClick[i]) {
             // close the door
             iconClick = [false, false, false, false, false];
             this.CloseScene(iconClick, null);
@@ -161,11 +160,11 @@ export default class Panel extends Component {
             if (this.state.isSceneOpen) {
                 // close + open
                 iconClick = [false, false, false, false, false];
-                this.CloseScene(iconClick, iconNumber);
+                this.CloseScene(iconClick, i);
             } else {
                 // open
                 iconClick = [false, false, false, false, false];
-                iconClick[iconNumber] = true;
+                iconClick[i] = true;
                 this.OpenScene(iconClick);
             }
         }
@@ -238,12 +237,23 @@ export default class Panel extends Component {
         }
     }
 
+
+
+    knowledgeSearch = (value) => {
+        this.onIconClick(1);
+        try{
+            this.refs.scene.refs.knowledge.askQuestion(value)
+        }catch(error){
+            console.log("Refs error");
+        }
+    }
+
     render() {
         let styles = this.preparePositions();
         return (
             <div id={"Panel"}>
                 <Cursor windowSize={this.state.PanelBox}></Cursor>
-                <Navbar ratio={this.state.ratio} PanelBox={this.state.PanelBox} NavbarBox={styles.navbar} clickIcon={this.onIconClick}></Navbar>
+                <Navbar ratio={this.state.ratio} PanelBox={this.state.PanelBox} NavbarBox={styles.navbar} clickIcon={this.onIconClick} knowledgeSearch={this.knowledgeSearch}></Navbar>
                 <div id={"floor"} style={
                     {
                         top: styles.floor.top,
@@ -359,7 +369,7 @@ export default class Panel extends Component {
                         }
                     }></div>
                 </div>
-                <Scene style={styles.scene} ratio={this.state.ratio} sceneOpened={this.state.SceneOpened}></Scene>
+                <Scene style={styles.scene} ratio={this.state.ratio} sceneOpened={this.state.SceneOpened} ref={"scene"}></Scene>
                 <div id={"left-door"} className={"door"} style={
                     {
                         top: styles.leftDoor.top,
