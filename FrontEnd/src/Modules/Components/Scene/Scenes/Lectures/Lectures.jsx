@@ -1,6 +1,4 @@
-import React, { Component, Fragment } from 'react';
-
-import Popover from '../../../Popover/Popover';
+import React, { Component } from 'react';
 
 import './Lectures.css';
 import './DocumentContainer.css';
@@ -26,6 +24,7 @@ import PagodaFloor4Hover from '../../../../../assets/Panel/Scene/Lectures/sceneP
 
 import DocumentContainer from './DocumentContainer';
 import PreparePosition from './PreparePosition';
+import PagodaContainer from './PagodaContainer';
 
 
 export default class Lectures extends Component {
@@ -77,12 +76,12 @@ export default class Lectures extends Component {
             isFloorClicked: [],
             isFloorHovered: [],
             floorPosition: {
-                width: 420,
-                height: 77
+                width: 315,
+                height: 58
             },
             floorPosition1: {
-                width: [321, 348, 390, 444],
-                height: [293, 129, 144, 162]
+                width: [241, 261, 293, 333],
+                height: [220, 97, 108, 122]
             },
             floorTexture: [{ "base": PagodaFloor1, "hover": PagodaFloor1Hover }, { "base": PagodaFloor2, "hover": PagodaFloor2Hover }, { "base": PagodaFloor3, "hover": PagodaFloor3Hover },
             { "base": PagodaFloor4, "hover": PagodaFloor4Hover }
@@ -106,7 +105,6 @@ export default class Lectures extends Component {
                             .then(request => {
                                 let prerequisites = [];
                                 let datas = request.data;
-
                                 let dataper2 = Math.ceil(datas.length / 2);
                                 for (let j = 0; j < dataper2; j++) {
                                     let temp_array = [];
@@ -165,7 +163,11 @@ export default class Lectures extends Component {
         let documentContainer = document.getElementsByClassName("document-container")[nb];
         let documentSeparator = document.getElementsByClassName("document-separator")[nb * 2 + 1];
         let corpus = document.getElementsByClassName("lectures-corpus")[nb];
+        let btn1 = document.getElementsByClassName("changeButton")[nb];
+        let btn2 = document.getElementsByClassName("changeButton-two")[nb];
         // transition
+        btn1.removeEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
+        btn2.removeEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
         upper_scroll.removeEventListener('click', this.scrollDocument);
         lower_scroll.removeEventListener('click', this.scrollDocument);
         lower_scroll.style.transition = "1.5s top";
@@ -185,6 +187,10 @@ export default class Lectures extends Component {
             setTimeout(() => {
                 document.getElementById("lectures").scrollTo(0, document.getElementsByClassName("lectures-document")[nb].offsetTop);
                 // transition out 
+                if(documents[nb].isScrolled){
+                    btn1.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
+                    btn2.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
+                }
                 upper_scroll.addEventListener('click', this.scrollDocument);
                 lower_scroll.addEventListener('click', this.scrollDocument);
                 lower_scroll.style.transition = "none";
@@ -246,7 +252,11 @@ export default class Lectures extends Component {
         let pagodaContainer = document.getElementsByClassName("pagoda-container")[nb];
         let separatorContainer = document.getElementsByClassName("document-separator")[nb * 2];
         let corpus = document.getElementsByClassName("lectures-corpus")[nb];
+        let btn1 = document.getElementsByClassName("changeButton")[nb];
+        let btn2 = document.getElementsByClassName("changeButton-two")[nb];
         // transition
+        btn1.removeEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
+        btn2.removeEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
         upper_scroll.removeEventListener('click', this.scrollDocument);
         lower_scroll.removeEventListener('click', this.scrollDocument);
         lower_scroll.style.transition = "1.5s left";
@@ -262,8 +272,10 @@ export default class Lectures extends Component {
             documents: documents
         }, () => {
             setTimeout(() => {
-                document.getElementById("lectures").scrollTo(0, document.getElementsByClassName("document-container")[nb].offsetTop);
+                document.getElementById("lectures").scrollTo(0, document.getElementsByClassName("lectures-document")[nb].offsetTop);
                 // transition out 
+                btn1.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
+                btn2.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
                 upper_scroll.addEventListener('click', this.scrollDocument);
                 lower_scroll.addEventListener('click', this.scrollDocument);
                 lower_scroll.style.transition = "none";
@@ -318,7 +330,7 @@ export default class Lectures extends Component {
                             height: styles.lecturesDocument.height[i]
                         }
                     }>
-                        {DocumentContainer(item, i, styles, this.changeScene, this.scrollEv, leftsideScroll, rightsideScroll, fullPagoda)}
+                        {DocumentContainer(item, i, styles, this.scrollEv, leftsideScroll, rightsideScroll, fullPagoda)}
 
                         <div className={"document-separator"} style={
                             {
@@ -328,153 +340,7 @@ export default class Lectures extends Component {
                             }
                         }></div>
 
-                        <div className={"pagoda-container"} data-id={item.id} style={
-                            {
-                                height: styles.container.pagoda.height[i],
-                                width: styles.container.pagoda.width,
-                                left: styles.container.pagoda.left[i]
-                            }
-                        }>
-                            {/* beam */}
-                            <div className={"verticalBeam"} style={
-                                {
-                                    left: styles.beamVertical.left1[i],
-                                    width: styles.beamVertical.width,
-                                    height: styles.beamVertical.height[i],
-                                }
-                            }></div>
-                            <div className={"verticalBeam"} style={
-                                {
-                                    left: styles.beamVertical.left2[i],
-                                    width: styles.beamVertical.width,
-                                    height: styles.beamVertical.height[i],
-                                }
-                            }></div>
-                            <div className={"horizontalBeam"} style={
-                                {
-                                    left: styles.beamHorizontal.left1[i],
-                                    width: styles.beamHorizontal.width1[i],
-                                    height: styles.beamHorizontal.height,
-                                    top: styles.beamHorizontal.top1[i],
-                                }
-                            }></div>
-                            <div className={"horizontalBeam"} style={
-                                {
-                                    left: styles.beamHorizontal.left3[i],
-                                    width: styles.beamHorizontal.width1[i],
-                                    height: styles.beamHorizontal.height,
-                                    top: styles.beamHorizontal.top1[i],
-                                }
-                            }></div>
-                            <div className={"horizontalBeam"} style={
-                                {
-                                    left: styles.beamHorizontal.left2[i],
-                                    width: styles.beamHorizontal.width2[i],
-                                    height: styles.beamHorizontal.height,
-                                    top: styles.beamHorizontal.top2[i],
-                                }
-                            }></div>
-
-                            {/* details */}
-                            <img className={"table"} alt={"table-pagoda"} src={table} style={
-                                {
-                                    left: styles.table.left,
-                                    width: styles.table.width,
-                                    height: styles.table.height,
-                                    top: styles.table.top[i],
-                                }
-                            }></img>
-
-                            <img className={"encens"} alt={"encens-pagoda"} src={encens} style={
-                                {
-                                    left: styles.encens.left,
-                                    width: styles.encens.width,
-                                    height: styles.encens.height,
-                                    top: styles.encens.top[i],
-                                }
-                            }></img>
-
-
-                            {/* pagoda */}
-                            {this.state.documents[i].data.map((item, j) =>
-                                <Fragment key={j}>
-                                    <img className={"pagoda"} alt={"pagoda-floor"}
-                                        src={this.state.isFloorHovered[i][j] ? this.state.floorTexture[j].hover : this.state.floorTexture[j].base}
-                                        onMouseEnter={() => { this.hoverPagoda(i, j) }} onMouseLeave={() => { this.unhoverPagoda(i, j) }} 
-                                        onClick={() => { this.clickPagoda(i, j) }} style={
-                                            {
-                                                top: styles.pagodaDocument[i].top[j],
-                                                height: styles.pagodaDocument[i].height[j],
-                                                width: styles.pagodaDocument[i].width[j],
-                                                left: styles.pagodaDocument[i].left[j],
-                                            }
-                                    }></img>
-                                    <Popover className={"pagoda-hover"} 
-                                        target={{top: styles.pagodaDocument[i].top[j],height: styles.pagodaDocument[i].height[j],width: styles.pagodaDocument[i].width[j],left: styles.pagodaDocument[i].left[j]}} 
-                                        ratio={1 / 2} side={"left"} size={{ width: 250, height: 100 }}
-                                        isOpen={this.state.isFloorHovered[i][j] && !this.state.isFloorClicked[i][j]} title={"Pagoda"}>
-                                        <div className={"body"}>
-                                            Click here to see more !
-                                        </div>
-                                    </Popover>
-                                    <Popover className={"pagoda-click"} 
-                                        target={{top: styles.pagodaDocument[i].top[j],height: styles.pagodaDocument[i].height[j],width: styles.pagodaDocument[i].width[j],left: styles.pagodaDocument[i].left[j]}} 
-                                        ratio={1 / 2} side={"left"} size={{ width: 450, height: 125 }}
-                                        isOpen={this.state.isFloorClicked[i][j]} title={item[0].title}>
-                                        <div className={"body"}>
-                                            <div className={"librarian-answering-item"} key={i} data-key={item.id}>
-                                                <div className={"librarian-answering-item-number"}><span>{i}</span></div>
-                                                <div className={"librarian-answering-item-info"}>
-                                                    <span className={"librarian-answering-item-info-title"}>{item[0].link}</span>
-                                                    <span></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Popover>
-                                    <Popover className={"pagoda-click"} 
-                                        target={{top: styles.pagodaDocument[i].top[j],height: styles.pagodaDocument[i].height[j],width: styles.pagodaDocument[i].width[j],left: styles.pagodaDocument[i].left[j]}} 
-                                        ratio={1 / 2} side={"right"} size={{ width: 450, height: 125 }}
-                                        isOpen={this.state.isFloorClicked[i][j]} title={item[0].title}>
-                                        <div className={"body"}>
-                                            <div className={"librarian-answering-item"} key={i} data-key={item.id}>
-                                                <div className={"librarian-answering-item-number"}><span>{i}</span></div>
-                                                <div className={"librarian-answering-item-info"}>
-                                                    <span className={"librarian-answering-item-info-title"}>{item[0].link}</span>
-                                                    <span></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Popover>
-                                </Fragment>
-                            )}
-
-                            <img className={"floor"} alt={"floor-pagoda"} src={PagodaFloor} style={
-                                {
-                                    left: styles.pagodafloor.left,
-                                    width: styles.pagodafloor.width,
-                                    height: styles.pagodafloor.height,
-                                    top: styles.pagodafloor.top[i],
-                                }
-                            }></img>
-
-                            {/* Changing button */}
-                            <div className={"changeButton-two"} data-key={i} onClick={item.isScrolled ? this.changeScene : () => { }} style={
-                                {
-                                    top: styles.button2.top[i],
-                                    width: styles.button2.width,
-                                    height: styles.button2.height,
-                                }
-                            }>
-                                <img className={"img"} alt={"scroll-button"} src={reverseScroll} style={
-                                    {
-                                        left: styles.image2[i].left,
-                                        top: styles.image2[i].top,
-                                        width: styles.image2[i].width,
-                                        height: styles.image2[i].height,
-                                    }
-                                }></img>
-                            </div>
-                        </div>
+                        {PagodaContainer(item, i, styles, this.hoverPagoda, this.unhoverPagoda, this.clickPagoda, this.state, PagodaFloor, encens, table, reverseScroll, this.props.isOpen)}
 
                         <div className={"document-separator"} style={
                             {

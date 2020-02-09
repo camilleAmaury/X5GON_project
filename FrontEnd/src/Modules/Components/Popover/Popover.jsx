@@ -41,7 +41,7 @@ export default class Popover extends Component {
     render() {
         let styles = this.preparePositions();
         return (
-            <div id={"popover-" + this.props.id} className={"popover"} style={
+            <div id={"popover-" + this.props.id} className={"popover " + this.props.className} style={
                 {
                     visibility: this.props.isOpen ? "visible" : "hidden",
                     width:styles.popover.width,
@@ -53,7 +53,8 @@ export default class Popover extends Component {
                 <div className={"popover-header"}><span>{this.props.title}</span></div>
                 <div className={"popover-body"} style={
                     {
-                        backgroundColor:this.state.color
+                        backgroundColor:this.state.color,
+                        direction:this.props.side === "right" ? "ltr" : 'rtl'
                     }
                 }>
                     {this.props.children}

@@ -57,14 +57,18 @@
     scroll-behavior: auto;
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none;
+    display: flex;
+    justify-content: center;
 }
 .document-container .scroll-center .lectures-corpus::-webkit-scrollbar { width: 0 !important }
 
-.document-container .scroll-center .lectures-corpus span{
+.document-container .scroll-center .lectures-corpus .span{
+    text-align:justify;
     line-height: 26px;
     font-size: 20px;
     white-space: pre-line;
     position: relative;
+    width:95%;
 }
 
 .document-container .side1{

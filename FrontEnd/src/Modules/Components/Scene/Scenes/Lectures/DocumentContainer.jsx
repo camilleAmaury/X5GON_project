@@ -1,5 +1,5 @@
 import React from 'react';
-export default function DocumentContainer(item, i, styles, changeScene, scrollEv, leftsideScroll, rightsideScroll, fullPagoda) {
+export default function DocumentContainer(item, i, styles, scrollEv, leftsideScroll, rightsideScroll, fullPagoda) {
   return(
     <div className={"document-container"}data-id={item.id} style={
         {
@@ -24,7 +24,7 @@ export default function DocumentContainer(item, i, styles, changeScene, scrollEv
                     width:styles.corpus.width
                 }
             }>
-                <span>{item.content}</span>
+                <div className={"span"}>{item.content}</div>
             </div>
             {/* sides */}
             <div className={"side1"} style={
@@ -117,7 +117,7 @@ export default function DocumentContainer(item, i, styles, changeScene, scrollEv
         }></img>
         
         {/* Changing button */}
-        <div className={"changeButton"} data-key={i} onClick={item.isScrolled ? changeScene : () => {}} style={
+        <div className={"changeButton"} data-key={i} style={
             {
                 left: styles.button.left,
                 top: styles.button.top[i],
