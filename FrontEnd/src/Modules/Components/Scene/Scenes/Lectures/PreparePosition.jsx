@@ -140,6 +140,23 @@ function preparePositionDocument(obj, documents, ratio, scene, state){
             obj.image.push(temp);
         }
     }
+    // validation - deletion
+    if(true){
+        obj.valdelButton = {
+            width:Math.floor(ratio * state.valdelBox.size),
+            height:Math.floor(ratio * state.valdelBox.size),
+            left:0,
+            top1:[],
+            top2:[]
+        };
+        for (let i = 0; i < documents.length; i++) {
+            let factor = documents[i].isRated ? 1/2 : 2/3;
+            obj.valdelButton.top1.push(Math.floor((obj.container.document.height[i]-state.documentSeparatorBox.height) * 1/3 - obj.valdelButton.height/2));
+            obj.valdelButton.top2.push(Math.floor((obj.container.document.height[i]-state.documentSeparatorBox.height) * factor - obj.valdelButton.height/2));
+        }
+    }
+
+
     return obj;
 }
 

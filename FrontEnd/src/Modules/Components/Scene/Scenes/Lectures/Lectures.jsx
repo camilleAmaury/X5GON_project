@@ -32,6 +32,9 @@ export default class Lectures extends Component {
         super(props);
         this.state = {
             documents: [],
+            valdelBox:{
+                size:50
+            },
             documentContainerBox: {
                 height: 250,
             },
@@ -72,9 +75,11 @@ export default class Lectures extends Component {
                     height: 200
                 }
             },
-            data: [],
             isFloorClicked: [],
             isFloorHovered: [],
+            isValidateHovered:[],
+            isDeleteHovered:[],
+            isDeleteClicked:[],
             floorPosition: {
                 width: 315,
                 height: 58
@@ -96,7 +101,8 @@ export default class Lectures extends Component {
                 .then(request => {
                     let doc = {
                         title: "A random title", id: documentsId[i], content: `\n${request.data.oer_contents[0].value.value}\n\n`,
-                        isScrolled: false, bgY1: 150, bgY2: 0, corpusTop: 0, isOpened: false, data: []
+                        isScrolled: false, bgY1: 150, bgY2: 0, corpusTop: 0, isOpened: false, data: [], isDeleteHovered:false, isDeleteClicked:0, isValidateHovered:false,
+                        isValidateClicked:false, ratingUnderstanding:0, ratingQuality:0, ratingUnderstandingHover:0, ratingQualityHover:0, isRated:false
                     };
                     let arr = this.state.documents.concat([doc]);
                     this.setState({ documents: arr }, () => {
@@ -165,6 +171,9 @@ export default class Lectures extends Component {
         let corpus = document.getElementsByClassName("lectures-corpus")[nb];
         let btn1 = document.getElementsByClassName("changeButton")[nb];
         let btn2 = document.getElementsByClassName("changeButton-two")[nb];
+        let btnVal = document.getElementsByClassName("validateButton")[nb];
+        let btnDel = document.getElementsByClassName("deleteButton")[nb];
+        let popDel = document.getElementById("popover-delete-hover2-" + nb);
         // transition
         btn1.removeEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
         btn2.removeEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
@@ -178,6 +187,9 @@ export default class Lectures extends Component {
         lectures.style.transition = "1.5s height";
         lower_scroll_sideLeft.style.transition = "1.5s top";
         lower_scroll_sideRight.style.transition = "1.5s top";
+        btnVal.style.transition = "1.5s top";
+        btnDel.style.transition = "1.5s top";
+        popDel.style.transition = "1.5s top";
         corpus.style.transition = "1.5s height";
         document.getElementsByClassName("side1")[nb].style.transition = "1.5s height";
         document.getElementsByClassName("side2")[nb].style.transition = "1.5s height";
@@ -201,6 +213,9 @@ export default class Lectures extends Component {
                 lower_scroll_sideLeft.style.transition = "none";
                 lower_scroll_sideRight.style.transition = "none";
                 lectures.style.transition = "none";
+                btnVal.style.transition = "none";
+                btnDel.style.transition = "none";
+                popDel.style.transition = "none";
                 document.getElementsByClassName("side1")[nb].style.transition = "none";
                 document.getElementsByClassName("side2")[nb].style.transition = "none";
                 corpus.style.transition = "none";
@@ -315,6 +330,99 @@ export default class Lectures extends Component {
         });
     }
 
+    clickDelete = (i) => {
+        let arr = this.state.documents;
+        if(arr[i].isScrolled){
+            arr[i].isDeleteClicked = arr[i].isDeleteClicked + 1;
+            this.setState({documents:arr}, () => {
+                let arr = this.state.documents;
+                if(arr[i].isDeleteClicked === 1){
+                    // wait 10 seconds to reset state 0
+                    setTimeout(() => {
+                        try {
+                            let arr = this.state.documents;
+                            if(arr[i].isDeleteClicked === 0){
+                                // it means that we already deleted it
+                            }else{
+                                // user don't want to delete
+                                arr[i].isDeleteClicked = 0;
+                                this.setState({documents:arr});
+                            }
+                        }
+                        catch(error) {
+                            // already deleted, no need to pursue
+                        }
+                    },10000);
+                }
+                if(arr[i].isDeleteClicked === 2){
+                    // request sent to server
+
+                    // process front end
+                    let doc1 = this.state.isFloorClicked;
+                    let doc2 = this.state.isFloorHovered;
+                    arr.splice(i, 1);
+                    doc1.splice(i, 1);
+                    doc2.splice(i, 1);
+                    this.setState({documents:arr, isFloorClicked:doc1, isFloorHovered:doc2});
+                }
+            });
+        }
+    }
+
+    hoverDelButton = (i, bool) => {
+        let arr = this.state.documents;
+        arr[i].isDeleteHovered = bool;
+        this.setState({documents:arr});
+    }
+
+    hoverValButton = (i, bool) => {
+        let arr = this.state.documents;
+        arr[i].isValidateHovered = bool;
+        this.setState({documents:arr});
+    }
+
+    clickValidate = (i) => {
+        let doc = this.state.documents;
+        if(doc[i].isScrolled){
+            doc[i].isValidateClicked = !doc[i].isValidateClicked;
+            this.setState({documents:doc});
+        }
+    }
+
+    ratingHover = (pos, i, j) => {
+        let doc = this.state.documents;
+        if(pos === 0){
+            doc[i].ratingUnderstandingHover = j;
+        }else if(pos === 1){
+            doc[i].ratingQualityHover = j;
+        }
+        this.setState({documents:doc});
+    }
+
+    ratingClick = (pos, i, j) => {
+        let doc = this.state.documents;
+        if(pos === 0){
+            doc[i].ratingUnderstanding = j;
+        }else if(pos === 1){
+            doc[i].ratingQuality = j;
+        }
+        this.setState({documents:doc});
+    }
+
+    sendRating = (i) => {
+        let doc = this.state.documents;
+        if(doc[i].ratingQuality !== 0 && doc[i].ratingUnderstanding !== 0){
+            doc[i].isRated = true;
+
+            // request
+
+            // hide validate state
+            this.setState({documents:doc}, () => {
+                console.log("rated");
+            });
+        }
+        
+    }
 
     render() {
         let styles = PreparePosition(this.state.documents, this.props.ratio, this.props.scene, this.state);
@@ -330,7 +438,8 @@ export default class Lectures extends Component {
                             height: styles.lecturesDocument.height[i]
                         }
                     }>
-                        {DocumentContainer(item, i, styles, this.scrollEv, leftsideScroll, rightsideScroll, fullPagoda)}
+                        {DocumentContainer(item, i, styles, this.scrollEv, leftsideScroll, rightsideScroll, fullPagoda, this.props.isOpen, this.state, this.hoverValButton, 
+                            this.hoverDelButton, this.clickDelete, this.clickValidate, this.ratingHover, this.ratingClick, this.sendRating)}
 
                         <div className={"document-separator"} style={
                             {
