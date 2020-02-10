@@ -5,6 +5,9 @@ import Cursor from '../Cursor/Cursor';
 import Scene from './Scene';
 import ScholarBubble from '../Popover/ScholarPopover';
 
+// import lantern from '../../../assets/Panel/lantern.png';
+// import bonsai from '../../../assets/Panel/bonsai.png';
+
 import './Panel.css';
 
 export default class Panel extends Component {
@@ -24,9 +27,17 @@ export default class Panel extends Component {
             DoorBox: {
                 width: 800
             },
+            // lanternBox:{
+            //     width:131,
+            //     height:235
+            // },
+            // bonsaiBox:{
+            //     width:179,
+            //     height:238
+            // },
             ratio: 1,
-            SceneOpened: [false, false, false, false, false],
-            isSceneOpen: false,
+            SceneOpened: [false, false, false, true, false],
+            isSceneOpen: true,
             isAnimationOpenEnded: true,
             isAnimationCloseEnded: true,
             animationTime: 1500
@@ -116,14 +127,14 @@ export default class Panel extends Component {
             top: pilarSize,
             width: obj.roof.width,
             height: pilarSize
-        }
+        };
         // bottom bottom
         obj.bottombottom = {
             top: obj.floor.top - pilarSize,
             left: obj.navbar.width,
             width: this.state.PanelBox.width - obj.navbar.width,
             height: pilarSize
-        }
+        };
         // left door
         let doorwidth = Math.ceil(this.state.DoorBox.width * this.state.ratio);
         let doorheight = obj.floor.top - obj.roof.height;
@@ -132,21 +143,35 @@ export default class Panel extends Component {
             left: this.state.isSceneOpen ? Math.floor(obj.navbar.width - doorwidth + doorwidth / 10) : obj.navbar.width,
             width: doorwidth,
             height: doorheight
-        }
+        };
         // right door
         obj.rightDoor = {
             top: obj.roof.height,
             left: this.state.isSceneOpen ? Math.floor(2 * doorwidth + obj.navbar.width - doorwidth / 10) : doorwidth + obj.navbar.width,
             width: doorwidth,
             height: doorheight
-        }
-        // right door
+        };
+        // scene
         obj.scene = {
             top: obj.roof.height,
             left: Math.floor(obj.navbar.width + doorwidth / 10),
             width: Math.floor(2 * doorwidth + obj.navbar.width - doorwidth / 10) - (Math.floor(obj.navbar.width + doorwidth / 10)),
             height: doorheight - obj.bottombottom.height
-        }
+        };
+        // lantern
+        // obj.sceneLantern = {
+        //     width: Math.floor(this.state.lanternBox.width*this.state.ratio),
+        //     height: Math.floor(this.state.lanternBox.height*this.state.ratio),
+        // };
+        // obj.sceneLantern.top = obj.scene.top;
+        // obj.sceneLantern.left = Math.floor(obj.scene.width * 1 / 20 - obj.sceneLantern.width/2) + obj.scene.left;
+        // bonsai
+        // obj.sceneBonsai = {
+        //     width: Math.floor(this.state.bonsaiBox.width*this.state.ratio),
+        //     height: Math.floor(this.state.bonsaiBox.height*this.state.ratio),
+        // };
+        // obj.sceneBonsai.top = obj.floor.top - obj.sceneBonsai.height;
+        // obj.sceneBonsai.left = Math.floor(obj.scene.width * 1 / 20 - obj.sceneBonsai.width/2) + obj.scene.left;
         return obj;
     }
 
@@ -388,6 +413,26 @@ export default class Panel extends Component {
                         backgroundSize: styles.leftDoor.width + "px " + styles.leftDoor.height + "px"
                     }
                 }></div>
+                {/* <div id={"scene-lantern"} className={"door"} style={
+                    {
+                        top: styles.sceneLantern.top,
+                        left: styles.sceneLantern.left,
+                        width: styles.sceneLantern.width,
+                        height: styles.sceneLantern.height,
+                        backgroundImage: `url('${lantern}')`,
+                        backgroundSize: "cover"
+                    }
+                }></div> */}
+                {/* <div id={"scene-bonsai"} className={"door"} style={
+                    {
+                        top: styles.sceneBonsai.top,
+                        left: styles.sceneBonsai.left,
+                        width: styles.sceneBonsai.width,
+                        height: styles.sceneBonsai.height,
+                        backgroundImage: `url('${bonsai}')`,
+                        backgroundSize: "cover"
+                    }
+                }></div> */}
                 <ScholarBubble ratio={this.state.ratio} windowSize={this.state.PanelBox} NavbarBox={styles.navbar}></ScholarBubble>
             </div>
         );

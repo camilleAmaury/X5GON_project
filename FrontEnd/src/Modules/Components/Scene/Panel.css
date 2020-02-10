@@ -63,3 +63,8 @@
     z-index: 1;
 }
 
+#scene-lantern{
+    position: absolute;
+    z-index: 1;
+}
+

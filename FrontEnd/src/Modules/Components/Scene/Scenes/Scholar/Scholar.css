@@ -1,0 +1,45 @@
+/* pagoda container */
+#scholar{
+    overflow: hidden;
+    position: relative;
+    background-color: #C6A561;
+    top:0;
+    left:0;
+    height: 100%;
+    width: 100%;
+}
+
+#scholar .verticalBeam{
+    position: absolute;
+    top:0;
+    background-color: #784027;
+}
+
+#scholar .horizontalBeam{
+    position: absolute;
+    background-color: #784027;
+}
+
+#scholar .table{
+    position: absolute;
+}
+
+#scholar .scroll{
+    position: absolute;
+}
+
+#scholar .chair{
+    position: absolute;
+}
+
+#scholar .lantern{
+    position: absolute;
+}
+
+#scholar .scholar{
+    position: absolute;
+}
+#scholar .scholar-hover{
+    background-color: rgba(190, 39, 39, 0.5);
+    position: absolute;
+}
