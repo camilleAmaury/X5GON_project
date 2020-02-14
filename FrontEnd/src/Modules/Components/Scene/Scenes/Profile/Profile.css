@@ -1,0 +1,88 @@
+#profile .verticalBeam, #profile .horizontalBeam, #profile .module, #profile .moduleTitle, #profile .badge{
+    position: absolute;
+}
+
+/* profile container */
+#profile{
+    overflow-x: hidden;
+    overflow-y: scroll;
+    position: relative;
+    background-color: #E8C379;
+    top:0;
+    left:0;
+    height: 100%;
+    width: 100%;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+}
+#profile::-webkit-scrollbar { width: 0 !important }
+
+#profile .verticalBeam{
+    top:0;
+    background-color: #784027;
+}
+
+#profile .horizontalBeam{
+    background-color: #784027;
+}
+
+#profile .module{
+    background-color: #DE946F;
+    box-shadow: 0px 0px 10px 5px rgba(0,0,0,0.3);
+}
+
+#profile .moduleTitle{
+    background-color: #B43120;
+    display: flex;
+    align-items:center;
+    justify-content:space-evenly;
+    font-size: 1.5vw;
+    font-family: 'Roboto';
+    color: white;
+    box-shadow: 0px 0px 6px 3px rgba(0,0,0,0.3);
+}
+
+/* Experience module */
+#profile .experience{
+    display: flex;
+    align-items:center;
+    justify-content:center;
+}
+
+#profile .moduleTitle .separation{
+    height: 80%;
+    width: 3px;
+    background-color: black;
+}
+
+#profile .badge{
+    background-image:linear-gradient(0.15turn, white, grey);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 0px 6px 3px rgba(0,0,0,0.3);
+}
+
+#profile .badge .silk{
+    position: absolute;
+}
+
+#profile .badge-hover{
+    color:white;
+    display: flex;
+    direction: ltr;
+    font-size: 16px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: calc(100% - 10px);
+    overflow: hidden;
+    flex-direction: column;
+    font-family: 'Roboto';
+}
+#profile .popover{
+    z-index:2;
+}
+#profile .badge-hover span{
+    max-width: 300px;
+}

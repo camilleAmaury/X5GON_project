@@ -1,0 +1,35 @@
+.progress-circle {
+   font-size: 20px;
+   position: absolute;
+   padding: 0;
+   background-color: rgb(221, 211, 203); 
+   border-radius: 50%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+.progress-circle .image{
+    border: none;
+    text-align: center;
+    border-radius: 50%;
+    background-color: white;
+    content: " ";
+}
+.left-half-clipper { 
+   /* a round circle */
+   border-radius: 50%;
+   position: absolute; /* needed for clipping */
+}
+.value-bar {
+   position: absolute;
+   border-radius: 50%;
+   box-sizing: border-box;
+  
+}
+/* Progress bar filling the whole right half for values above 50% */
+.progress-circle .first50-bar {
+   /*Progress bar for the first 50%, filling the whole right half*/
+   position: absolute; /*needed for clipping*/
+   border-radius: 50%;
+}
