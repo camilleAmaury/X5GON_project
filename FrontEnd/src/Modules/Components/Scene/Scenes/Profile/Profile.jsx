@@ -43,7 +43,9 @@ export default class Profile extends Component {
                 data:[0,2,8,5], 
                 label:"Your Skills",
                 backgroundColor:"rgba(180,49,32,0.5)"
-            }]}
+            }]},
+            keywords:["datascience", "deep learning", "machine learning", "decision tree", "datascience", "deep learning", "machine learning", "decision tree",
+            "datascience", "deep learning", "machine learning", "decision tree", "datascience", "deep learning", "machine learning", "decision tree"]
         };
     }
 
@@ -164,7 +166,7 @@ export default class Profile extends Component {
             // module skills
             obj.skills = {
                 width: Math.floor(this.props.scene.width * 1/2),
-                height:  Math.floor(this.props.scene.width * 1/2)
+                height:  Math.floor(this.props.scene.height * 2/3)
             };
             obj.skills.left = obj.badges.left + Math.floor((obj.badges.width - obj.skills.width)/2)
             obj.skills.top = obj.badges.top + obj.badges.height + Math.floor(this.props.scene.height * 1/16);
@@ -176,6 +178,31 @@ export default class Profile extends Component {
             obj.skillsBar.left = obj.skills.left + Math.floor((obj.skills.width - obj.skillsBar.width)/2);
             obj.skillsBar.top = obj.skills.top + Math.floor((obj.skills.height - obj.skillsBar.height)/2)
         }
+        // modules recurrent theme
+        if(true){
+            // module theme
+            obj.theme = {
+                width: Math.floor(this.props.scene.width * 1/4),
+                height:  Math.floor(this.props.scene.width * 1/2)
+            };
+            obj.theme.left  = Math.floor(this.props.scene.width * 1/16);
+            obj.theme.top = obj.experience.top + obj.experience.height + Math.floor(this.props.scene.height * 1/16);
+            // themeBar
+            obj.themeBar = {
+                width: obj.theme.width*1.1,
+                height: obj.theme.height*1/8,
+            };
+            obj.themeBar.left = obj.theme.left + Math.floor((obj.theme.width - obj.themeBar.width)/2);
+            obj.themeBar.top = obj.theme.top + Math.floor(obj.theme.height*1/16);
+            // keywords
+            obj.keywords = {
+                width: obj.theme.width,
+                height: obj.theme.top + obj.theme.height - (obj.themeBar.top + obj.themeBar.height) - 20,
+            };
+            obj.keywords.left = obj.theme.left;
+            obj.keywords.top = obj.themeBar.top + obj.themeBar.height + 10;
+        }
+
         return obj;
     }
 
@@ -201,300 +228,338 @@ export default class Profile extends Component {
             }>
                 {/* beams */}
                 <Fragment>
-                    <div className={"verticalBeam"} style={
+                        <div className={"verticalBeam"} style={
+                            {
+                                left: styles.beamVertical.left1,
+                                width: styles.beamVertical.width,
+                                height: styles.beamVertical.height,
+                            }
+                        }></div>
+                        <div className={"verticalBeam"} style={
+                            {
+                                left: styles.beamVertical.left2,
+                                width: styles.beamVertical.width,
+                                height: styles.beamVertical.height,
+                            }
+                        }></div>
+                        <div className={"horizontalBeam"} style={
+                            {
+                                left: styles.beamHorizontal.left1,
+                                width: styles.beamHorizontal.width1,
+                                height: styles.beamHorizontal.height,
+                                top: styles.beamHorizontal.top1,
+                            }
+                        }></div>
+                        <div className={"horizontalBeam"} style={
+                            {
+                                left: styles.beamHorizontal.left3,
+                                width: styles.beamHorizontal.width1,
+                                height: styles.beamHorizontal.height,
+                                top: styles.beamHorizontal.top1,
+                            }
+                        }></div>
+                        <div className={"horizontalBeam"} style={
+                            {
+                                left: styles.beamHorizontal.left2,
+                                width: styles.beamHorizontal.width2,
+                                height: styles.beamHorizontal.height,
+                                top: styles.beamHorizontal.top2,
+                            }
+                        }></div>
+                    </Fragment>
+                <div id={"profile-inner"}>
+                    
+                    {/* ---------------------------> Modules <--------------------------- */}
+                    {/* experience */}
+                    <div className={"experience module"} style={
                         {
-                            left: styles.beamVertical.left1,
-                            width: styles.beamVertical.width,
-                            height: styles.beamVertical.height,
-                        }
-                    }></div>
-                    <div className={"verticalBeam"} style={
-                        {
-                            left: styles.beamVertical.left2,
-                            width: styles.beamVertical.width,
-                            height: styles.beamVertical.height,
-                        }
-                    }></div>
-                    <div className={"horizontalBeam"} style={
-                        {
-                            left: styles.beamHorizontal.left1,
-                            width: styles.beamHorizontal.width1,
-                            height: styles.beamHorizontal.height,
-                            top: styles.beamHorizontal.top1,
-                        }
-                    }></div>
-                    <div className={"horizontalBeam"} style={
-                        {
-                            left: styles.beamHorizontal.left3,
-                            width: styles.beamHorizontal.width1,
-                            height: styles.beamHorizontal.height,
-                            top: styles.beamHorizontal.top1,
-                        }
-                    }></div>
-                    <div className={"horizontalBeam"} style={
-                        {
-                            left: styles.beamHorizontal.left2,
-                            width: styles.beamHorizontal.width2,
-                            height: styles.beamHorizontal.height,
-                            top: styles.beamHorizontal.top2,
-                        }
-                    }></div>
-                </Fragment>
-                
-                {/* Modules */}
-                <div className={"experience module"} style={
-                    {
-                        left: styles.experience.left,
-                        top: styles.experience.top,
-                        width: styles.experience.width,
-                        height: styles.experience.height,
-                    }
-                }>
-                    <div className={"progress-circle"} style={
-                        {
-                            left: styles.progressCircle.left,
-                            top: styles.progressCircle.top,
-                            width: styles.progressCircle.width,
-                            height: styles.progressCircle.height,
-                            lineHeight:styles.progressCircle.height
+                            left: styles.experience.left,
+                            top: styles.experience.top,
+                            width: styles.experience.width,
+                            height: styles.experience.height,
                         }
                     }>
-                        <div className={"left-half-clipper"} style={
+                        <div className={"progress-circle"} style={
                             {
-                                left: 0,
-                                top: 0,
+                                left: styles.progressCircle.left,
+                                top: styles.progressCircle.top,
                                 width: styles.progressCircle.width,
                                 height: styles.progressCircle.height,
-                                clip:percentage <= 0.5 ? `rect(0px, ${styles.progressCircle.width}px, ${styles.progressCircle.width}px, ${styles.progressCircle.width/2}px)` : 'rect(auto,auto,auto,auto)'
+                                lineHeight:styles.progressCircle.height
                             }
                         }>
-                            <div className={"value-bar"} style={
+                            <div className={"left-half-clipper"} style={
                                 {
                                     left: 0,
                                     top: 0,
                                     width: styles.progressCircle.width,
                                     height: styles.progressCircle.height,
-                                    border:`${styles.progressCircle.height*0.08}px solid #53777A`,
-                                    clip:`rect(0px, ${styles.progressCircle.width/2}px, ${styles.progressCircle.width}px, 0px)`,
-                                    transform: percentage <= 0.5 ? `rotate(${percentage * 360}deg)` : `rotate(180deg)`
+                                    clip:percentage <= 0.5 ? `rect(0px, ${styles.progressCircle.width}px, ${styles.progressCircle.width}px, ${styles.progressCircle.width/2}px)` : 'rect(auto,auto,auto,auto)'
                                 }
-                            }></div>
-                            <div className={"value-bar"} style={
+                            }>
+                                <div className={"value-bar"} style={
+                                    {
+                                        left: 0,
+                                        top: 0,
+                                        width: styles.progressCircle.width,
+                                        height: styles.progressCircle.height,
+                                        border:`${styles.progressCircle.height*0.08}px solid #53777A`,
+                                        clip:`rect(0px, ${styles.progressCircle.width/2}px, ${styles.progressCircle.width}px, 0px)`,
+                                        transform: percentage <= 0.5 ? `rotate(${percentage * 360}deg)` : `rotate(180deg)`
+                                    }
+                                }></div>
+                                <div className={"value-bar"} style={
+                                    {
+                                        left: 0,
+                                        top: 0,
+                                        width: styles.progressCircle.width,
+                                        height: styles.progressCircle.height,
+                                        border:`${styles.progressCircle.height*0.08}px solid #53777A`,
+                                        clip:`rect(0px, ${styles.progressCircle.width/2}px, ${styles.progressCircle.width}px, 0px)`,
+                                        transform: percentage <= 0.5 ? `rotate(0deg)`:`rotate(${percentage * 360}deg)`
+                                    }
+                                }></div>
+                            </div>
+                            <div className={"image"} style={
                                 {
-                                    left: 0,
-                                    top: 0,
-                                    width: styles.progressCircle.width,
-                                    height: styles.progressCircle.height,
-                                    border:`${styles.progressCircle.height*0.08}px solid #53777A`,
-                                    clip:`rect(0px, ${styles.progressCircle.width/2}px, ${styles.progressCircle.width}px, 0px)`,
-                                    transform: percentage <= 0.5 ? `rotate(0deg)`:`rotate(${percentage * 360}deg)`
+                                    width: styles.centerCircle.width,
+                                    height: styles.centerCircle.height
                                 }
                             }></div>
                         </div>
-                        <div className={"image"} style={
-                            {
-                                width: styles.centerCircle.width,
-                                height: styles.centerCircle.height
-                            }
-                        }></div>
                     </div>
-                </div>
-                <div className={"xpBar moduleTitle"} onMouseEnter={()=>{this.hoverExp(true)}} onMouseLeave={()=>{this.hoverExp(false)}} style={
-                    {
-                        left: styles.xpBar.left,
-                        width: styles.xpBar.width,
-                        height: styles.xpBar.height,
-                        top: styles.xpBar.top,
-                    }
-                }>
-                    {this.state.isHoverExp ? <span>Level {this.state.currentLevel}</span> : <Fragment><span>{this.state.currentXp}</span><div className={"separation"}></div><span>{this.state.maxXp}</span></Fragment>}
-                </div>
-                
-                <div className={"badges module"} style={
-                    {
-                        left: styles.badges.left,
-                        top: styles.badges.top,
-                        width: styles.badges.width,
-                        height: styles.badges.height,
-                    }
-                }>
-                    {/* Apprentice */}
-                    <div className={"badge"} onMouseEnter={() => {this.hoverBadge(0, true)}} onMouseLeave={() => {this.hoverBadge(0, false)}} style={
+                    <div className={"xpBar moduleTitle"} onMouseEnter={()=>{this.hoverExp(true)}} onMouseLeave={()=>{this.hoverExp(false)}} style={
                         {
-                            left: styles.badge1.left,
-                            width: styles.badge1.width,
-                            height: styles.badge1.height,
-                            top: styles.badge1.top,
-                            borderRadius:"50%",
+                            left: styles.xpBar.left,
+                            width: styles.xpBar.width,
+                            height: styles.xpBar.height,
+                            top: styles.xpBar.top,
                         }
                     }>
-                        <div className={"badge1"} style={
+                        {this.state.isHoverExp ? <span>Level {this.state.currentLevel}</span> : <Fragment><span>{this.state.currentXp}</span><div className={"separation"}></div><span>{this.state.maxXp}</span></Fragment>}
+                    </div>
+                    {/* badges */}
+                    <div className={"badges module"} style={
+                        {
+                            left: styles.badges.left,
+                            top: styles.badges.top,
+                            width: styles.badges.width,
+                            height: styles.badges.height,
+                        }
+                    }>
+                        {/* Apprentice */}
+                        <div className={"badge"} onMouseEnter={() => {this.hoverBadge(0, true)}} onMouseLeave={() => {this.hoverBadge(0, false)}} style={
                             {
-                                width: styles.badge1.width*0.8,
-                                height: styles.badge1.height*0.8,
-                                backgroundImage:`url(${this.state.badges[0].texture})`,
+                                left: styles.badge1.left,
+                                width: styles.badge1.width,
+                                height: styles.badge1.height,
+                                top: styles.badge1.top,
+                                borderRadius:"50%",
+                            }
+                        }>
+                            <div className={"badge1"} style={
+                                {
+                                    width: styles.badge1.width*0.8,
+                                    height: styles.badge1.height*0.8,
+                                    backgroundImage:`url(${this.state.badges[0].texture})`,
+                                    backgroundSize:"cover"
+                                }
+                            }></div>
+                            <div className={"silk"} style={
+                                {
+                                    borderRadius:"50%",
+                                    width: "100%",
+                                    height: "100%",
+                                    backgroundColor: this.state.badges[0].has ? (this.state.badges[0].hovered ? `rgba(0,0,0,0.1)` : `rgba(0,0,0,0)`) : (this.state.badges[0].hovered ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.3)`)
+                                }
+                            }></div>
+                        </div>
+                        <Popover color={"#334458"} id={"badge-hover-" + 0} ratio={1 / 2} side={"left"} size={{ width: 350, height: 100 }}
+                            target={{left: styles.badge1.left,width: styles.badge1.width,height: styles.badge1.height,top: styles.badge1.top}}
+                            isOpen={this.state.badges[0].hovered && this.props.isOpen} title={this.state.badges[0].name}>
+                            <div className={"badge-hover"}>
+                                <span>{this.state.badges[0].condition}</span>
+                            </div>
+                        </Popover>
+                        {/* Help */}
+                        <div className={"badge"} onMouseEnter={() => {this.hoverBadge(1, true)}} onMouseLeave={() => {this.hoverBadge(1, false)}} style={
+                            {
+                                left: styles.badge2.left,
+                                width: styles.badge2.width,
+                                height: styles.badge2.height,
+                                top: styles.badge2.top,
+                                backgroundImage:`url(${this.state.badges[1].texture})`,
                                 backgroundSize:"cover"
                             }
-                        }></div>
-                        <div className={"silk"} style={
-                            {
-                                borderRadius:"50%",
-                                width: "100%",
-                                height: "100%",
-                                backgroundColor: this.state.badges[0].has ? (this.state.badges[0].hovered ? `rgba(0,0,0,0.1)` : `rgba(0,0,0,0)`) : (this.state.badges[0].hovered ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.3)`)
-                            }
-                        }></div>
-                    </div>
-                    <Popover color={"#334458"} id={"badge-hover-" + 0} ratio={1 / 2} side={"left"} size={{ width: 350, height: 100 }}
-                        target={{left: styles.badge1.left,width: styles.badge1.width,height: styles.badge1.height,top: styles.badge1.top}}
-                        isOpen={this.state.badges[0].hovered && this.props.isOpen} title={this.state.badges[0].name}>
-                        <div className={"badge-hover"}>
-                            <span>{this.state.badges[0].condition}</span>
-                        </div>
-                    </Popover>
-                    {/* Help */}
-                    <div className={"badge"} onMouseEnter={() => {this.hoverBadge(1, true)}} onMouseLeave={() => {this.hoverBadge(1, false)}} style={
-                        {
-                            left: styles.badge2.left,
-                            width: styles.badge2.width,
-                            height: styles.badge2.height,
-                            top: styles.badge2.top,
-                            backgroundImage:`url(${this.state.badges[1].texture})`,
-                            backgroundSize:"cover"
-                        }
-                    }>
-                        <div className={"silk"} style={
-                            {
-                                width: "100%",
-                                height: "100%",
-                                backgroundColor: this.state.badges[1].has ? (this.state.badges[1].hovered ? `rgba(0,0,0,0.1)` : `rgba(0,0,0,0)`) : (this.state.badges[1].hovered ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.3)`)
-                            }
-                        }></div>
-                    </div>
-                    <Popover color={"#334458"} id={"badge-hover-" + 1} ratio={1 / 2} side={"left"} size={{ width: 350, height: 100 }}
-                        target={{left: styles.badge2.left,width: styles.badge2.width,height: styles.badge2.height,top: styles.badge2.top}}
-                        isOpen={this.state.badges[1].hovered && this.props.isOpen} title={this.state.badges[1].name}>
-                        <div className={"badge-hover"}>
-                            <span>{this.state.badges[1].condition}</span>
-                        </div>
-                    </Popover>
-                    {/* Eager */}
-                    <div className={"badge"} onMouseEnter={() => {this.hoverBadge(2, true)}} onMouseLeave={() => {this.hoverBadge(2, false)}} style={
-                        {
-                            left: styles.badge3.left,
-                            width: styles.badge3.width,
-                            height: styles.badge3.height,
-                            top: styles.badge3.top,
-                            backgroundImage:`url(${this.state.badges[2].texture})`,
-                            backgroundSize:"cover"
-                        }
-                    }>
-                        <div className={"silk"} style={
-                            {
-                                width: "100%",
-                                height: "100%",
-                                backgroundColor: this.state.badges[2].has ? (this.state.badges[2].hovered ? `rgba(0,0,0,0.1)` : `rgba(0,0,0,0)`) : (this.state.badges[2].hovered ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.3)`)
-                            }
-                        }></div>
-                    </div>
-                    <Popover color={"#334458"} id={"badge-hover-" + 1} ratio={1 / 2} side={"left"} size={{ width: 350, height: 100 }}
-                        target={{left: styles.badge3.left,width: styles.badge3.width,height: styles.badge3.height,top: styles.badge3.top}}
-                        isOpen={this.state.badges[2].hovered && this.props.isOpen} title={this.state.badges[2].name}>
-                        <div className={"badge-hover"}>
-                            <span>{this.state.badges[2].condition}</span>
-                        </div>
-                    </Popover>
-                    {/* Master */}
-                    <div className={"badge"} onMouseEnter={() => {this.hoverBadge(3, true)}} onMouseLeave={() => {this.hoverBadge(3, false)}} style={
-                        {
-                            left: styles.badge4.left,
-                            width: styles.badge4.width,
-                            height: styles.badge4.height,
-                            top: styles.badge4.top,
-                            backgroundImage:`url(${this.state.badges[3].texture})`,
-                            backgroundSize:"cover"
-                        }
-                    }>
-                        <div className={"silk"} style={
-                            {
-                                width: "100%",
-                                height: "100%",
-                                backgroundColor: this.state.badges[3].has ? (this.state.badges[3].hovered ? `rgba(0,0,0,0.1)` : `rgba(0,0,0,0)`) : (this.state.badges[3].hovered ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.3)`)
-                            }
-                        }></div>
-                    </div>
-                    <Popover color={"#334458"} id={"badge-hover-" + 1} ratio={1 / 2} side={"left"} size={{ width: 350, height: 100 }}
-                        target={{left: styles.badge4.left,width: styles.badge4.width,height: styles.badge4.height,top: styles.badge4.top}}
-                        isOpen={this.state.badges[3].hovered && this.props.isOpen} title={this.state.badges[3].name}>
-                        <div className={"badge-hover"}>
-                            <span>{this.state.badges[3].condition}</span>
-                        </div>
-                    </Popover>
-                     {/* Architect */}
-                     <div className={"badge"} onMouseEnter={() => {this.hoverBadge(4, true)}} onMouseLeave={() => {this.hoverBadge(4, false)}} style={
-                        {
-                            left: styles.badge5.left,
-                            width: styles.badge5.width,
-                            height: styles.badge5.height,
-                            top: styles.badge5.top,
-                            backgroundImage:`url(${this.state.badges[4].texture})`,
-                            backgroundSize:"cover"
-                        }
-                    }>
-                        <div className={"silk"} style={
-                            {
-                                width: "100%",
-                                height: "100%",
-                                backgroundColor: this.state.badges[4].has ? (this.state.badges[4].hovered ? `rgba(0,0,0,0.1)` : `rgba(0,0,0,0)`) : (this.state.badges[4].hovered ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.3)`)
-                            }
-                        }></div>
-                    </div>
-                    <Popover color={"#334458"} id={"badge-hover-" + 1} ratio={1 / 2} side={"left"} size={{ width: 350, height: 100 }}
-                        target={{left: styles.badge5.left,width: styles.badge5.width,height: styles.badge5.height,top: styles.badge5.top}}
-                        isOpen={this.state.badges[4].hovered && this.props.isOpen} title={this.state.badges[4].name}>
-                        <div className={"badge-hover"}>
-                            <span>{this.state.badges[4].condition}</span>
-                        </div>
-                    </Popover>
-                </div>
-                <div className={"badgesBar moduleTitle"} style={
-                    {
-                        left: styles.badgesBar.left,
-                        width: styles.badgesBar.width,
-                        height: styles.badgesBar.height,
-                        top: styles.badgesBar.top,
-                    }
-                }>
-                    <span>Badges</span>
-                </div>
-
-                <div className={"skills module"} style={
-                    {
-                        left: styles.skills.left,
-                        top: styles.skills.top,
-                        width: styles.skills.width,
-                        height: styles.skills.height,
-                    }
-                }></div>
-                <div className={"skillsBar moduleTitle"} style={
-                    {
-                        left: styles.skillsBar.left,
-                        width: styles.skillsBar.width,
-                        height: styles.skillsBar.height,
-                        top: styles.skillsBar.top,
-                        backgroundColor:"white"
-                    }
-                }>
-                    <Radar data={this.state.skills} width={styles.skillsBar.height*0.9} height={styles.skillsBar.height*0.9} options={
-                        { 
-                            maintainAspectRatio: false,
-                            scale: {
-                                display: true,
-                                ticks: {
-                                    suggestedMin: 0
+                        }>
+                            <div className={"silk"} style={
+                                {
+                                    width: "100%",
+                                    height: "100%",
+                                    backgroundColor: this.state.badges[1].has ? (this.state.badges[1].hovered ? `rgba(0,0,0,0.1)` : `rgba(0,0,0,0)`) : (this.state.badges[1].hovered ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.3)`)
                                 }
+                            }></div>
+                        </div>
+                        <Popover color={"#334458"} id={"badge-hover-" + 1} ratio={1 / 2} side={"left"} size={{ width: 350, height: 100 }}
+                            target={{left: styles.badge2.left,width: styles.badge2.width,height: styles.badge2.height,top: styles.badge2.top}}
+                            isOpen={this.state.badges[1].hovered && this.props.isOpen} title={this.state.badges[1].name}>
+                            <div className={"badge-hover"}>
+                                <span>{this.state.badges[1].condition}</span>
+                            </div>
+                        </Popover>
+                        {/* Eager */}
+                        <div className={"badge"} onMouseEnter={() => {this.hoverBadge(2, true)}} onMouseLeave={() => {this.hoverBadge(2, false)}} style={
+                            {
+                                left: styles.badge3.left,
+                                width: styles.badge3.width,
+                                height: styles.badge3.height,
+                                top: styles.badge3.top,
+                                backgroundImage:`url(${this.state.badges[2].texture})`,
+                                backgroundSize:"cover"
                             }
-                        }}></Radar>
+                        }>
+                            <div className={"silk"} style={
+                                {
+                                    width: "100%",
+                                    height: "100%",
+                                    backgroundColor: this.state.badges[2].has ? (this.state.badges[2].hovered ? `rgba(0,0,0,0.1)` : `rgba(0,0,0,0)`) : (this.state.badges[2].hovered ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.3)`)
+                                }
+                            }></div>
+                        </div>
+                        <Popover color={"#334458"} id={"badge-hover-" + 1} ratio={1 / 2} side={"left"} size={{ width: 350, height: 100 }}
+                            target={{left: styles.badge3.left,width: styles.badge3.width,height: styles.badge3.height,top: styles.badge3.top}}
+                            isOpen={this.state.badges[2].hovered && this.props.isOpen} title={this.state.badges[2].name}>
+                            <div className={"badge-hover"}>
+                                <span>{this.state.badges[2].condition}</span>
+                            </div>
+                        </Popover>
+                        {/* Master */}
+                        <div className={"badge"} onMouseEnter={() => {this.hoverBadge(3, true)}} onMouseLeave={() => {this.hoverBadge(3, false)}} style={
+                            {
+                                left: styles.badge4.left,
+                                width: styles.badge4.width,
+                                height: styles.badge4.height,
+                                top: styles.badge4.top,
+                                backgroundImage:`url(${this.state.badges[3].texture})`,
+                                backgroundSize:"cover"
+                            }
+                        }>
+                            <div className={"silk"} style={
+                                {
+                                    width: "100%",
+                                    height: "100%",
+                                    backgroundColor: this.state.badges[3].has ? (this.state.badges[3].hovered ? `rgba(0,0,0,0.1)` : `rgba(0,0,0,0)`) : (this.state.badges[3].hovered ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.3)`)
+                                }
+                            }></div>
+                        </div>
+                        <Popover color={"#334458"} id={"badge-hover-" + 1} ratio={1 / 2} side={"left"} size={{ width: 350, height: 100 }}
+                            target={{left: styles.badge4.left,width: styles.badge4.width,height: styles.badge4.height,top: styles.badge4.top}}
+                            isOpen={this.state.badges[3].hovered && this.props.isOpen} title={this.state.badges[3].name}>
+                            <div className={"badge-hover"}>
+                                <span>{this.state.badges[3].condition}</span>
+                            </div>
+                        </Popover>
+                        {/* Architect */}
+                        <div className={"badge"} onMouseEnter={() => {this.hoverBadge(4, true)}} onMouseLeave={() => {this.hoverBadge(4, false)}} style={
+                            {
+                                left: styles.badge5.left,
+                                width: styles.badge5.width,
+                                height: styles.badge5.height,
+                                top: styles.badge5.top,
+                                backgroundImage:`url(${this.state.badges[4].texture})`,
+                                backgroundSize:"cover"
+                            }
+                        }>
+                            <div className={"silk"} style={
+                                {
+                                    width: "100%",
+                                    height: "100%",
+                                    backgroundColor: this.state.badges[4].has ? (this.state.badges[4].hovered ? `rgba(0,0,0,0.1)` : `rgba(0,0,0,0)`) : (this.state.badges[4].hovered ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.3)`)
+                                }
+                            }></div>
+                        </div>
+                        <Popover color={"#334458"} id={"badge-hover-" + 1} ratio={1 / 2} side={"left"} size={{ width: 350, height: 100 }}
+                            target={{left: styles.badge5.left,width: styles.badge5.width,height: styles.badge5.height,top: styles.badge5.top}}
+                            isOpen={this.state.badges[4].hovered && this.props.isOpen} title={this.state.badges[4].name}>
+                            <div className={"badge-hover"}>
+                                <span>{this.state.badges[4].condition}</span>
+                            </div>
+                        </Popover>
+                    </div>
+                    <div className={"badgesBar moduleTitle"} style={
+                        {
+                            left: styles.badgesBar.left,
+                            width: styles.badgesBar.width,
+                            height: styles.badgesBar.height,
+                            top: styles.badgesBar.top,
+                        }
+                    }>
+                        <span>Badges</span>
+                    </div>
+                    {/* skills */}
+                    <div className={"skills module"} style={
+                        {
+                            left: styles.skills.left,
+                            top: styles.skills.top,
+                            width: styles.skills.width,
+                            height: styles.skills.height,
+                        }
+                    }></div>
+                    <div className={"skillsBar moduleTitle"} style={
+                        {
+                            left: styles.skillsBar.left,
+                            width: styles.skillsBar.width,
+                            height: styles.skillsBar.height,
+                            top: styles.skillsBar.top,
+                            backgroundColor:"white"
+                        }
+                    }>
+                        <Radar data={this.state.skills} width={styles.skillsBar.height*0.9} height={styles.skillsBar.height*0.9} options={
+                            { 
+                                maintainAspectRatio: false,
+                                scale: {
+                                    display: true,
+                                    ticks: {
+                                        suggestedMin: 0
+                                    }
+                                }
+                            }}></Radar>
+                    </div>
+                    {/* theme */}
+                    <div className={"theme module"} style={
+                        {
+                            left: styles.theme.left,
+                            top: styles.theme.top,
+                            width: styles.theme.width,
+                            height: styles.theme.height,
+                        }
+                    }></div>
+                    <div className={"themeBar moduleTitle"} style={
+                        {
+                            left: styles.themeBar.left,
+                            width: styles.themeBar.width,
+                            height: styles.themeBar.height,
+                            top: styles.themeBar.top
+                        }
+                    }>Keywords</div>
+                    <div className={"keywords"} style={
+                        {
+                            left: styles.keywords.left,
+                            width: styles.keywords.width,
+                            height: styles.keywords.height,
+                            top: styles.keywords.top
+                        }
+                    }>
+                        {this.state.keywords.map((item, i) => 
+                                <div className={"item"} key={i} onClick={() => this.props.knowledgeSearch(item)}>
+                                    <div className={"item-number"}><span>{i+1}</span></div>
+                                    <div className={"item-info"}>
+                                        <span className={"title"}>{item}</span>
+                                        <span></span>
+                                    </div>
+                                </div>
+                        )}
+                    </div>
                 </div>
             </div>
         );

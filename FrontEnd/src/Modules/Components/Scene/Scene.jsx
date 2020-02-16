@@ -29,6 +29,15 @@ export default class Scene extends Component {
         return obj;
     }
 
+    knowledgeSearch = (value) => {
+        this.props.clickIcon(1);
+        try{
+            this.refs.knowledge.askQuestion(value)
+        }catch(error){
+            console.log("Refs error");
+        }
+    }
+
     render() {
         let styles = this.preparePositions();
         return (
@@ -40,7 +49,7 @@ export default class Scene extends Component {
                     left:styles.scene.left
                 }
             }>
-                <Profile isOpen={this.props.sceneOpened[0]} scene={styles.scene} ratio={this.props.ratio}></Profile>
+                <Profile isOpen={this.props.sceneOpened[0]} scene={styles.scene} ratio={this.props.ratio} knowledgeSearch={this.knowledgeSearch}></Profile>
                 <Knowledge isOpen={this.props.sceneOpened[1]} scene={styles.scene} ratio={this.props.ratio} setSearch={this.props.setSearch} ref={"knowledge"}></Knowledge>
                 <Scholar isOpen={this.props.sceneOpened[3]} scene={styles.scene} ratio={this.props.ratio}></Scholar>
                 <Lectures isOpen={this.props.sceneOpened[4]} scene={styles.scene} ratio={this.props.ratio}></Lectures>
