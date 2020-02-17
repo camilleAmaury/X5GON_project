@@ -64,7 +64,7 @@
     background-color: rgb(221, 54, 54);
 }
 
-#community .submenu .active{
+#community .submenu.active{
     background-color: rgb(221, 54, 54);
 }
 
@@ -158,7 +158,7 @@
 }
 
 #community .deploy{
-    grid-column: 5 / 9;
+    grid-column: 4 / 9;
     grid-row: 6;
     display: flex;
     align-items: flex-end;
@@ -255,4 +255,75 @@
     justify-content: center;
     font-size: 0.75vw;
     font-family: 'Roboto-light';
+}
+
+/* answer */
+#community .answer{
+    width:80%;
+    grid-gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(11, 1fr);
+    grid-auto-rows: minmax(50px, auto);
+    background-color: #D08864;
+}
+#community .answer .bar{
+    background-color: rgb(180, 114, 80);
+    grid-column: 1 / 3;
+    grid-row: 1 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+#community .answer .send {
+    grid-column: 10 / 12;
+    grid-row: 1 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+#community .answer .textarea{
+    grid-column: 3 / 10;
+    grid-row: 1 / 3;
+    border-top: 1px solid black;
+    display: flex;
+    align-items: center;
+}
+
+#community .answer .textarea textarea{
+    width:100%;
+    background-color: lightgray;
+    color: #303030;
+    resize: none;
+    font-family: 'Roboto-Light';
+    font-style: italic;
+    text-align: center;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    border:10px solid lightgray;
+    z-index: 5;
+    border-radius: 50px;
+}
+#community .answer .textarea textarea::-webkit-scrollbar {
+    display: none;
+}
+#community .answer .textarea textarea:hover, #community .answer .textarea textarea:active, #community .answer .textarea textarea:focus{
+    outline:0px !important;
+    -webkit-appearance:none;
+    box-shadow: none !important;
+}
+
+#community .answer .send .arrow{
+    border-color:black;
+    border-style:solid;
+    border-width:0px 10px 10px 0px;
+    display: inline-block;
+    padding: 10px;
+    transform: rotate(-45deg);
+}
+
+#community .answer .send .arrow:hover{
+    border-color:white;
 }
