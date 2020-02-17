@@ -36,7 +36,7 @@ export default class Panel extends Component {
             //     height:238
             // },
             ratio: 1,
-            SceneOpened: [true, false, false, false, false],
+            SceneOpened: [false, false, true, false, false],
             isSceneOpen: true,
             isAnimationOpenEnded: true,
             isAnimationCloseEnded: true,
