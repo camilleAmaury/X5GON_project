@@ -269,7 +269,7 @@ export default class Navbar extends Component {
                                             width: styles.icon.height,
                                             height: styles.icon.height,
                                             backgroundImage:`url('${this.state.hoverIcon[i] ? icon.IconHover : icon.icon}')`,
-                                            backgroundSize:"contain"
+                                            backgroundSize:"cover"
                                         }
                                 }>
 

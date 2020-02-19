@@ -8,10 +8,9 @@ export default class Community extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            beamBox: {
-                size: 50
-            },
-            questions: []
+            questions: [],
+            panelOpened: [true, false],
+            isAnimating: false
         };
     }
 
@@ -37,27 +36,6 @@ export default class Community extends Component {
 
     preparePositions = () => {
         let obj = {};
-        // background
-        if (true) {
-            // verticalbeam
-            obj.beamVertical = {
-                width: Math.floor(this.state.beamBox.size * this.props.ratio),
-                height: this.props.scene.height
-            };
-            obj.beamVertical.left2 = Math.floor(this.props.scene.width * 11 / 16 - (obj.beamVertical.width) / 2);
-            obj.beamVertical.left1 = Math.floor(this.props.scene.width * 5 / 16 - (obj.beamVertical.width) / 2);
-            // horizontalBeam
-            obj.beamHorizontal = {
-                height: Math.floor(this.state.beamBox.size * this.props.ratio),
-                width1: obj.beamVertical.left1 + obj.beamVertical.width,
-                width2: obj.beamVertical.left2 - (obj.beamVertical.left1 + obj.beamVertical.width),
-                left1: 0,
-                left2: obj.beamVertical.left1 + obj.beamVertical.width,
-                left3: obj.beamVertical.left2 + obj.beamVertical.width
-            };
-            obj.beamHorizontal.top1 = Math.floor(this.props.scene.width * 1 / 16 - (obj.beamHorizontal.height) / 2);
-            obj.beamHorizontal.top2 = Math.floor((this.props.scene.height - obj.beamHorizontal.height) / 2);
-        }
         // panel
         if (true) {
             // panel
@@ -71,9 +49,10 @@ export default class Community extends Component {
             obj.subpanel = {
                 height: obj.panel.height,
                 width: obj.panel.width,
-                left1: 0,
-                left2: obj.panel.width,
-                top: 0
+                left1: this.state.panelOpened[0] ? 0 : (- obj.panel.width - 20),
+                left2: this.state.panelOpened[1] ? 0 : (20 + obj.panel.width),
+                top: 0,
+                left3: this.state.panelOpened[1] ? -20 : obj.panel.width
             };
         }
 
@@ -114,29 +93,50 @@ export default class Community extends Component {
                 answer.value = "";
                 let questions = this.state.questions;
                 let now = new Date();
-                let day = now.getDate().toString().length === 1 ? "0"+ now.getDate().toString() : now.getDate();
-                let month = (now.getMonth() + 1).toString().length === 1 ? "0"+ (now.getMonth() + 1).toString() : (now.getMonth() + 1);
+                let day = now.getDate().toString().length === 1 ? "0" + now.getDate().toString() : now.getDate();
+                let month = (now.getMonth() + 1).toString().length === 1 ? "0" + (now.getMonth() + 1).toString() : (now.getMonth() + 1);
                 questions[i].comments.push(
                     {
-                        author: 'Tonclure2000', 
-                        time: `${now.getMinutes()}:${now.getHours()} ${day}/${month}/${now.getFullYear()}`, 
-                        content: answerValue, 
-                        like: 0, 
-                        isLiked: 0, 
-                        hoveredArrow: 0 
+                        author: 'Tonclure2000',
+                        time: `${now.getMinutes()}:${now.getHours()} ${day}/${month}/${now.getFullYear()}`,
+                        content: answerValue,
+                        like: 0,
+                        isLiked: 0,
+                        hoveredArrow: 0
                     }
                 );
                 this.setState({
-                    questions:questions
+                    questions: questions
                 });
             }, 50);
         }
     }
 
     postAnswer2 = (event, i) => {
-        if(event.key === 'Enter'){
+        if (event.key === 'Enter') {
             this.postAnswer(i);
         }
+    }
+
+    changePanel = (i) => {
+        let panelOpened = [false, false];
+        panelOpened[i] = true;
+        // animation
+        let subp1 = document.getElementsByClassName("sub-panel")[0];
+        let subp2 = document.getElementsByClassName("sub-panel")[1];
+        let subps = document.getElementsByClassName("sub-panel-separator")[0];
+        subp1.style.transition = "1.5s left";
+        subp2.style.transition = "1.5s left";
+        subps.style.transition = "1.5s left";
+        this.setState({ panelOpened: panelOpened, isAnimating: true }, () => {
+            setTimeout(() => {
+                subp1.style.transition = "none";
+                subp2.style.transition = "none";
+                subps.style.transition = "none";
+                this.setState({ isAnimating: false });
+            }, 1500);
+
+        });
     }
 
     render() {
@@ -148,53 +148,12 @@ export default class Community extends Component {
                     visibility: this.props.isOpen ? "visible" : "hidden"
                 }
             }>
-                {/* beams */}
-                <Fragment>
-                    <div className={"verticalBeam"} style={
-                        {
-                            left: styles.beamVertical.left1,
-                            width: styles.beamVertical.width,
-                            height: styles.beamVertical.height,
-                        }
-                    }></div>
-                    <div className={"verticalBeam"} style={
-                        {
-                            left: styles.beamVertical.left2,
-                            width: styles.beamVertical.width,
-                            height: styles.beamVertical.height,
-                        }
-                    }></div>
-                    <div className={"horizontalBeam"} style={
-                        {
-                            left: styles.beamHorizontal.left1,
-                            width: styles.beamHorizontal.width1,
-                            height: styles.beamHorizontal.height,
-                            top: styles.beamHorizontal.top1,
-                        }
-                    }></div>
-                    <div className={"horizontalBeam"} style={
-                        {
-                            left: styles.beamHorizontal.left3,
-                            width: styles.beamHorizontal.width1,
-                            height: styles.beamHorizontal.height,
-                            top: styles.beamHorizontal.top1,
-                        }
-                    }></div>
-                    <div className={"horizontalBeam"} style={
-                        {
-                            left: styles.beamHorizontal.left2,
-                            width: styles.beamHorizontal.width2,
-                            height: styles.beamHorizontal.height,
-                            top: styles.beamHorizontal.top2,
-                        }
-                    }></div>
-                </Fragment>
                 {/* Content */}
                 <div id={"community-inner"}>
                     <div id={"menu"}>
-                        <div className={"submenu active"}>Community Questions</div>
+                        <div className={this.state.panelOpened[0] ? "submenu active" : "submenu"} onClick={this.state.isAnimating ? () => { } : () => this.changePanel(0)}>Community Questions</div>
                         <div className={"submenuSeparation"}></div>
-                        <div className={"submenu"}>Ask A Question</div>
+                        <div className={this.state.panelOpened[1] ? "submenu active" : "submenu"} onClick={this.state.isAnimating ? () => { } : () => this.changePanel(1)}>Ask A Question</div>
                     </div>
                     <div id={"scrollable-panel"} style={
                         {
@@ -226,14 +185,14 @@ export default class Community extends Component {
                                         </div>
                                     </div>
                                     {item.isClicked ?
-                                    <div className={"answer"}>
-                                        <div className={"bar"}></div>
-                                        <div className={"send"}><div className={"arrow"} onClick={() => this.postAnswer(i)}></div></div>
-                                        <div className={"textarea"}><textarea id={"answer-textarea-" + i} 
-                                            onKeyPress={event => this.postAnswer2(event, i)}></textarea>
+                                        <div className={"answer"}>
+                                            <div className={"bar"}></div>
+                                            <div className={"send"}><div className={"arrow"} onClick={() => this.postAnswer(i)}></div></div>
+                                            <div className={"textarea"}><textarea id={"answer-textarea-" + i}
+                                                onKeyPress={event => this.postAnswer2(event, i)}></textarea>
+                                            </div>
                                         </div>
-                                    </div>
-                                    : ""}
+                                        : ""}
                                     {item.isClicked ? item.comments.map((com, j) =>
                                         <div className={"comment"} key={j}>
                                             <div className={"bar"}>
@@ -271,6 +230,16 @@ export default class Community extends Component {
                             )}
 
                         </div>
+
+                        <div className={"sub-panel-separator"} style={
+                            {
+                                height: styles.panel.height,
+                                width: 20,
+                                left: styles.subpanel.left3,
+                                top: 0
+                            }
+                        }></div>
+
                         <div className={"sub-panel"} style={
                             {
                                 height: styles.subpanel.height,

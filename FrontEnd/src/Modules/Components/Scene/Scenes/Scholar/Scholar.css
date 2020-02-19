@@ -5,7 +5,7 @@
 /* scholar container */
 #scholar{
     overflow: hidden;
-    position: relative;
+    position: absolute;
     background-color: #C6A561;
     top:0;
     left:0;
