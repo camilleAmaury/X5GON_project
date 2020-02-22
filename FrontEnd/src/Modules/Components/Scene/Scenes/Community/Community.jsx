@@ -31,7 +31,9 @@ export default class Community extends Component {
                 ]
             }
         ];
-        this.setState({ questions: questions });
+        if(this.props.isMounted){
+            this.setState({ questions: questions });
+        }
     }
 
     preparePositions = () => {
@@ -60,29 +62,45 @@ export default class Community extends Component {
     }
 
     openComment = (i) => {
-        let questions = this.state.questions;
-        questions[i].isClicked = !questions[i].isClicked;
-        this.setState({ questions: questions });
+        if(this.props.isMounted){
+            let questions = this.state.questions;
+            questions[i].isClicked = !questions[i].isClicked;
+            if(this.props.isMounted){
+                this.setState({ questions: questions });    
+            }
+        }
     }
 
     liked = (i, j, val) => {
-        let questions = this.state.questions;
-        questions[i].comments[j].like += questions[i].comments[j].isLiked !== 0 ? val * 2 : val;
-        questions[i].comments[j].isLiked = val;
-        this.setState({ questions: questions });
+        if(this.props.isMounted){
+            let questions = this.state.questions;
+            questions[i].comments[j].like += questions[i].comments[j].isLiked !== 0 ? val * 2 : val;
+            questions[i].comments[j].isLiked = val;
+            if(this.props.isMounted){
+                this.setState({ questions: questions });
+            }
+        }
     }
 
     unliked = (i, j) => {
-        let questions = this.state.questions;
-        questions[i].comments[j].like -= questions[i].comments[j].isLiked;
-        questions[i].comments[j].isLiked = 0;
-        this.setState({ questions: questions });
+        if(this.props.isMounted){
+            let questions = this.state.questions;
+            questions[i].comments[j].like -= questions[i].comments[j].isLiked;
+            questions[i].comments[j].isLiked = 0;
+            if(this.props.isMounted){
+                this.setState({ questions: questions });
+            }
+        }
     }
 
     hoverArrow = (i, j, val) => {
-        let questions = this.state.questions;
-        questions[i].comments[j].hoverArrow = val;
-        this.setState({ questions: questions });
+        if(this.props.isMounted){
+            let questions = this.state.questions;
+            questions[i].comments[j].hoverArrow = val;
+            if(this.props.isMounted){
+                this.setState({ questions: questions });
+            }
+        }
     }
 
     postAnswer = (i) => {
@@ -91,23 +109,27 @@ export default class Community extends Component {
         if (!(answerValue === null || answerValue === undefined || answerValue === "")) {
             setTimeout(() => {
                 answer.value = "";
-                let questions = this.state.questions;
-                let now = new Date();
-                let day = now.getDate().toString().length === 1 ? "0" + now.getDate().toString() : now.getDate();
-                let month = (now.getMonth() + 1).toString().length === 1 ? "0" + (now.getMonth() + 1).toString() : (now.getMonth() + 1);
-                questions[i].comments.push(
-                    {
-                        author: 'Tonclure2000',
-                        time: `${now.getMinutes()}:${now.getHours()} ${day}/${month}/${now.getFullYear()}`,
-                        content: answerValue,
-                        like: 0,
-                        isLiked: 0,
-                        hoveredArrow: 0
+                if(this.props.isMounted){
+                    let questions = this.state.questions;
+                    let now = new Date();
+                    let day = now.getDate().toString().length === 1 ? "0" + now.getDate().toString() : now.getDate();
+                    let month = (now.getMonth() + 1).toString().length === 1 ? "0" + (now.getMonth() + 1).toString() : (now.getMonth() + 1);
+                    questions[i].comments.push(
+                        {
+                            author: 'Tonclure2000',
+                            time: `${now.getMinutes()}:${now.getHours()} ${day}/${month}/${now.getFullYear()}`,
+                            content: answerValue,
+                            like: 0,
+                            isLiked: 0,
+                            hoveredArrow: 0
+                        }
+                    );
+                    if(this.props.isMounted){
+                        this.setState({
+                            questions: questions
+                        });
                     }
-                );
-                this.setState({
-                    questions: questions
-                });
+                }
             }, 50);
         }
     }
@@ -128,15 +150,16 @@ export default class Community extends Component {
         subp1.style.transition = "1.5s left";
         subp2.style.transition = "1.5s left";
         subps.style.transition = "1.5s left";
-        this.setState({ panelOpened: panelOpened, isAnimating: true }, () => {
-            setTimeout(() => {
-                subp1.style.transition = "none";
-                subp2.style.transition = "none";
-                subps.style.transition = "none";
-                this.setState({ isAnimating: false });
-            }, 1500);
-
-        });
+        if(this.props.isMounted){
+            this.setState({ panelOpened: panelOpened, isAnimating: true }, () => {
+                setTimeout(() => {
+                    subp1.style.transition = "none";
+                    subp2.style.transition = "none";
+                    subps.style.transition = "none";
+                    this.setState({ isAnimating: false });
+                }, 1500);
+            });
+        }
     }
 
     render() {
@@ -177,7 +200,7 @@ export default class Community extends Component {
                                         <div className={"title"}><span>{item.question}</span></div>
                                         <div className={"bar"}></div>
                                         <div className={"question-title"}><span>{item.questionContent}</span></div>
-                                        <div className={"deploy"} onClick={() => this.openComment(i)}><span>see comments ({item.comments.length})</span></div>
+                                        <div className={"deploy"} onClick={() => this.openComment(i)}><span>{item.isClicked? "unsee comments": "see comments"} ({item.comments.length})</span></div>
                                         <div className={"user-information"}>
                                             <div className={"picture"}></div>
                                             <div className={"username"}>{item.author.username}</div>

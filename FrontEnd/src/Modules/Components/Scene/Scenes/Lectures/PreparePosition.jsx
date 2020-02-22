@@ -274,7 +274,7 @@ function preparePositionPagoda(obj, documents, ratio, scene, state){
                     pagodaStep.height[i] = Math.floor(state.floorPosition1.height[i] * ratio);
                     pagodaStep.left[i] = Math.floor((obj.container.pagoda.width-pagodaStep.width[i])/2);
                     if(i === max){
-                        pagodaStep.top[i] = obj.pagodafloor.top[max - i] + gap - pagodaStep.height[i];
+                        pagodaStep.top[i] = obj.pagodafloor.top[j] + gap - pagodaStep.height[i];
                     }else{
                         pagodaStep.top[i] = pagodaStep.top[i+1] - pagodaStep.height[i];
                     }
