@@ -50,11 +50,13 @@ export default class Profile extends Component {
     }
 
     componentDidMount = () => {
-        this.setState({
-            maxXp:200,
-            currentXp:125,
-            currentLevel:4
-        })
+        if(this.props.isMounted){
+            this.setState({
+                maxXp:200,
+                currentXp:125,
+                currentLevel:4
+            });
+        }
     }
 
     preparePositions = () => {
@@ -207,19 +209,25 @@ export default class Profile extends Component {
     }
 
     hoverExp = (bool) => {
-        this.setState({isHoverExp:bool});
+        if(this.props.isMounted){
+            this.setState({isHoverExp:bool});
+        }
     }
 
     hoverBadge = (i, bool) => {
-        let badges = this.state.badges;
-        badges[i].hovered = bool;
-        this.setState({badges:badges});
+        if(this.props.isMounted){
+            let badges = this.state.badges;
+            badges[i].hovered = bool;
+            if(this.props.isMounted){
+                this.setState({badges:badges});
+            }
+        }
     }
 
     render() {
         let styles = this.preparePositions();
-        let percentage = this.state.currentXp / this.state.maxXp;
-
+        
+        let percentage = this.props.isMounted ? this.state.currentXp / this.state.maxXp : 0;
         return (
             <div id={"profile"} style={
                 {

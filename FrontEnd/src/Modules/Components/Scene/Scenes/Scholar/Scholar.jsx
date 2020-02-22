@@ -53,7 +53,9 @@ export default class Scholar extends Component {
         if(questions.length === 0){
             questions.push({question:"No question available", answer:"You never ask me something !"})
         }
-        this.setState({questions:questions});
+        if(this.props.isMounted){
+            this.setState({questions:questions});
+        }
     }
 
     preparePositions = () => {
@@ -131,11 +133,15 @@ export default class Scholar extends Component {
     }
 
     hover = (bool) => {
-        this.setState({ isHovered: bool });
+        if(this.props.isMounted){
+            this.setState({ isHovered: bool });
+        }
     }
 
-    click = event => {
-        this.setState({ isClicked : !this.state.isClicked});
+    click = () => {
+        if(this.props.isMounted){
+            this.setState({ isClicked : !this.state.isClicked});
+        }
     }
 
     render() {
