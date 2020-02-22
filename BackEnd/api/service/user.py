@@ -142,6 +142,7 @@ def get_user_info(user_id):
     mod['experience']['experience'] = user.experience
     mod['badge'] = badge_service.get_all_badges(user_id)
     mod['skill'] = get_all_user_skills(user_id)
+    mod['search_history'] = get_all_user_searches(user_id)
     return mod
 
 
