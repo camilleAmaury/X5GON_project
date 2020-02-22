@@ -105,46 +105,50 @@ export default class Lectures extends Component {
                         isValidateClicked:false, ratingUnderstanding:0, ratingQuality:0, ratingUnderstandingHover:0, ratingQualityHover:0, isRated:false
                     };
                     let arr = this.state.documents.concat([doc]);
-                    this.setState({ documents: arr }, () => {
-                        // find the prerequisites
-                        axios.get(`http://185.157.246.81:5000/prerequisites/${documentsId[i]}`)
-                            .then(request => {
-                                let prerequisites = [];
-                                let datas = request.data;
-                                let dataper2 = Math.ceil(datas.length / 2);
-                                for (let j = 0; j < dataper2; j++) {
-                                    let temp_array = [];
-                                    if (j === dataper2 - 1 && datas.length % 2 === 1) {
-                                        temp_array.push({ title: datas[2 * j][0], link: datas[2 * j][1] });
-                                    } else {
-                                        temp_array.push({ title: datas[2 * j][0], link: datas[2 * j][1] });
-                                        temp_array.push({ title: datas[2 * j + 1][0], link: datas[2 * j + 1][1] });
+                    if(this.props.isMounted){
+                        this.setState({ documents: arr }, () => {
+                            // find the prerequisites
+                            axios.get(`http://185.157.246.81:5000/prerequisites/${documentsId[i]}`)
+                                .then(request => {
+                                    let prerequisites = [];
+                                    let datas = request.data;
+                                    let dataper2 = Math.ceil(datas.length / 2);
+                                    for (let j = 0; j < dataper2; j++) {
+                                        let temp_array = [];
+                                        if (j === dataper2 - 1 && datas.length % 2 === 1) {
+                                            temp_array.push({ title: datas[2 * j][0], link: datas[2 * j][1] });
+                                        } else {
+                                            temp_array.push({ title: datas[2 * j][0], link: datas[2 * j][1] });
+                                            temp_array.push({ title: datas[2 * j + 1][0], link: datas[2 * j + 1][1] });
+                                        }
+                                        prerequisites.push(temp_array);
                                     }
-                                    prerequisites.push(temp_array);
-                                }
-                                let arr = this.state.documents;
-                                arr[i].data = prerequisites;
-                                let bool = [];
-                                let bool2 = [];
-                                for (let j = 0; j < arr[i].data.length; j++) {
-                                    bool.push(false);
-                                    bool2.push(false)
-                                }
-                                let floorhovered = this.state.isFloorHovered;
-                                let floorcliked = this.state.isFloorClicked;
-                                floorhovered.push(bool);
-                                floorcliked.push(bool2);
-                                this.setState({ documents: arr, isFloorHovered: floorhovered, isFloorClicked:floorcliked }, () => {
-                                    let list = document.getElementsByClassName("scrollUpper");
-                                    list[i * 2].addEventListener("click", this.scrollDocument);
-                                    list[i * 2 + 1].addEventListener("click", this.scrollDocument);
+                                    let arr = this.state.documents;
+                                    arr[i].data = prerequisites;
+                                    let bool = [];
+                                    let bool2 = [];
+                                    for (let j = 0; j < arr[i].data.length; j++) {
+                                        bool.push(false);
+                                        bool2.push(false)
+                                    }
+                                    let floorhovered = this.state.isFloorHovered;
+                                    let floorcliked = this.state.isFloorClicked;
+                                    floorhovered.push(bool);
+                                    floorcliked.push(bool2);
+                                    if(this.props.isMounted){
+                                        this.setState({ documents: arr, isFloorHovered: floorhovered, isFloorClicked:floorcliked }, () => {
+                                            let list = document.getElementsByClassName("scrollUpper");
+                                            list[i * 2].addEventListener("click", this.scrollDocument);
+                                            list[i * 2 + 1].addEventListener("click", this.scrollDocument);
+                                        });
+                                    }
+                                })
+                                .catch(error => {
+                                    console.log(error)
+                                    console.log("this doesn't work");
                                 });
-                            })
-                            .catch(error => {
-                                console.log(error)
-                                console.log("this doesn't work");
-                            });
-                    });
+                        });
+                    }
                 })
                 .catch(error => {
                     console.log(error)
@@ -193,34 +197,36 @@ export default class Lectures extends Component {
         corpus.style.transition = "1.5s height";
         document.getElementsByClassName("side1")[nb].style.transition = "1.5s height";
         document.getElementsByClassName("side2")[nb].style.transition = "1.5s height";
-        this.setState({
-            documents: documents
-        }, () => {
-            setTimeout(() => {
-                document.getElementById("lectures").scrollTo(0, document.getElementsByClassName("lectures-document")[nb].offsetTop);
-                // transition out 
-                if(documents[nb].isScrolled){
-                    btn1.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
-                    btn2.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
-                }
-                upper_scroll.addEventListener('click', this.scrollDocument);
-                lower_scroll.addEventListener('click', this.scrollDocument);
-                lower_scroll.style.transition = "none";
-                lower_texture.style.transition = "none";
-                documentContainer.style.transition = "none";
-                documentSeparator.style.transition = "none";
-                center_texture.style.transition = "none";
-                lower_scroll_sideLeft.style.transition = "none";
-                lower_scroll_sideRight.style.transition = "none";
-                lectures.style.transition = "none";
-                btnVal.style.transition = "none";
-                btnDel.style.transition = "none";
-                popDel.style.transition = "none";
-                document.getElementsByClassName("side1")[nb].style.transition = "none";
-                document.getElementsByClassName("side2")[nb].style.transition = "none";
-                corpus.style.transition = "none";
-            }, 1500);
-        });
+        if(this.props.isMounted){
+            this.setState({
+                documents: documents
+            }, () => {
+                setTimeout(() => {
+                    document.getElementById("lectures").scrollTo(0, document.getElementsByClassName("lectures-document")[nb].offsetTop);
+                    // transition out 
+                    if(documents[nb].isScrolled){
+                        btn1.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
+                        btn2.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
+                    }
+                    upper_scroll.addEventListener('click', this.scrollDocument);
+                    lower_scroll.addEventListener('click', this.scrollDocument);
+                    lower_scroll.style.transition = "none";
+                    lower_texture.style.transition = "none";
+                    documentContainer.style.transition = "none";
+                    documentSeparator.style.transition = "none";
+                    center_texture.style.transition = "none";
+                    lower_scroll_sideLeft.style.transition = "none";
+                    lower_scroll_sideRight.style.transition = "none";
+                    lectures.style.transition = "none";
+                    btnVal.style.transition = "none";
+                    btnDel.style.transition = "none";
+                    popDel.style.transition = "none";
+                    document.getElementsByClassName("side1")[nb].style.transition = "none";
+                    document.getElementsByClassName("side2")[nb].style.transition = "none";
+                    corpus.style.transition = "none";
+                }, 1500);
+            });
+        }
     }
 
     scrollEv = event => {
@@ -237,20 +243,22 @@ export default class Lectures extends Component {
 
         let size = document.getElementsByClassName("lectures-corpus")[nb].children[0].offsetHeight;
         size -= document.getElementsByClassName("lectures-corpus")[nb].offsetHeight - 20;
-        if (st > 0 && Math.sign(speed) === -1) {
-            documents[nb].bgY1 += speed;
-            documents[nb].bgY2 += speed;
-            documents[nb].corpusTop = st;
-            this.setState({
-                documents: documents
-            });
-        } else if (st < size && Math.sign(speed) === 1) {
-            documents[nb].bgY1 += speed;
-            documents[nb].bgY2 += speed;
-            documents[nb].corpusTop = st;
-            this.setState({
-                documents: documents
-            });
+        if(this.props.isMounted){
+            if (st > 0 && Math.sign(speed) === -1) {
+                documents[nb].bgY1 += speed;
+                documents[nb].bgY2 += speed;
+                documents[nb].corpusTop = st;
+                this.setState({
+                    documents: documents
+                });
+            } else if (st < size && Math.sign(speed) === 1) {
+                documents[nb].bgY1 += speed;
+                documents[nb].bgY2 += speed;
+                documents[nb].corpusTop = st;
+                this.setState({
+                    documents: documents
+                });
+            }
         }
     }
 
@@ -283,145 +291,182 @@ export default class Lectures extends Component {
         corpus.style.transition = "1.5s left";
         document.getElementsByClassName("side1")[nb].style.transition = "1.5s left";
         document.getElementsByClassName("side2")[nb].style.transition = "1.5s left";
-        this.setState({
-            documents: documents
-        }, () => {
-            setTimeout(() => {
-                document.getElementById("lectures").scrollTo(0, document.getElementsByClassName("lectures-document")[nb].offsetTop);
-                // transition out 
-                btn1.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
-                btn2.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
-                upper_scroll.addEventListener('click', this.scrollDocument);
-                lower_scroll.addEventListener('click', this.scrollDocument);
-                lower_scroll.style.transition = "none";
-                documentContainer.style.transition = "none";
-                lower_scroll_sideLeft.style.transition = "none";
-                lower_scroll_sideRight.style.transition = "none";
-                pagodaContainer.style.transition = "none";
-                separatorContainer.style.transition = "none";
-                document.getElementsByClassName("side1")[nb].style.transition = "none";
-                document.getElementsByClassName("side2")[nb].style.transition = "none";
-                corpus.style.transition = "none";
-            }, 1500);
-        });
+        if(this.props.isMounted){
+            this.setState({
+                documents: documents
+            }, () => {
+                setTimeout(() => {
+                    document.getElementById("lectures").scrollTo(0, document.getElementsByClassName("lectures-document")[nb].offsetTop);
+                    // transition out 
+                    btn1.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
+                    btn2.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
+                    upper_scroll.addEventListener('click', this.scrollDocument);
+                    lower_scroll.addEventListener('click', this.scrollDocument);
+                    lower_scroll.style.transition = "none";
+                    documentContainer.style.transition = "none";
+                    lower_scroll_sideLeft.style.transition = "none";
+                    lower_scroll_sideRight.style.transition = "none";
+                    pagodaContainer.style.transition = "none";
+                    separatorContainer.style.transition = "none";
+                    document.getElementsByClassName("side1")[nb].style.transition = "none";
+                    document.getElementsByClassName("side2")[nb].style.transition = "none";
+                    corpus.style.transition = "none";
+                }, 1500);
+            });
+        }
     }
 
     hoverPagoda = (i, j) => {
         let floor = this.state.isFloorHovered;
         floor[i][j] = true;
-        this.setState({
-            isFloorHovered: floor
-        });
+        if(this.props.isMounted){
+            this.setState({
+                isFloorHovered: floor
+            });
+        }
     }
 
     unhoverPagoda = (i, j) => {
         let floor = this.state.isFloorHovered;
         floor[i][j] = false;
-        this.setState({
-            isFloorHovered: floor
-        });
+        if(this.props.isMounted){
+            this.setState({
+                isFloorHovered: floor
+            });
+        }
     }
 
     clickPagoda = (i, j) => {
         let floor = this.state.isFloorClicked;
         floor[i][j] = !floor[i][j];
-        this.setState({
-            isFloorClicked: floor
-        });
+        if(this.props.isMounted){
+            if(this.props.isMounted){
+                this.setState({
+                    isFloorClicked: floor
+                });
+            }
+        }
     }
 
     clickDelete = (i) => {
-        let arr = this.state.documents;
-        if(arr[i].isScrolled){
-            arr[i].isDeleteClicked = arr[i].isDeleteClicked + 1;
-            this.setState({documents:arr}, () => {
-                let arr = this.state.documents;
-                if(arr[i].isDeleteClicked === 1){
-                    // wait 10 seconds to reset state 0
-                    setTimeout(() => {
-                        try {
-                            let arr = this.state.documents;
-                            if(arr[i].isDeleteClicked === 0){
-                                // it means that we already deleted it
-                            }else{
-                                // user don't want to delete
-                                arr[i].isDeleteClicked = 0;
-                                this.setState({documents:arr});
+        if(this.props.isMounted){
+            let arr = this.state.documents;
+            if(arr[i].isScrolled){
+                arr[i].isDeleteClicked = arr[i].isDeleteClicked + 1;
+                if(this.props.isMounted){
+                    this.setState({documents:arr}, () => {
+                        let arr = this.state.documents;
+                        if(arr[i].isDeleteClicked === 1){
+                            // wait 10 seconds to reset state 0
+                            setTimeout(() => {
+                                try {
+                                    let arr = this.state.documents;
+                                    if(arr[i].isDeleteClicked === 0){
+                                        // it means that we already deleted it
+                                    }else{
+                                        // user don't want to delete
+                                        arr[i].isDeleteClicked = 0;
+                                        if(this.props.isMounted){
+                                            this.setState({documents:arr});
+                                        }
+                                    }
+                                }
+                                catch(error) {
+                                    // already deleted, no need to pursue
+                                }
+                            },10000);
+                        }
+                        if(arr[i].isDeleteClicked === 2){
+                            // request sent to server
+
+                            // process front end
+                            let doc1 = this.state.isFloorClicked;
+                            let doc2 = this.state.isFloorHovered;
+                            arr.splice(i, 1);
+                            doc1.splice(i, 1);
+                            doc2.splice(i, 1);
+                            if(this.props.isMounted){
+                                this.setState({documents:arr, isFloorClicked:doc1, isFloorHovered:doc2});
                             }
                         }
-                        catch(error) {
-                            // already deleted, no need to pursue
-                        }
-                    },10000);
+                    });
                 }
-                if(arr[i].isDeleteClicked === 2){
-                    // request sent to server
-
-                    // process front end
-                    let doc1 = this.state.isFloorClicked;
-                    let doc2 = this.state.isFloorHovered;
-                    arr.splice(i, 1);
-                    doc1.splice(i, 1);
-                    doc2.splice(i, 1);
-                    this.setState({documents:arr, isFloorClicked:doc1, isFloorHovered:doc2});
-                }
-            });
+            }
         }
     }
 
     hoverDelButton = (i, bool) => {
-        let arr = this.state.documents;
-        arr[i].isDeleteHovered = bool;
-        this.setState({documents:arr});
+        if(this.props.isMounted){
+            let arr = this.state.documents;
+            arr[i].isDeleteHovered = bool;
+            if(this.props.isMounted){
+                this.setState({documents:arr});
+            }
+        }
     }
 
     hoverValButton = (i, bool) => {
-        let arr = this.state.documents;
-        arr[i].isValidateHovered = bool;
-        this.setState({documents:arr});
+        if(this.props.isMounted){
+            let arr = this.state.documents;
+            arr[i].isValidateHovered = bool;
+            if(this.props.isMounted){
+                this.setState({documents:arr});
+            }
+        }
     }
 
     clickValidate = (i) => {
-        let doc = this.state.documents;
-        if(doc[i].isScrolled){
-            doc[i].isValidateClicked = !doc[i].isValidateClicked;
-            this.setState({documents:doc});
+        if(this.props.isMounted){
+            let doc = this.state.documents;
+            if(doc[i].isScrolled){
+                doc[i].isValidateClicked = !doc[i].isValidateClicked;
+                if(this.props.isMounted){
+                    this.setState({documents:doc});
+                }
+            }
         }
     }
 
     ratingHover = (pos, i, j) => {
-        let doc = this.state.documents;
-        if(pos === 0){
-            doc[i].ratingUnderstandingHover = j;
-        }else if(pos === 1){
-            doc[i].ratingQualityHover = j;
+        if(this.props.isMounted){
+            let doc = this.state.documents;
+            if(pos === 0){
+                doc[i].ratingUnderstandingHover = j;
+            }else if(pos === 1){
+                doc[i].ratingQualityHover = j;
+            }
+            this.setState({documents:doc});
         }
-        this.setState({documents:doc});
     }
 
     ratingClick = (pos, i, j) => {
-        let doc = this.state.documents;
-        if(pos === 0){
-            doc[i].ratingUnderstanding = j;
-        }else if(pos === 1){
-            doc[i].ratingQuality = j;
+        if(this.props.isMounted){
+            let doc = this.state.documents;
+            if(pos === 0){
+                doc[i].ratingUnderstanding = j;
+            }else if(pos === 1){
+                doc[i].ratingQuality = j;
+            }
+            if(this.props.isMounted){
+                this.setState({documents:doc});
+            }
         }
-        this.setState({documents:doc});
     }
 
     sendRating = (i) => {
-        let doc = this.state.documents;
-        if(doc[i].ratingQuality !== 0 && doc[i].ratingUnderstanding !== 0){
-            doc[i].isRated = true;
+        if(this.props.isMounted){
+            let doc = this.state.documents;
+            if(doc[i].ratingQuality !== 0 && doc[i].ratingUnderstanding !== 0){
+                doc[i].isRated = true;
 
-            // request
+                // request
 
-            // hide validate state
-            this.setState({documents:doc}, () => {
-                console.log("rated");
-            });
+                // hide validate state
+                if(this.props.isMounted){
+                    this.setState({documents:doc});
+                }
+            }
         }
-        
     }
 
     render() {

@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React, { Component} from 'react';
+import { Redirect } from 'react-router';
 
 import Navbar from '../Navbar/Navbar';
 import Cursor from '../Cursor/Cursor';
@@ -11,6 +12,8 @@ import ScholarBubble from '../Popover/ScholarPopover';
 import './Panel.css';
 
 export default class Panel extends Component {
+    _isMounted=true;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -36,8 +39,8 @@ export default class Panel extends Component {
             //     height:238
             // },
             ratio: 1,
-            SceneOpened: [false, false, true, false, false],
-            isSceneOpen: true,
+            SceneOpened: [false, false, false, false, false],
+            isSceneOpen: false,
             isAnimationOpenEnded: true,
             isAnimationCloseEnded: true,
             animationTime: 1500
@@ -47,24 +50,39 @@ export default class Panel extends Component {
     componentDidMount = () => {
         window.addEventListener("resize", this.resize);
         let panel = document.getElementById("Panel");
-        this.setState({
-            PanelBox: {
-                width: panel.clientWidth,
-                height: panel.clientHeight
-            },
-            ratio: panel.clientWidth / 1920
-        });
+        if(this._isMounted){
+            this.setState({
+                PanelBox: {
+                    width: panel.clientWidth,
+                    height: panel.clientHeight
+                },
+                ratio: panel.clientWidth / 1920
+            });
+        }
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
+
+    isConnected = () => {
+        if(localStorage.getItem("isConnected") === null || localStorage.getItem("isConnected") === undefined){
+            console.log("hello")
+            return <Redirect to='/'/>;
+        }
     }
 
     resize = () => {
         let panel = document.getElementById("Panel");
-        this.setState({
-            PanelBox: {
-                width: panel.clientWidth,
-                height: panel.clientHeight
-            },
-            ratio: panel.clientWidth / 1920
-        });
+        if(this._isMounted){
+            this.setState({
+                PanelBox: {
+                    width: panel.clientWidth,
+                    height: panel.clientHeight
+                },
+                ratio: panel.clientWidth / 1920
+            });
+        }
     }
 
     preparePositions = () => {
@@ -176,21 +194,23 @@ export default class Panel extends Component {
     }
 
     onIconClick = (i) => {
-        let iconClick = this.state.SceneOpened;
-        if (iconClick[i]) {
-            // close the door
-            iconClick = [false, false, false, false, false];
-            this.CloseScene(iconClick, null);
-        } else {
-            if (this.state.isSceneOpen) {
-                // close + open
+        if(this._isMounted){
+            let iconClick = this.state.SceneOpened;
+            if (iconClick[i]) {
+                // close the door
                 iconClick = [false, false, false, false, false];
-                this.CloseScene(iconClick, i);
+                this.CloseScene(iconClick, null);
             } else {
-                // open
-                iconClick = [false, false, false, false, false];
-                iconClick[i] = true;
-                this.OpenScene(iconClick);
+                if (this.state.isSceneOpen) {
+                    // close + open
+                    iconClick = [false, false, false, false, false];
+                    this.CloseScene(iconClick, i);
+                } else {
+                    // open
+                    iconClick = [false, false, false, false, false];
+                    iconClick[i] = true;
+                    this.OpenScene(iconClick);
+                }
             }
         }
     }
@@ -202,28 +222,34 @@ export default class Panel extends Component {
             let transition = `left ${this.state.animationTime / 1000}s ease-in-out`;
             document.getElementById("left-door").style.transition = transition;
             document.getElementById("right-door").style.transition = transition;
-            this.setState({
-                SceneOpened: OpenScene,
-                isAnimationOpenEnded: false
-            }, () => {
-                setTimeout(() => {
-                    // after loading the content we can know animate
-                    this.setState({
-                        isSceneOpen: true
-                    }, () => {
-                        // waiting the animation time to re-give right to click on icons + load some future contents
-                        setTimeout(() => {
+            if(this._isMounted){
+                this.setState({
+                    SceneOpened: OpenScene,
+                    isAnimationOpenEnded: false
+                }, () => {
+                    setTimeout(() => {
+                        if(this._isMounted){
+                            // after loading the content we can know animate
                             this.setState({
-                                isAnimationOpenEnded: true
+                                isSceneOpen: true
                             }, () => {
-                                document.getElementById("left-door").style.transition = "none";
-                                document.getElementById("right-door").style.transition = "none";
+                                // waiting the animation time to re-give right to click on icons + load some future contents
+                                setTimeout(() => {
+                                    if(this._isMounted){
+                                        this.setState({
+                                            isAnimationOpenEnded: true
+                                        }, () => {
+                                            document.getElementById("left-door").style.transition = "none";
+                                            document.getElementById("right-door").style.transition = "none";
+                                        });
+                                    }
+                                }, this.state.animationTime);
                             });
-                        }, this.state.animationTime);
-                    });
-                }, 500);
+                        }
+                    }, 500);
 
-            });
+                });
+            }
         }
     }
 
@@ -234,31 +260,37 @@ export default class Panel extends Component {
             let transition = `left ${this.state.animationTime / 1000}s ease-in-out`;
             document.getElementById("left-door").style.transition = transition;
             document.getElementById("right-door").style.transition = transition;
-            this.setState({
-                isAnimationCloseEnded: false
-            }, () => {
-                // after loading the content we can know animate
+            if(this._isMounted){
                 this.setState({
-                    isSceneOpen: false
+                    isAnimationCloseEnded: false
                 }, () => {
-                    // waiting the animation time to re-give right to click on icons + load some future contents
-                    setTimeout(() => {
+                    if(this._isMounted){
+                        // after loading the content we can know animate
                         this.setState({
-                            isAnimationCloseEnded: true,
-                            SceneOpened: openScene,
+                            isSceneOpen: false
                         }, () => {
-                            document.getElementById("left-door").style.transition = "none";
-                            document.getElementById("right-door").style.transition = "none";
-                            if (key !== null) {
-                                setTimeout(() => {
-                                    openScene[key] = true;
-                                    this.OpenScene(openScene);
-                                }, 500);
-                            }
+                            // waiting the animation time to re-give right to click on icons + load some future contents
+                            setTimeout(() => {
+                                if(this._isMounted){
+                                    this.setState({
+                                        isAnimationCloseEnded: true,
+                                        SceneOpened: openScene,
+                                    }, () => {
+                                        document.getElementById("left-door").style.transition = "none";
+                                        document.getElementById("right-door").style.transition = "none";
+                                        if (key !== null) {
+                                            setTimeout(() => {
+                                                openScene[key] = true;
+                                                this.OpenScene(openScene);
+                                            }, 500);
+                                        }
+                                    });
+                                }
+                            }, this.state.animationTime);
                         });
-                    }, this.state.animationTime);
+                    }
                 });
-            });
+            }
         }
     }
 
@@ -275,6 +307,7 @@ export default class Panel extends Component {
         let styles = this.preparePositions();
         return (
             <div id={"Panel"}>
+                {this.isConnected()}
                 <Cursor windowSize={this.state.PanelBox}></Cursor>
                 <Navbar ratio={this.state.ratio} PanelBox={this.state.PanelBox} NavbarBox={styles.navbar} clickIcon={this.onIconClick} knowledgeSearch={this.knowledgeSearch}></Navbar>
                 <div id={"floor"} style={
@@ -392,7 +425,7 @@ export default class Panel extends Component {
                         }
                     }></div>
                 </div>
-                <Scene style={styles.scene} ratio={this.state.ratio} sceneOpened={this.state.SceneOpened} clickIcon={this.onIconClick} ref={"scene"}></Scene>
+                <Scene style={styles.scene} ratio={this.state.ratio} sceneOpened={this.state.SceneOpened} clickIcon={this.onIconClick} ref={"scene"} isMounted={this._isMounted}></Scene>
                 <div id={"left-door"} className={"door"} style={
                     {
                         top: styles.leftDoor.top,
