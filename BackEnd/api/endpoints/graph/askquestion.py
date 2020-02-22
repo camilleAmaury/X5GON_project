@@ -166,10 +166,28 @@ class AskQuestion(Resource):
             doc = nlp(question)
             #print(doc.ents)
             allEntities = ["<http://dbpedia.org/resource/"+X.text.replace(" ", "_").title()+">" for X in doc.ents]
-            print(allEntities)
+            
+            res = requests.get("http://api.dbpedia-spotlight.org/en/annotate?text="+r_json["oer_contents"][0]["value"]["value"][:2000]+"&confidence=0.5&support=50", headers = {'Accept': 'application/json'}).json()
+            resFormat = {}
+            for r in res['Resources']:
+                if(r['@URI'] in list(resFormat.keys())):
+                    resFormat[r['@URI']] = max(r['@similarityScore'], resFormat[r['@URI']])
+                else:
+                    resFormat[r['@URI']] = r['@similarityScore']
+            l = list()              
+            if(len(resFormat) >= 8):
+                l = list(dict(sorted(resFormat.items(), key=operator.itemgetter(1),reverse=True)))[:8]
+            else:
+                l = list(dict(sorted(resFormat.items(), key=operator.itemgetter(1),reverse=True)))+concept_init[:8-len(resFormat)]
+                
+            resRet = []
+            for el in l:
+                resRet.append(el)
+            
+            print(resRet)
             concatenationDocument = []
 
-            for entity in allEntities:
+            for entity in resRet:
                 #queryDocumentOnDataset = "PREFIX dcterms: <http://purl.org/dc/terms/> SELECT ?idDocument WHERE {?doc dcterms:identifier ?idDocument. ?doc dcterms:concept "+entity+".}"
                 #res = execQuery(sparql, queryDocumentOnDataset)['results']['bindings'][:document]
                 #print(res)
