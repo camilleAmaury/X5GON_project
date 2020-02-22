@@ -13,8 +13,10 @@ def load_vectors(fname):
             data[tokens[0]] = map(float, tokens[1:])
             print(i, end='\r')
         i+=1
-           
+
     return data
-    
+
 vectors = None
-vectors = load_vectors('endpoints/data/wiki-news-300d-1M.vec')
+
+if __name__ == "__main__":
+    vectors = load_vectors('endpoints/data/wiki-news-300d-1M.vec')
