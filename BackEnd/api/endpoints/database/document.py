@@ -8,8 +8,9 @@ from .evaluation import evaluation_schema
 api = Namespace('documents', description='Documents operations')
 
 document_schema = api.model('Document', {
-    'graph_ref': fields.Integer(required=False, description='ID of the document', readonly=True),
-    'graph_ref': fields.String(required=True, description='Reference of the document in graph')
+    'document_id': fields.Integer(required=False, description='ID of the document', readonly=True),
+    'graph_ref': fields.String(required=True, description='Reference of the document in graph'),
+    'isValidated': fields.Boolean(required=False, description='True if this document is already validated by the specified user', readonly=True)
 })
 
 @api.route("/<string:graph_ref>/evaluations")

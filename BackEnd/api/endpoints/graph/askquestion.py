@@ -10,7 +10,7 @@ import pprint
 import random
 import string
 import sys
-import tensorflow as tf
+# import tensorflow as tf
 import time
 import spacy
 import requests
@@ -45,9 +45,9 @@ class AskQuestion(Resource):
         #hyperparameters
         SIZE_CHUNK = 500
         document = 5
-        
+
         #vec = copy.deepcopy(vectors)
-        
+
         def splitTextByChunk(text_divide, s):
             chunk = [[]]
             i = 1
@@ -63,7 +63,7 @@ class AskQuestion(Resource):
                 i+=1
 
             return(chunk)
-        
+
         def TF(textDictio, corpus):
             tf = np.zeros((len(textDictio), len(corpus)))
             dictio = list(textDictio.keys())
@@ -73,7 +73,7 @@ class AskQuestion(Resource):
             #print(dictio)
 
             return(np.array(tf))
-            
+
         def IDF(textDictio, corpus):
             dictio = list(textDictio.keys())
             idf = [0 for x in range(len(dictio))]
@@ -83,10 +83,10 @@ class AskQuestion(Resource):
                   idf[i]+=1
             idf2 = [(math.log(len(corpus)/x) if x != 0 else x) for x in idf]
             return(np.array(idf2))
-            
+
         def TFIDF(text, corpus):
             return(TF(text, corpus).transpose() * IDF(text, corpus))
-            
+
         def getTheBestChunk(question, dictio, tfidf):
             words = list(set(question.split()))
             score = [0 for i in range(tfidf.shape[0])]
@@ -99,13 +99,13 @@ class AskQuestion(Resource):
                 return e_x / e_x.sum()
 
             return(np.argmax(softmax(score)))
-  
+
         def execQuery(sparql, query):
             sparql.setQuery(query)
             sparql.setReturnFormat(JSON)
             results = sparql.query().convert()
             return results
-            
+
         def getArticleContent(url):
             ret = requests.get(url)
 
@@ -117,15 +117,15 @@ class AskQuestion(Resource):
                   # just grab the text up to contents as stated in question
                 intro = '\n'.join([ para.text for para in paragraphs])
                 return(intro)
-                
+
         def euclidian_distance(a, b):
             sum = 0
             if(len(a) == len(b)):
                 for i in range(0, len(a)):
                     sum = sum + math.pow(a[i] - b[i], 2)
             return math.sqrt(sum)
-    
-            
+
+
         def getContentDocument(id, PLATFORM_URL):
             # initialise the endpoint
             get_specific_materials_endpoint = "/oer_materials/{}/contents/"
@@ -133,20 +133,20 @@ class AskQuestion(Resource):
             # get the material id of the first material returned from previous example
             test_material_id = id
 
-            # query for meta-information about this material, Note that there are no 
+            # query for meta-information about this material, Note that there are no
             # parameters for this endpoint
             response = requests.get(PLATFORM_URL + get_specific_materials_endpoint.format(test_material_id))
             ret = ""
-            
+
             if(response.status_code == 200):
                 r_json = response.json()
                 ret = str(r_json["oer_contents"][0]["value"]["value"])
             return(ret)
-            
+
         # The objective is to get a subgraph of our KG which contains some documents using tfidf
         # return : concatenation of all of the document into the subgraph
-       
-    
+
+
         def getPertinentDocument(question):
             PLATFORM_URL = "https://platform.x5gon.org/api/v1"
             nlp = en_core_web_sm.load()
@@ -227,8 +227,8 @@ class AskQuestion(Resource):
                 distance.append(euclidian_distance(vecs, questionVector))
             return distance, corpus[np.argmin(distance)]'''
             return ' '.join(concatenationDocument).replace("[", "").replace("]", "").replace("\\", "").replace("/", "")
-            
-            
+
+
 
         def askQuestionToBERT(question):
             start = time.time()
@@ -266,7 +266,7 @@ class AskQuestion(Resource):
                 --doc_stride=128 \
                 --output_dir="+os.path.abspath("endpoints/data/output/"))
             process = subprocess.Popen(command, stdout = subprocess.PIPE)
-            
+
             process.wait()
             res = ""
             with open("endpoints/data/output/predictions.json", 'r+') as fin:

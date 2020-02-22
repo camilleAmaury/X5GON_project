@@ -2,11 +2,15 @@ from flask import request
 from flask_restplus import Namespace, Resource, fields
 
 from api.utils import validator
-from api.service.user import get_user, get_all_users, create_user, update_user, delete_user, get_all_opened_documents, add_opened_document, get_opened_document, remove_opened_document, get_all_user_questions, add_user_question, get_user_question, remove_user_question, get_all_user_evaluations
+from api.service.user import get_user, get_all_users, create_user, update_user, delete_user, get_all_opened_documents, add_opened_document, get_opened_document, remove_opened_document, get_all_user_questions, add_user_question, get_user_question, remove_user_question, get_all_user_evaluations, get_all_user_badges, get_user_badge, add_user_badge, remove_user_badge, get_user_experience, add_user_experience, remove_user_experience, get_user_info
 from api.service.evaluation import get_evaluation, remove_evaluation
 from .document import document_schema
 from .scholar_question import scholar_question_schema
 from .evaluation import evaluation_schema
+from .badge import badge_schema
+from .user_search import user_search_schema
+from .level import level_schema
+from .skill import skill_schema
 
 import json
 
@@ -67,15 +71,32 @@ class UserRoute(Resource):
         delete_user(user_id=user_id)
         return '', 201
 
+
+@api.route("/<int:user_id>/info")
+class UserInfoRoute(Resource):
+
+    @api.response(200, 'Active user info')
+    @api.response(409, 'User not found')
+    def get(self, user_id):
+        return get_user_info(user_id)
+
+# User Opened Documents *******************************************************************************************************************************
+
+
 @api.route("/<int:user_id>/opened_documents")
 class UserOpenedDocumentsRoute(Resource):
     @api.marshal_with(document_schema, as_list=True)
-    @api.doc(responses={
-        200: 'Active user opened documents list',
-        409: 'Conflict, user not exist'
-    })
-    def get(self, user_id):
-        return get_all_opened_documents(user_id)
+    @api.doc(
+        params={
+            'isValidated': 'True if you want to know wotch opened documents are allready validated or not (default value : False)'
+        },
+        responses={
+            200: 'Active user opened documents list',
+            409: 'Conflict, user not exist'
+        }
+    )
+    def get(self, user_id, isValidated=None):
+        return get_all_opened_documents(user_id, isValidated)
 
     @api.expect(document_schema, validate=True, envelope='json')
     @api.doc(responses={
@@ -92,9 +113,9 @@ class UserOpenedDocumentsRoute(Resource):
 class UserOpenedDocumentRoute(Resource):
 
     @api.marshal_with(document_schema)
-    @api.response(200, 'User info')
+    @api.response(200, 'Opened document info')
     @api.doc(responses={
-        200: 'Document info',
+        200: 'Opened document info',
         409: 'Conflict, user not exist / document not exist / user don\'t have opened this document',
         422: 'Validation Error'
     })
@@ -108,6 +129,56 @@ class UserOpenedDocumentRoute(Resource):
     def delete(self, user_id, graph_ref):
         remove_opened_document(user_id=user_id, graph_ref=graph_ref)
         return '', 201
+
+
+# User Validated Documents *******************************************************************************************************************************
+
+
+@api.route("/<int:user_id>/validated_documents")
+class UserOpenedDocumentsRoute(Resource):
+    @api.marshal_with(document_schema, as_list=True)
+    @api.doc(responses={
+        200: 'Active user validated documents list',
+        409: 'Conflict, user not exist'
+    })
+    def get(self, user_id):
+        return get_all_validated_documents(user_id)
+
+    @api.expect(document_schema, validate=True, envelope='json')
+    @api.doc(responses={
+        201: 'Document successfully validate by user',
+        409: 'Conflict, user not exist',
+        422: 'Validation Error'
+    })
+    @api.marshal_with(document_schema)
+    def post(self, user_id):
+        validator.validate_payload(request.json, document_schema)
+        return add_validated_document(user_id=user_id, graph_ref=request.json.get('graph_ref')), 201
+
+@api.route("/<int:user_id>/validated_documents/<string:graph_ref>")
+class UserOpenedDocumentRoute(Resource):
+
+    @api.marshal_with(document_schema)
+    @api.response(200, 'Validated document info')
+    @api.doc(responses={
+        200: 'Validated document info',
+        409: 'Conflict, user not exist / document not exist / user don\'t have validated this document',
+        422: 'Validation Error'
+    })
+    def get(self, user_id, graph_ref):
+        return get_validated_document(user_id=user_id, graph_ref=graph_ref)
+
+    @api.doc(responses={
+        201: 'Document successfully deleted from user',
+        409: 'Conflict, user not exist / document not exist / user don\'t have validated this document',
+    })
+    def delete(self, user_id, graph_ref):
+        remove_validated_document(user_id=user_id, graph_ref=graph_ref)
+        return '', 201
+
+
+# User Questions *******************************************************************************************************************************
+
 
 @api.route("/<int:user_id>/scholar_questions")
 class UserScholarQuestionsRoute(Resource):
@@ -150,6 +221,55 @@ class UserScholarQuestionRoute(Resource):
         remove_user_question(user_id=user_id, question_id=question_id)
         return '', 201
 
+
+# User Search *******************************************************************************************************************************
+
+
+@api.route("/<int:user_id>/searches")
+class UserSearchesRoute(Resource):
+    @api.marshal_with(user_search_schema, as_list=True)
+    @api.doc(responses={
+        200: 'Active user searches list',
+        409: 'Conflict, user not exist'
+    })
+    def get(self, user_id):
+        return get_all_user_searches(user_id)
+
+    @api.expect(user_search_schema, validate=True, envelope='json')
+    @api.doc(responses={
+        201: 'Question successfully ask by user',
+        409: 'Conflict, user not exist',
+        422: 'Validation Error'
+    })
+    @api.marshal_with(user_search_schema)
+    def post(self, user_id):
+        validator.validate_payload(request.json, user_search_schema)
+        return add_user_search(user_id=user_id, data=request.json.get("search_subject")), 201
+
+@api.route("/<int:user_id>/searches/<int:search_id>")
+class UserSearcheRoute(Resource):
+
+    @api.marshal_with(user_search_schema)
+    @api.response(200, 'User info')
+    @api.doc(responses={
+        200: 'Question info',
+        409: 'Conflict, user not exist / search not exist / user never ask this search'
+    })
+    def get(self, user_id, search_id):
+        return get_user_search(user_id=user_id, search_id=search_id)
+
+    @api.doc(responses={
+        201: 'Question successfully deleted from user',
+        409: 'Conflict, user not exist / search not exist / user never ask this search',
+    })
+    def delete(self, user_id, search_id):
+        remove_user_search(user_id=user_id, search_id=search_id)
+        return '', 201
+
+
+# User Evaluations *******************************************************************************************************************************
+
+
 @api.route("/<int:user_id>/evaluations")
 class UserEvaluationsRoute(Resource):
     @api.marshal_with(evaluation_schema, as_list=True)
@@ -179,4 +299,146 @@ class UserEvaluationRoute(Resource):
     })
     def delete(self, user_id, document_ref):
         remove_evaluation(user_id=user_id, document_ref=document_ref)
+        return '', 201
+
+
+# User Badges *******************************************************************************************************************************
+
+
+@api.route("/<int:user_id>/badges")
+class UserBadgesRoute(Resource):
+    @api.marshal_with(badge_schema, as_list=True)
+    @api.doc(responses={
+        200: 'Active user badges list',
+        409: 'Conflict, user not exist'
+    })
+    def get(self, user_id):
+        return get_all_user_badges(user_id)
+
+    @api.expect(badge_schema, validate=True, envelope='json')
+    @api.doc(responses={
+        201: 'Badge successfully add by user',
+        409: 'Conflict, user not exist / badge not exist / user already have this badge',
+        422: 'Validation Error'
+    })
+    @api.marshal_with(badge_schema)
+    def post(self, user_id):
+        validator.validate_payload(request.json, badge_schema)
+        return add_user_badge(user_id=user_id, badge_id=request.json.get('badge_id')), 201
+
+@api.route("/<int:user_id>/badges/<int:badge_id>")
+class UserBadgeRoute(Resource):
+
+    @api.marshal_with(badge_schema)
+    @api.response(200, 'Basge info')
+    @api.doc(responses={
+        200: 'Badge info',
+        409: 'Conflict, user not exist / badge not exist / user didn\'t have this badge',
+        422: 'Validation Error'
+    })
+    def get(self, user_id, badge_id):
+        return get_user_badge(user_id=user_id, badge_id=badge_id)
+
+    @api.doc(responses={
+        201: 'Badge successfully deleted from user',
+        409: 'Conflict, user not exist / badge not exist / user didn\'t have this badge',
+    })
+    def delete(self, user_id, badge_id):
+        remove_user_badge(user_id=user_id, badge_id=badge_id)
+        return '', 201
+
+
+# User Experience *******************************************************************************************************************************
+
+
+@api.route("/<int:user_id>/experience")
+class UserExperienceRoute(Resource):
+
+    @api.marshal_with(level_schema)
+    @api.doc(responses={
+    200: 'Active user experience',
+    409: 'Conflict, user not exist'
+    })
+    def get(self, user_id):
+        return get_user_experience(user_id)
+
+    @api.doc(
+        params={
+            'nb_experience': 'Number of experience to add to this user (default value : 1)'
+        },
+        responses={
+            201: 'Experience successfully add to user',
+            409: 'Conflict, user not exist'
+        }
+    )
+    def post(self, user_id):
+        nb_experience = int(request.args.get('nb_experience', 1))
+        add_user_experience(user_id, nb_experience)
+        return '', 201
+
+    @api.doc(
+        params={
+            'nb_experience': 'Number of experience to remove to this user (default value : 1)'
+        },
+        responses={
+            201: 'Experience successfully remove to user',
+            409: 'Conflict, user not exist'
+        }
+    )
+    def delete(self, user_id):
+        nb_experience = int(request.args.get('nb_experience', 1))
+        remove_user_experience(user_id, nb_experience)
+        return '', 201
+
+
+# User Skill *******************************************************************************************************************************
+
+
+@api.route("/<int:user_id>/skills")
+class UserSkillsRoute(Resource):
+    @api.marshal_with(skill_schema, as_list=True)
+    @api.doc(responses={
+        200: 'Active user skills list',
+        409: 'Conflict, user not exist'
+    })
+    def get(self, user_id):
+        return get_all_user_skills(user_id)
+
+@api.route("/<int:user_id>/skills/<string:document_ref>")
+class UserSkillRoute(Resource):
+
+    @api.marshal_with(skill_schema)
+    @api.response(200, 'Skill info')
+    @api.doc(responses={
+        200: 'Skill info',
+        409: 'Conflict, this user not exist / this skill not exist',
+        422: 'Validation Error'
+    })
+    def get(self, user_id, document_ref):
+        return get_skill(user_id=user_id, document_ref=document_ref)
+
+    @api.doc(
+        params={
+            'nb_level' : 'Level number to add to this skill (default value : 1)'
+        },
+        responses={
+            201: 'Skill successfully add to user',
+            409: 'Conflict, user not exist'
+        }
+    )
+    def post(self, user_id, nb_experience, nb_level=1):
+        add_user_experience(user_id=user_id, nb_experience=nb_experience, nb_level=nb_level)
+        return '', 201
+
+    @api.doc(
+        params={
+            'nb_level' : 'Level number to remove to this skill (default value : 1)'
+        },
+        responses={
+            201: 'Skill successfully deleted from user',
+            409: 'Conflict, user not exist / document not exist / skill not exist',
+        }
+    )
+    def delete(self, user_id, document_ref, nb_level=1):
+        remove_skill(user_id=user_id, document_ref=document_ref, nb_level=nb_level)
         return '', 201

@@ -15,6 +15,10 @@ from .database.authentication import authorizations
 from .database.document import api as document_api
 from .database.scholar_question import api as scholar_question_api
 from .database.evaluation import api as evaluation_api
+from .database.badge import api as badge_api
+from .database.level import api as level_api
+from .database.skill import api as skill_api
+from .database.user_search import api as user_search_api
 
 api = Api(
     title='X5GON API',
@@ -35,3 +39,7 @@ api.add_namespace(anthentication_api)
 api.add_namespace(document_api)
 api.add_namespace(scholar_question_api)
 api.add_namespace(evaluation_api)
+api.add_namespace(badge_api)
+api.add_namespace(level_api)
+api.add_namespace(skill_api)
+api.add_namespace(user_search_api)

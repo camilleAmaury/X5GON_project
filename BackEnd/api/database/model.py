@@ -5,7 +5,17 @@ from api.database import db
 #Many to many link
 user_opened_documents = db.Table('user_opened_documents',
     db.Column('user_id', db.Integer, db.ForeignKey('users.user_id')),
-    db.Column('graph_ref', db.Integer, db.ForeignKey('documents.graph_ref'))
+    db.Column('document_id', db.Integer, db.ForeignKey('documents.document_id'))
+)
+
+user_validated_documents = db.Table('user_validated_documents',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.user_id')),
+    db.Column('document_id', db.Integer, db.ForeignKey('documents.document_id'))
+)
+
+user_badges = db.Table('user_badges',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.user_id')),
+    db.Column('badge_id', db.Integer, db.ForeignKey('badges.badge_id'))
 )
 
 class User(db.Model):
@@ -15,8 +25,15 @@ class User(db.Model):
     username = db.Column(db.String(), unique=True, nullable=False, index=True)
     password = db.Column(db.String())
     opened_documents = db.relationship("Document", secondary=user_opened_documents)
+    validated_documents = db.relationship("Document", secondary=user_validated_documents)
     scholar_questions = db.relationship('ScholarQuestion', backref='users', lazy=True)
+    user_searches = db.relationship('UserSearch', backref='users', lazy=True)
     document_evaluations = db.relationship('Evaluation', backref='users', lazy=True)
+    badges = db.relationship("Badge", secondary=user_badges)
+    level_number = db.Column(db.Integer, db.ForeignKey('levels.level_number'))
+    level = db.relationship("Level", back_populates="users")
+    experience = db.Column(db.Integer)
+    user_skills = db.relationship('User_skill', backref='users', lazy=True)
 
     def __init__(self, username, password):
         self.username = username
@@ -43,6 +60,15 @@ class User(db.Model):
     def remove_opened_document(self, opened_document):
         self.opened_documents.remove(opened_document)
 
+    def get_validated_documents(self):
+        return self.validated_documents
+
+    def add_validated_document(self, validated_document):
+        self.validated_documents.append(validated_document)
+
+    def remove_validated_document(self, validated_document):
+        self.validated_documents.remove(validated_document)
+
     def add_scholar_question(self, scholar_question):
         self.scholar_questions.append(scholar_question)
 
@@ -52,6 +78,15 @@ class User(db.Model):
     def remove_scholar_question(self, scholar_question):
         self.scholar_questions.remove(scholar_question)
 
+    def get_user_searches(self):
+        return self.user_searches
+
+    def add_user_search(self, user_search):
+        self.user_searches.append(user_search)
+
+    def remove_user_search(self, user_search):
+        self.user_searches.remove(user_search)
+
     def add_document_evaluation(self, document_evaluation):
         self.document_evaluations.append(document_evaluation)
 
@@ -60,6 +95,47 @@ class User(db.Model):
 
     def remove_document_evaluation(self, document_evaluation):
         self.document_evaluations.remove(document_evaluation)
+
+    def add_badge(self, badge):
+        self.badges.append(badge)
+
+    def get_badges(self):
+        return self.badges
+
+    def remove_badge(self, badge):
+        self.badges.remove(badge)
+
+    def add_experience(self, experience):
+        self.experience += experience
+        while self.experience >= self.level.next_stage :
+            new_level = Level.query.get(self.level.level_number+1)
+            if not new_level :
+                break;
+            self.experience -= self.level.next_stage
+            self.level = new_level
+
+    def remove_experience(self, experience):
+        self.experience -= experience
+        while self.experience < 0 :
+            previous_level = Level.query.get(self.level.level_number-1)
+            if not previous_level :
+                self.experience = 0
+                break;
+            self.experience += previous_level.next_stage
+            self.level = previous_level
+
+    def get_level(self):
+        return self.level
+
+    def set_level(self, level):
+        self.level = level
+        self.experience = 0
+
+    def get_user_skills(self):
+        return self.user_skills
+
+    def remove_user_skills(self, skill):
+        self.user_skills.remove(skill)
 
 class Document(db.Model):
     __tablename__ = 'documents'
@@ -85,6 +161,13 @@ class ScholarQuestion(db.Model):
     answer = db.Column(db.String())
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
 
+class UserSearch(db.Model):
+    __tablename__ = 'user_search'
+
+    search_id = db.Column(db.Integer, primary_key=True)
+    search_subject = db.Column(db.String(), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+
 class Evaluation(db.Model):
     __tablename__ = 'evaluations'
 
@@ -93,3 +176,41 @@ class Evaluation(db.Model):
     quality_rating = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     document_ref = db.Column(db.Integer, db.ForeignKey('documents.graph_ref'))
+
+class Badge(db.Model):
+    __tablename__ = 'badges'
+
+    badge_id = db.Column(db.Integer, primary_key=True)
+    badge_name = db.Column(db.String())
+    description = db.Column(db.String())
+    image_adress = db.Column(db.String())
+
+class Level(db.Model):
+    __tablename__ = 'levels'
+
+    level_number = db.Column(db.Integer, primary_key=True)
+    next_stage = db.Column(db.Integer)
+    users = db.relationship("User", back_populates="level")
+
+class Skill(db.Model):
+    __tablename__ = 'skills'
+
+    skill_id = db.Column(db.Integer, primary_key=True)
+    skill_name = db.Column(db.String(), unique=True, nullable=False, index=True)
+
+class User_skill(db.Model):
+    __tablename__ = 'user_skills'
+
+    user_skill_id = db.Column(db.Integer, primary_key=True)
+    skill_level = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    skill_name = db.Column(db.String(), db.ForeignKey('skills.skill_name'))
+
+    def get_skill_level(self):
+        return self.skill_level
+
+    def increase_level(self, nb_level):
+        self.skill_level += nb_level
+
+    def decrease_level(self, nb_level):
+        self.skill_level -= nb_level
