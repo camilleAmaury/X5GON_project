@@ -27,7 +27,7 @@ export default class Navbar extends Component {
     }
 
     componentDidMount = () => {
-        let icons = [{ text: "Improvement", icon: Icon1, IconHover: Icon1Hover, hover:"See your progression and achievements" }, 
+        let icons = [{ text: "Profile", icon: Icon1, IconHover: Icon1Hover, hover:"See your progression and achievements" }, 
             { text: "Knowledge", icon: Icon2, IconHover: Icon2Hover, hover:"Looking for more knowledge ?"  }, 
             { text: "Community", icon: Icon3, IconHover: Icon3Hover, hover:"Retrieve all your answers and questions"  }, 
             { text: "Scholar", icon: Icon4, IconHover: Icon4Hover, hover:"Ask the scholar something you don't know"  }, 
@@ -269,7 +269,7 @@ export default class Navbar extends Component {
                                             width: styles.icon.height,
                                             height: styles.icon.height,
                                             backgroundImage:`url('${this.state.hoverIcon[i] ? icon.IconHover : icon.icon}')`,
-                                            backgroundSize:"contain"
+                                            backgroundSize:"cover"
                                         }
                                 }>
 

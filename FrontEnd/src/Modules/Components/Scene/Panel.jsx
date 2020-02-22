@@ -36,7 +36,7 @@ export default class Panel extends Component {
             //     height:238
             // },
             ratio: 1,
-            SceneOpened: [false, false, false, true, false],
+            SceneOpened: [false, false, true, false, false],
             isSceneOpen: true,
             isAnimationOpenEnded: true,
             isAnimationCloseEnded: true,
@@ -262,8 +262,6 @@ export default class Panel extends Component {
         }
     }
 
-
-
     knowledgeSearch = (value) => {
         this.onIconClick(1);
         try{
@@ -394,7 +392,7 @@ export default class Panel extends Component {
                         }
                     }></div>
                 </div>
-                <Scene style={styles.scene} ratio={this.state.ratio} sceneOpened={this.state.SceneOpened} ref={"scene"}></Scene>
+                <Scene style={styles.scene} ratio={this.state.ratio} sceneOpened={this.state.SceneOpened} clickIcon={this.onIconClick} ref={"scene"}></Scene>
                 <div id={"left-door"} className={"door"} style={
                     {
                         top: styles.leftDoor.top,

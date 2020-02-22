@@ -1,7 +1,11 @@
-/* pagoda container */
+#scholar .verticalBeam, #scholar .horizontalBeam, #scholar .table, #scholar .scroll, #scholar .chair, #scholar .lantern, #scholar .scholar, #scholar .scholar-hover{
+    position: absolute;
+}
+
+/* scholar container */
 #scholar{
     overflow: hidden;
-    position: relative;
+    position: absolute;
     background-color: #C6A561;
     top:0;
     left:0;
@@ -10,36 +14,127 @@
 }
 
 #scholar .verticalBeam{
-    position: absolute;
     top:0;
     background-color: #784027;
 }
 
 #scholar .horizontalBeam{
-    position: absolute;
     background-color: #784027;
-}
-
-#scholar .table{
-    position: absolute;
-}
-
-#scholar .scroll{
-    position: absolute;
-}
-
-#scholar .chair{
-    position: absolute;
-}
-
-#scholar .lantern{
-    position: absolute;
-}
-
-#scholar .scholar{
-    position: absolute;
 }
 #scholar .scholar-hover{
     background-color: rgba(190, 39, 39, 0.5);
-    position: absolute;
+}
+
+/* popover */
+#scholar-historic{
+    color:white;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: calc(100% - 10px);
+    overflow-y: scroll;
+    overflow-x: hidden;
+    direction: rtl;
+    flex-direction: column;
+    padding-bottom: 10px;
+}
+
+#scholar-question-list{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#scholar-question-list .item{
+    margin-top:20px;
+    direction: ltr;
+    width:350px;
+    height:auto;
+    display: flex;
+    flex-direction: row;
+    color:black;
+}
+
+#scholar-question-list  .item-number{
+    position: relative;
+    top:5px;
+    left:5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    font-family: 'Roboto';
+    font-weight: bold;
+    font-size: 16px;
+    overflow:hidden;
+    width: 30px;
+    height: 30px;
+    transition-property:color;
+    background-color: rgb(219, 114, 114);
+}
+
+#scholar-question-list .item-info{
+    background-color: rgb(219, 114, 114);
+    height: auto;
+    width:275px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    transition-property:box-shadow, color;
+    transition-duration: 0.3s;
+}
+
+#scholar-question-list .item-info span{
+    margin-left: 25px;
+    min-height: 5px;
+    max-width:225px;
+}
+
+#scholar-question-list .item-info .title{
+    margin-top:5px;
+    font-size: 14px;
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: bold;
+}
+#scholar-question-list .item-info .format{
+    margin-top:5px;
+    margin-bottom:5px;
+    font-size: 12px;
+    font-family: 'Roboto-Medium';
+}
+
+#scholar-question-list  .item-info:hover{
+    background-color: rgb(214, 165, 165);
+    box-shadow: 0px 0px 10px 5px rgba(0,0,0,0.4);
+}
+
+#scholar-question-list  .item-number:hover{
+    background-color: rgb(214, 165, 165);
+}
+
+#scholar-historic::-webkit-scrollbar-track
+{
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.9);
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.9);
+	border-radius: 10px;
+	background-color: transparent;
+}
+
+#scholar-historic::-webkit-scrollbar
+{
+	width: 12px;
+	background-color: rgba(255,255,255,0.2);
+}
+
+#scholar-historic::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	background-color: rgb(219, 114, 114);
+	background-image: -webkit-linear-gradient(90deg,
+											  transparent,
+											  rgba(0, 0, 0, 0.4) 50%,
+											  transparent,
+											  transparent)
 }
