@@ -23,7 +23,10 @@ class User(db.Model):
 
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(), unique=True, nullable=False, index=True)
-    password = db.Column(db.String())
+    pwd = db.Column(db.String())
+    email = db.Column(db.String())
+    phone = db.Column(db.String())
+    year = db.Column(db.Integer())
     opened_documents = db.relationship("Document", secondary=user_opened_documents)
     validated_documents = db.relationship("Document", secondary=user_validated_documents)
     scholar_questions = db.relationship('ScholarQuestion', backref='users', lazy=True)
@@ -35,9 +38,9 @@ class User(db.Model):
     experience = db.Column(db.Integer)
     user_skills = db.relationship('User_skill', backref='users', lazy=True)
 
-    def __init__(self, username, password):
+    def __init__(self, username, pwd):
         self.username = username
-        self.password = generate_password_hash(password)
+        self.pwd = generate_password_hash(pwd)
 
     def __repr__(self):
         return '<User {}>'.format(self.user_id)
@@ -45,11 +48,11 @@ class User(db.Model):
     def get_user_id(self):
         return self.user_id
 
-    def set_password(self, password):
-        self.password = generate_password_hash(password)
+    def set_password(self, pwd):
+        self.pwd = generate_password_hash(pwd)
 
-    def check_password(self, password):
-        return check_password_hash(self.password, password)
+    def check_password(self, pwd):
+        return check_password_hash(self.pwd, pwd)
 
     def add_opened_document(self, opened_document):
         self.opened_documents.append(opened_document)

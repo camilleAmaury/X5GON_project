@@ -15,6 +15,8 @@ def build_user_schema(user):
     mod = {}
     mod['user_id'] = user.user_id
     mod['username'] = user.username
+    mod['phone'] = user.phone
+    mod['year'] = user.year
     return mod
 
 def get_user(user_id):
