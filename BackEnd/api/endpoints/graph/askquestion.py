@@ -167,7 +167,7 @@ class AskQuestion(Resource):
             
             #doc = nlp(question)
             #print(doc.ents)
-            allEntities = ["<http://dbpedia.org/resource/"+X.text.replace(" ", "_").title()+">" for X in doc.ents]
+            #allEntities = ["<http://dbpedia.org/resource/"+X.text.replace(" ", "_").title()+">" for X in doc.ents]
             
             res = requests.get("http://api.dbpedia-spotlight.org/en/annotate?text="+question+"&confidence=0.5&support=50", headers = {'Accept': 'application/json'}).json()
             resFormat = {}
@@ -176,15 +176,13 @@ class AskQuestion(Resource):
                     resFormat[r['@URI']] = max(r['@similarityScore'], resFormat[r['@URI']])
                 else:
                     resFormat[r['@URI']] = r['@similarityScore']
-            l = list()              
-            if(len(resFormat) >= 8):
-                l = list(dict(sorted(resFormat.items(), key=operator.itemgetter(1),reverse=True)))[:8]
-            else:
-                l = list(dict(sorted(resFormat.items(), key=operator.itemgetter(1),reverse=True)))+concept_init[:8-len(resFormat)]
+            
+            print(resFormat)
+            
                 
             resRet = []
-            for el in l:
-                resRet.append(el)
+            for key in resFormat:
+                resRet.append(key)
             
             print(resRet)
             concatenationDocument = []
@@ -199,30 +197,30 @@ class AskQuestion(Resource):
                         #doc = getContentDocument(int(res[j]['idDocument']['value']), PLATFORM_URL)
                         #if("<?xml" not in doc):
                             #concatenationDocument.append(doc)
-
-                    queryDocumentOnDbpedia = "PREFIX dbo: <http://dbpedia.org/ontology/> SELECT ?abstract WHERE {SERVICE <http://dbpedia.org/sparql> {"+entity+" dbo:abstract ?abstract.}FILTER LANGMATCHES(LANG(?abstract), 'EN')}"
+                    print(entity)
+                    queryDocumentOnDbpedia = "PREFIX dbo: <http://dbpedia.org/ontology/> SELECT ?abstract WHERE {SERVICE <http://dbpedia.org/sparql> {<"+entity+"> dbo:abstract ?abstract.}FILTER LANGMATCHES(LANG(?abstract), 'EN')}"
                     res = execQuery(sparql, queryDocumentOnDbpedia)['results']['bindings'][:document]
                     #print(res)
                     #print(len(res))
                     for j in range(len(res)):
-                        #concatenationDocument.append(res[j]['abstract']['value'])
-                        concatenationDocument.append(getArticleContent("https://en.wikipedia.org/wiki/"+entity.replace('<http://dbpedia.org/resource/', '').replace('>', '')))
+                        concatenationDocument.append(res[j]['abstract']['value'])
+                        #concatenationDocument.append(getArticleContent("https://en.wikipedia.org/wiki/"+entity.replace('<http://dbpedia.org/resource/', '').replace('>', '')))
                     if(len(res) < 1):
-                        queryDocumentOnDbpediaDerived = "PREFIX dbo: <http://dbpedia.org/ontology/> SELECT ?abstract WHERE {SERVICE <http://dbpedia.org/sparql> {"+entity+" dbo:wikiPageRedirects ?page. ?page dbo:abstract ?abstract.}FILTER LANGMATCHES(LANG(?abstract), 'EN')}"
+                        queryDocumentOnDbpediaDerived = "PREFIX dbo: <http://dbpedia.org/ontology/> SELECT ?abstract WHERE {SERVICE <http://dbpedia.org/sparql> {<"+entity+"> dbo:wikiPageRedirects ?page. ?page dbo:abstract ?abstract.}FILTER LANGMATCHES(LANG(?abstract), 'EN')}"
                         res = execQuery(sparql, queryDocumentOnDbpediaDerived)['results']['bindings'][:document]
                         #print(res)
                         #print(len(res))
                         for j in range(len(res)):
-                            #concatenationDocument.append(res[j]['abstract']['value'])
-                            concatenationDocument.append(getArticleContent("https://en.wikipedia.org/wiki/"+entity.replace('<http://dbpedia.org/resource/', '').replace('>', '')))
+                            concatenationDocument.append(res[j]['abstract']['value'])
+                            #concatenationDocument.append(getArticleContent("https://en.wikipedia.org/wiki/"+entity.replace('<http://dbpedia.org/resource/', '').replace('>', '')))
 
-                        queryDocumentOnDbpediaDisambiquates = "PREFIX dbo: <http://dbpedia.org/ontology/> SELECT ?disambiquatespages ?abstract WHERE {SERVICE <http://dbpedia.org/sparql> {"+entity+" dbo:wikiPageDisambiguates ?disambiquatespages. ?disambiquatespages dbo:abstract ?abstract.}FILTER LANGMATCHES(LANG(?abstract), 'EN')}"
+                        queryDocumentOnDbpediaDisambiquates = "PREFIX dbo: <http://dbpedia.org/ontology/> SELECT ?disambiquatespages ?abstract WHERE {SERVICE <http://dbpedia.org/sparql> {<"+entity+"> dbo:wikiPageDisambiguates ?disambiquatespages. ?disambiquatespages dbo:abstract ?abstract.}FILTER LANGMATCHES(LANG(?abstract), 'EN')}"
                         res = execQuery(sparql, queryDocumentOnDbpediaDisambiquates)['results']['bindings'][:document]
                         #print(res)
                         #print(len(res))
                         for j in range(len(res)):
-                            #concatenationDocument.append(res[j]['abstract']['value'])
-                            concatenationDocument.append(getArticleContent("https://en.wikipedia.org/wiki/"+entity.replace('<http://dbpedia.org/resource/', '').replace('>', '')))
+                            concatenationDocument.append(res[j]['abstract']['value'])
+                            #concatenationDocument.append(getArticleContent("https://en.wikipedia.org/wiki/"+entity.replace('<http://dbpedia.org/resource/', '').replace('>', '')))
             else:
                 concatenationDocument.append(getContentDocument(idDoc, PLATFORM_URL))
 
@@ -274,7 +272,7 @@ class AskQuestion(Resource):
             start = time.time()
             corpusPertinent = getPertinentDocument(question, idDoc)
             end2 = time.time()
-            
+            print(corpusPertinent)
             print(len(corpusPertinent))
             
             question_answering_tokenizer.pad_token = '<PAD>'
@@ -282,19 +280,24 @@ class AskQuestion(Resource):
             print(len(question_answering_tokenizer))
             t_encoded_1 = question_answering_tokenizer.encode(corpusPertinent)
             t_encoded_2 = question_answering_tokenizer.encode(question)[1:]
-            indexed_tokens = t_encoded_1+t_encoded_2
+            if(len(t_encoded_1)+len(t_encoded_2) > 511):
+                indexed_tokens = t_encoded_1[:(511-len(t_encoded_2))]+t_encoded_2
+                segments_ids = [0 for i in range(len(t_encoded_1[:(511-len(t_encoded_2))]))]+[1 for i in range(len(t_encoded_2))]
+            else:
+                indexed_tokens = t_encoded_1+t_encoded_2
+                segments_ids = [0 for i in range(len(t_encoded_1))]+[1 for i in range(len(t_encoded_2))]
             print(len(indexed_tokens))
-            segments_ids = [0 for i in range(len(t_encoded_1))]+[1 for i in range(len(t_encoded_2))]
+            
             segments_tensors = torch.tensor([segments_ids])
             tokens_tensor = torch.tensor([indexed_tokens])
             
             # Predict the start and end positions logits
-            '''t = time.time()
+            t = time.time()
             with torch.no_grad():
                 start_logits, end_logits = question_answering_model(tokens_tensor, token_type_ids=segments_tensors)
             print("Time : {}s".format(time.time()-t))
             print("Start logits : {}".format(torch.argmax(start_logits)))
-            print("End logits : {}".format(torch.argmax(end_logits)))'''
-            return('coucou')
-            #return(question_answering_tokenizer.decode(indexed_tokens[torch.argmax(start_logits):torch.argmax(end_logits)+1]))
+            print("End logits : {}".format(torch.argmax(end_logits)))
+            #return('coucou')
+            return(question_answering_tokenizer.decode(indexed_tokens[torch.argmax(start_logits):torch.argmax(end_logits)+1]))
         return askQuestionToBERT(question, idDoc)
