@@ -1,7 +1,7 @@
 from flask_restplus import Namespace, Resource, fields
 from SPARQLWrapper import SPARQLWrapper, JSON
 import re
-#from .fastTextVectors import vectors
+from .fastTextVectors import vectors
 import os
 import operator
 import datetime
@@ -15,6 +15,7 @@ import time
 import spacy
 import requests
 import bs4
+import torch
 import numpy as np
 import math
 from spacy import displacy
@@ -23,6 +24,9 @@ import en_core_web_sm
 import shlex
 import subprocess
 import copy
+import nltk
+from nltk.corpus import stopwords
+from transformers import BertTokenizer, BertForQuestionAnswering
 
 
 api = Namespace('askquestion', description='Ask a question to a ML Model')
@@ -41,12 +45,21 @@ class AskQuestion(Resource):
         server_URL = "http://localhost:3030/x5gon/"
         sparqlDbPediaEndpoint = "http://dbpedia.org/sparql"
         sparql = SPARQLWrapper(server_URL)
-
+        
         #hyperparameters
         SIZE_CHUNK = 500
         document = 5
         
-        #vec = copy.deepcopy(vectors)
+        #var to set global and vec of fasttext
+        print("Charging models")
+        stop_words = set(stopwords.words('english'))
+        question_answering_tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+        question_answering_model = BertForQuestionAnswering.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
+        nlp = en_core_web_sm.load()
+        
+        vec = vectors
+        
+        print("End charging model")
         
         def splitTextByChunk(text_divide, s):
             chunk = [[]]
@@ -149,7 +162,7 @@ class AskQuestion(Resource):
     
         def getPertinentDocument(question):
             PLATFORM_URL = "https://platform.x5gon.org/api/v1"
-            nlp = en_core_web_sm.load()
+            
             doc = nlp(question)
             #print(doc.ents)
             allEntities = ["<http://dbpedia.org/resource/"+X.text.replace(" ", "_").title()+">" for X in doc.ents]
@@ -172,61 +185,66 @@ class AskQuestion(Resource):
                 #print(res)
                 #print(len(res))
                 for j in range(len(res)):
-                    concatenationDocument.append(res[j]['abstract']['value'])
-                    #concatenationDocument.append(getArticleContent("https://en.wikipedia.org/wiki/"+entity.replace('<http://dbpedia.org/resource/', '').replace('>', '')))
+                    #concatenationDocument.append(res[j]['abstract']['value'])
+                    concatenationDocument.append(getArticleContent("https://en.wikipedia.org/wiki/"+entity.replace('<http://dbpedia.org/resource/', '').replace('>', '')))
                 if(len(res) < 1):
                     queryDocumentOnDbpediaDerived = "PREFIX dbo: <http://dbpedia.org/ontology/> SELECT ?abstract WHERE {SERVICE <http://dbpedia.org/sparql> {"+entity+" dbo:wikiPageRedirects ?page. ?page dbo:abstract ?abstract.}FILTER LANGMATCHES(LANG(?abstract), 'EN')}"
                     res = execQuery(sparql, queryDocumentOnDbpediaDerived)['results']['bindings'][:document]
                     #print(res)
                     #print(len(res))
                     for j in range(len(res)):
-                        concatenationDocument.append(res[j]['abstract']['value'])
-                        #concatenationDocument.append(getArticleContent("https://en.wikipedia.org/wiki/"+entity.replace('<http://dbpedia.org/resource/', '').replace('>', '')))
+                        #concatenationDocument.append(res[j]['abstract']['value'])
+                        concatenationDocument.append(getArticleContent("https://en.wikipedia.org/wiki/"+entity.replace('<http://dbpedia.org/resource/', '').replace('>', '')))
 
                     queryDocumentOnDbpediaDisambiquates = "PREFIX dbo: <http://dbpedia.org/ontology/> SELECT ?disambiquatespages ?abstract WHERE {SERVICE <http://dbpedia.org/sparql> {"+entity+" dbo:wikiPageDisambiguates ?disambiquatespages. ?disambiquatespages dbo:abstract ?abstract.}FILTER LANGMATCHES(LANG(?abstract), 'EN')}"
                     res = execQuery(sparql, queryDocumentOnDbpediaDisambiquates)['results']['bindings'][:document]
                     #print(res)
                     #print(len(res))
                     for j in range(len(res)):
-                        concatenationDocument.append(res[j]['abstract']['value'])
-                        #concatenationDocument.append(getArticleContent("https://en.wikipedia.org/wiki/"+entity.replace('<http://dbpedia.org/resource/', '').replace('>', '')))
+                        #concatenationDocument.append(res[j]['abstract']['value'])
+                        concatenationDocument.append(getArticleContent("https://en.wikipedia.org/wiki/"+entity.replace('<http://dbpedia.org/resource/', '').replace('>', '')))
 
-            '''text = ' '.join(concatenationDocument).replace("[", "").replace("]", "").replace("\\", "").replace("/", "").lower()
-            corpus = splitTextByChunk(text.split(), 500)
-            documentRepresentation = []
-            key = list(vec.keys())
-            print(len(vec))
-            distance = 0
-            for doc in corpus:
-                words = []
-                for word in doc:
-                    if(word in key):
-                        v = list(vec[word])
+            if(len(question.split(" ")) > 10):
+                text = ' '.join(concatenationDocument).replace("[", "").replace("]", "").replace("\\", "").replace("/", "").lower()
+                text = text.split(" ")
+                textWithoutStopWords = [w for w in text if not w in stop_words]
+                text = ' '.join(textWithoutStopWords)
+                corpus = splitTextByChunk(text.split(" "), 500)
+                documentRepresentation = []
+                key = list(vec.keys())
+                print(len(vec))
+                distance = 0
+                for doc in corpus:
+                    words = []
+                    for word in doc:
+                        if(word in key):
+                            v = list(vec[word])
+                            if(len(v) > 0):
+                                words.append(v)
+                    documentRepresentation.append([float(sum(col))/len(col) for col in zip(*words)])
+                print(len(documentRepresentation))
+                print(len(documentRepresentation[0]))
+                print("doc")
+                questionRepresentation = []
+                for wQ in question.split(" "):
+                    if(wQ in key):
+                        v = list(vec[wQ])
                         if(len(v) > 0):
-                            words.append(v)
-                documentRepresentation.append([float(sum(col))/len(col) for col in zip(*words)])
-            print(len(documentRepresentation))
-            print(len(documentRepresentation[0]))
-            print("doc")
-            questionRepresentation = []
-            for wQ in question.split():
-                if(wQ in key):
-                    v = list(vec[wQ])
-                    if(len(v) > 0):
-                        questionRepresentation.append(v)
-                        print(v)
-            print(len(questionRepresentation))
-            print(len(questionRepresentation[0]))
-            questionVector = [float(sum(col))/len(col) for col in zip(*questionRepresentation)]
-            print(len(questionVector))
-            print("question")
-            distance = []
-            for vecs in documentRepresentation:
-                #print(vec[:10])
-                #print(questionVector[:10])
-                distance.append(euclidian_distance(vecs, questionVector))
-            return distance, corpus[np.argmin(distance)]'''
-            return ' '.join(concatenationDocument).replace("[", "").replace("]", "").replace("\\", "").replace("/", "")
+                            questionRepresentation.append(v)
+                            print(v)
+                print(len(questionRepresentation))
+                print(len(questionRepresentation[0]))
+                questionVector = [float(sum(col))/len(col) for col in zip(*questionRepresentation)]
+                print(len(questionVector))
+                print("question")
+                distance = []
+                for vecs in documentRepresentation:
+                    #print(vec[:10])
+                    #print(questionVector[:10])
+                    distance.append(euclidian_distance(vecs, questionVector))
+                return corpus[np.argmin(distance)]
+            else:
+                return ' '.join(concatenationDocument).replace("[", "").replace("]", "").replace("\\", "").replace("/", "")
             
             
 
@@ -234,46 +252,27 @@ class AskQuestion(Resource):
             start = time.time()
             corpusPertinent = getPertinentDocument(question)
             end2 = time.time()
-            print(str((end2 - start)/60)+" min")
-            #print(corpusPertinent)
-            #print(len(corpusPertinent))
-            #print(corpusPertinent)
-            fileContent = "{\"version\": \"v2.0\",\"data\": [{\"title\": \"your_title\",\"paragraphs\": [{\"qas\": [{\"question\": \"<question>\",\"id\": \"0\",\"is_impossible\": \"\"}],\"context\": \"<content>\"}]}]}"
-            fileContent = fileContent.replace("<question>", question, 1)
-            fileContent = fileContent.replace("<content>", corpusPertinent.replace("\"", ""), 1)
-            myfile = "endpoints/data/input_file.json"
-            #print(fileContent)
-            with open(myfile, "wb+") as f:
-                data = f.read()
-                f.seek(0)
-                f.write(fileContent.encode('utf-8'))
-                f.truncate()
-            res = ""
-            command = shlex.split("ls")
-            process = subprocess.Popen(command, stdout = subprocess.PIPE)
-            print(process.stdout.read())
-            command = shlex.split("python3 endpoints/bert/run_squad.py \
-                --vocab_file="+os.path.abspath("endpoints/wwm_uncased_L-24_H-1024_A-16/vocab.txt")+" \
-                --bert_config_file="+os.path.abspath("endpoints/wwm_uncased_L-24_H-1024_A-16/bert_config.json")+" \
-                --init_checkpoint="+os.path.abspath("endpoints/data/model.ckpt-10859")+" \
-                --do_train=False \
-                --max_query_length=30  \
-                --do_predict=True \
-                --predict_file="+os.path.abspath("endpoints/data/input_file.json")+" \
-                --predict_batch_size=8 \
-                --n_best_size=3 \
-                --max_seq_length=384 \
-                --doc_stride=128 \
-                --output_dir="+os.path.abspath("endpoints/data/output/"))
-            process = subprocess.Popen(command, stdout = subprocess.PIPE)
             
-            process.wait()
-            res = ""
-            with open("endpoints/data/output/predictions.json", 'r+') as fin:
-                res = fin.read()
-            end = time.time()
-            print(str((end - start)/60)+" min")
-            #print((' '.join(corpusPertinent)).replace("\"", "").replace("\\", "").replace("/", ""))
-            #print(distance)
-            return(res)
+            print(len(corpusPertinent))
+            
+            question_answering_tokenizer.pad_token = '<PAD>'
+            question_answering_model.resize_token_embeddings(len(question_answering_tokenizer))
+            print(len(question_answering_tokenizer))
+            t_encoded_1 = question_answering_tokenizer.encode(corpusPertinent)
+            t_encoded_2 = question_answering_tokenizer.encode(question)[1:]
+            indexed_tokens = t_encoded_1+t_encoded_2
+            print(len(indexed_tokens))
+            segments_ids = [0 for i in range(len(t_encoded_1))]+[1 for i in range(len(t_encoded_2))]
+            segments_tensors = torch.tensor([segments_ids])
+            tokens_tensor = torch.tensor([indexed_tokens])
+            
+            # Predict the start and end positions logits
+            '''t = time.time()
+            with torch.no_grad():
+                start_logits, end_logits = question_answering_model(tokens_tensor, token_type_ids=segments_tensors)
+            print("Time : {}s".format(time.time()-t))
+            print("Start logits : {}".format(torch.argmax(start_logits)))
+            print("End logits : {}".format(torch.argmax(end_logits)))'''
+            return('coucou')
+            #return(question_answering_tokenizer.decode(indexed_tokens[torch.argmax(start_logits):torch.argmax(end_logits)+1]))
         return askQuestionToBERT(question)
