@@ -1,7 +1,6 @@
 from flask_restplus import Namespace, Resource, fields
 from SPARQLWrapper import SPARQLWrapper, JSON
 import re
-from .fastTextVectors import vectors
 import os
 import operator
 import datetime
@@ -20,13 +19,10 @@ import numpy as np
 import math
 from spacy import displacy
 from collections import Counter
-import en_core_web_sm
 import shlex
 import subprocess
 import copy
-import nltk
-from nltk.corpus import stopwords
-from transformers import BertTokenizer, BertForQuestionAnswering
+from . import stop_words, question_answering_tokenizer, question_answering_model, nlp, vec
 
 
 api = Namespace('askquestion', description='Ask a question to a ML Model')
@@ -53,12 +49,7 @@ class AskQuestion(Resource):
 
         #var to set global and vec of fasttext
         print("Charging models")
-        stop_words = set(stopwords.words('english'))
-        question_answering_tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-        question_answering_model = BertForQuestionAnswering.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
-        nlp = en_core_web_sm.load()
 
-        vec = vectors
 
         print("End charging model")
 
