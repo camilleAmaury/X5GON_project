@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import Popover from '../../../Popover/Popover';
 
-export default function DocumentContainer(item, i, styles, scrollEv, leftsideScroll, rightsideScroll, fullPagoda, isOpen, state, hoverValButton, hoverDelButton,
+export default function DocumentContainer(item, i, styles, scrollEv, leftsideScroll, rightsideScroll, fullPagoda, isOpen, hoverValButton, hoverDelButton,
                                             clickDelete, clickValidate, ratingHover, ratingClick, sendRating) {
     
     let lantern = [1, 2, 3, 4, 5];

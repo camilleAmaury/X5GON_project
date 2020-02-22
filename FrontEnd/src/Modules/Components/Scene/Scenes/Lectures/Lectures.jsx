@@ -32,8 +32,8 @@ export default class Lectures extends Component {
         super(props);
         this.state = {
             documents: [],
-            valdelBox:{
-                size:50
+            valdelBox: {
+                size: 50
             },
             documentContainerBox: {
                 height: 250,
@@ -77,9 +77,9 @@ export default class Lectures extends Component {
             },
             isFloorClicked: [],
             isFloorHovered: [],
-            isValidateHovered:[],
-            isDeleteHovered:[],
-            isDeleteClicked:[],
+            isValidateHovered: [],
+            isDeleteHovered: [],
+            isDeleteClicked: [],
             floorPosition: {
                 width: 315,
                 height: 58
@@ -98,56 +98,58 @@ export default class Lectures extends Component {
         let documentsId = [8160, 8160]
         for (let i = 0; i < documentsId.length; i++) {
             axios.get(`https://platform.x5gon.org/api/v1/oer_materials/${documentsId[i]}/contents/`)
-                .then(request => {
-                    let doc = {
-                        title: "A random title", id: documentsId[i], content: `\n${request.data.oer_contents[0].value.value}\n\n`,
-                        isScrolled: false, bgY1: 150, bgY2: 0, corpusTop: 0, isOpened: false, data: [], isDeleteHovered:false, isDeleteClicked:0, isValidateHovered:false,
-                        isValidateClicked:false, ratingUnderstanding:0, ratingQuality:0, ratingUnderstandingHover:0, ratingQualityHover:0, isRated:false
-                    };
-                    let arr = this.state.documents.concat([doc]);
-                    if(this.props.isMounted){
-                        this.setState({ documents: arr }, () => {
-                            // find the prerequisites
-                            axios.get(`http://185.157.246.81:5000/prerequisites/${documentsId[i]}`)
-                                .then(request => {
-                                    let prerequisites = [];
-                                    let datas = request.data;
-                                    let dataper2 = Math.ceil(datas.length / 2);
-                                    for (let j = 0; j < dataper2; j++) {
-                                        let temp_array = [];
-                                        if (j === dataper2 - 1 && datas.length % 2 === 1) {
-                                            temp_array.push({ title: datas[2 * j][0], link: datas[2 * j][1] });
-                                        } else {
-                                            temp_array.push({ title: datas[2 * j][0], link: datas[2 * j][1] });
-                                            temp_array.push({ title: datas[2 * j + 1][0], link: datas[2 * j + 1][1] });
-                                        }
-                                        prerequisites.push(temp_array);
+                .then(request1 => {
+                    if (this.props.isMounted) {
+                        // find the prerequisites
+                        axios.get(`http://185.157.246.81:5000/prerequisites/${documentsId[i]}`)
+                            .then(request2 => {
+                                let prerequisites = [];
+                                let datas = request2.data;
+                                let dataper2 = Math.ceil(datas.length / 2);
+                                for (let j = 0; j < dataper2; j++) {
+                                    let temp_array = [];
+                                    if (j === dataper2 - 1 && datas.length % 2 === 1) {
+                                        temp_array.push({ title: datas[2 * j][0], link: datas[2 * j][1] });
+                                    } else {
+                                        temp_array.push({ title: datas[2 * j][0], link: datas[2 * j][1] });
+                                        temp_array.push({ title: datas[2 * j + 1][0], link: datas[2 * j + 1][1] });
                                     }
+                                    prerequisites.push(temp_array);
+                                }
+                                let doc = {
+                                    title: "A random title", id: documentsId[i], content: `\n${request1.data.oer_contents[0].value.value}\n\n`,
+                                    isScrolled: false, bgY1: 150, bgY2: 0, corpusTop: 0, isOpened: false, data: [], isDeleteHovered: false, isDeleteClicked: 0, isValidateHovered: false,
+                                    isValidateClicked: false, ratingUnderstanding: 0, ratingQuality: 0, ratingUnderstandingHover: 0, ratingQualityHover: 0, isRated: false
+                                };
+                                doc.data = prerequisites;
+                                let bool = [];
+                                let bool2 = [];
+                                for (let j = 0; j < doc.data.length; j++) {
+                                    bool.push(false);
+                                    bool2.push(false)
+                                }
+                                let floorhovered = this.state.isFloorHovered;
+                                let floorcliked = this.state.isFloorClicked;
+                                floorhovered.push(bool);
+                                floorcliked.push(bool2);
+                                if (this.props.isMounted) {
                                     let arr = this.state.documents;
-                                    arr[i].data = prerequisites;
-                                    let bool = [];
-                                    let bool2 = [];
-                                    for (let j = 0; j < arr[i].data.length; j++) {
-                                        bool.push(false);
-                                        bool2.push(false)
-                                    }
-                                    let floorhovered = this.state.isFloorHovered;
-                                    let floorcliked = this.state.isFloorClicked;
-                                    floorhovered.push(bool);
-                                    floorcliked.push(bool2);
-                                    if(this.props.isMounted){
-                                        this.setState({ documents: arr, isFloorHovered: floorhovered, isFloorClicked:floorcliked }, () => {
+                                    arr = arr.concat([doc]);
+                                    this.setState({ documents: arr, isFloorHovered: floorhovered, isFloorClicked: floorcliked }, () => {
+                                        try {
                                             let list = document.getElementsByClassName("scrollUpper");
                                             list[i * 2].addEventListener("click", this.scrollDocument);
                                             list[i * 2 + 1].addEventListener("click", this.scrollDocument);
-                                        });
-                                    }
-                                })
-                                .catch(error => {
-                                    console.log(error)
-                                    console.log("this doesn't work");
-                                });
-                        });
+                                        } catch (error) {
+                                            console.log(error);
+                                        }
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.log(error)
+                                console.log("this doesn't work");
+                            });
                     }
                 })
                 .catch(error => {
@@ -179,8 +181,10 @@ export default class Lectures extends Component {
         let btnDel = document.getElementsByClassName("deleteButton")[nb];
         let popDel = document.getElementById("popover-delete-hover2-" + nb);
         // transition
-        btn1.removeEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
-        btn2.removeEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
+        if(!documents[nb].isScrolled){
+            btn1.removeEventListener('click', this.changeScene);
+            btn2.removeEventListener('click', this.changeScene);
+        }
         upper_scroll.removeEventListener('click', this.scrollDocument);
         lower_scroll.removeEventListener('click', this.scrollDocument);
         lower_scroll.style.transition = "1.5s top";
@@ -197,16 +201,16 @@ export default class Lectures extends Component {
         corpus.style.transition = "1.5s height";
         document.getElementsByClassName("side1")[nb].style.transition = "1.5s height";
         document.getElementsByClassName("side2")[nb].style.transition = "1.5s height";
-        if(this.props.isMounted){
+        if (this.props.isMounted) {
             this.setState({
                 documents: documents
             }, () => {
                 setTimeout(() => {
                     document.getElementById("lectures").scrollTo(0, document.getElementsByClassName("lectures-document")[nb].offsetTop);
                     // transition out 
-                    if(documents[nb].isScrolled){
-                        btn1.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
-                        btn2.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
+                    if (documents[nb].isScrolled) {
+                        btn1.addEventListener('click', this.changeScene);
+                        btn2.addEventListener('click', this.changeScene);
                     }
                     upper_scroll.addEventListener('click', this.scrollDocument);
                     lower_scroll.addEventListener('click', this.scrollDocument);
@@ -243,7 +247,7 @@ export default class Lectures extends Component {
 
         let size = document.getElementsByClassName("lectures-corpus")[nb].children[0].offsetHeight;
         size -= document.getElementsByClassName("lectures-corpus")[nb].offsetHeight - 20;
-        if(this.props.isMounted){
+        if (this.props.isMounted) {
             if (st > 0 && Math.sign(speed) === -1) {
                 documents[nb].bgY1 += speed;
                 documents[nb].bgY2 += speed;
@@ -278,8 +282,10 @@ export default class Lectures extends Component {
         let btn1 = document.getElementsByClassName("changeButton")[nb];
         let btn2 = document.getElementsByClassName("changeButton-two")[nb];
         // transition
-        btn1.removeEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
-        btn2.removeEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
+        if(documents[nb].isScrolled){
+            btn1.removeEventListener('click', this.changeScene);
+            btn2.removeEventListener('click', this.changeScene);
+        }
         upper_scroll.removeEventListener('click', this.scrollDocument);
         lower_scroll.removeEventListener('click', this.scrollDocument);
         lower_scroll.style.transition = "1.5s left";
@@ -291,15 +297,17 @@ export default class Lectures extends Component {
         corpus.style.transition = "1.5s left";
         document.getElementsByClassName("side1")[nb].style.transition = "1.5s left";
         document.getElementsByClassName("side2")[nb].style.transition = "1.5s left";
-        if(this.props.isMounted){
+        if (this.props.isMounted) {
             this.setState({
                 documents: documents
             }, () => {
                 setTimeout(() => {
                     document.getElementById("lectures").scrollTo(0, document.getElementsByClassName("lectures-document")[nb].offsetTop);
                     // transition out 
-                    btn1.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
-                    btn2.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
+                    if(documents[nb].isScrolled){
+                        btn1.addEventListener('click', this.changeScene);
+                        btn2.addEventListener('click', this.changeScene);
+                    }
                     upper_scroll.addEventListener('click', this.scrollDocument);
                     lower_scroll.addEventListener('click', this.scrollDocument);
                     lower_scroll.style.transition = "none";
@@ -319,7 +327,7 @@ export default class Lectures extends Component {
     hoverPagoda = (i, j) => {
         let floor = this.state.isFloorHovered;
         floor[i][j] = true;
-        if(this.props.isMounted){
+        if (this.props.isMounted) {
             this.setState({
                 isFloorHovered: floor
             });
@@ -329,7 +337,7 @@ export default class Lectures extends Component {
     unhoverPagoda = (i, j) => {
         let floor = this.state.isFloorHovered;
         floor[i][j] = false;
-        if(this.props.isMounted){
+        if (this.props.isMounted) {
             this.setState({
                 isFloorHovered: floor
             });
@@ -339,8 +347,8 @@ export default class Lectures extends Component {
     clickPagoda = (i, j) => {
         let floor = this.state.isFloorClicked;
         floor[i][j] = !floor[i][j];
-        if(this.props.isMounted){
-            if(this.props.isMounted){
+        if (this.props.isMounted) {
+            if (this.props.isMounted) {
                 this.setState({
                     isFloorClicked: floor
                 });
@@ -349,34 +357,34 @@ export default class Lectures extends Component {
     }
 
     clickDelete = (i) => {
-        if(this.props.isMounted){
+        if (this.props.isMounted) {
             let arr = this.state.documents;
-            if(arr[i].isScrolled){
+            if (arr[i].isScrolled) {
                 arr[i].isDeleteClicked = arr[i].isDeleteClicked + 1;
-                if(this.props.isMounted){
-                    this.setState({documents:arr}, () => {
+                if (this.props.isMounted) {
+                    this.setState({ documents: arr }, () => {
                         let arr = this.state.documents;
-                        if(arr[i].isDeleteClicked === 1){
+                        if (arr[i].isDeleteClicked === 1) {
                             // wait 10 seconds to reset state 0
                             setTimeout(() => {
                                 try {
                                     let arr = this.state.documents;
-                                    if(arr[i].isDeleteClicked === 0){
+                                    if (arr[i].isDeleteClicked === 0) {
                                         // it means that we already deleted it
-                                    }else{
+                                    } else {
                                         // user don't want to delete
                                         arr[i].isDeleteClicked = 0;
-                                        if(this.props.isMounted){
-                                            this.setState({documents:arr});
+                                        if (this.props.isMounted) {
+                                            this.setState({ documents: arr });
                                         }
                                     }
                                 }
-                                catch(error) {
+                                catch (error) {
                                     // already deleted, no need to pursue
                                 }
-                            },10000);
+                            }, 10000);
                         }
-                        if(arr[i].isDeleteClicked === 2){
+                        if (arr[i].isDeleteClicked === 2) {
                             // request sent to server
 
                             // process front end
@@ -385,8 +393,8 @@ export default class Lectures extends Component {
                             arr.splice(i, 1);
                             doc1.splice(i, 1);
                             doc2.splice(i, 1);
-                            if(this.props.isMounted){
-                                this.setState({documents:arr, isFloorClicked:doc1, isFloorHovered:doc2});
+                            if (this.props.isMounted) {
+                                this.setState({ documents: arr, isFloorClicked: doc1, isFloorHovered: doc2 });
                             }
                         }
                     });
@@ -396,74 +404,74 @@ export default class Lectures extends Component {
     }
 
     hoverDelButton = (i, bool) => {
-        if(this.props.isMounted){
+        if (this.props.isMounted) {
             let arr = this.state.documents;
             arr[i].isDeleteHovered = bool;
-            if(this.props.isMounted){
-                this.setState({documents:arr});
+            if (this.props.isMounted) {
+                this.setState({ documents: arr });
             }
         }
     }
 
     hoverValButton = (i, bool) => {
-        if(this.props.isMounted){
+        if (this.props.isMounted) {
             let arr = this.state.documents;
             arr[i].isValidateHovered = bool;
-            if(this.props.isMounted){
-                this.setState({documents:arr});
+            if (this.props.isMounted) {
+                this.setState({ documents: arr });
             }
         }
     }
 
     clickValidate = (i) => {
-        if(this.props.isMounted){
+        if (this.props.isMounted) {
             let doc = this.state.documents;
-            if(doc[i].isScrolled){
+            if (doc[i].isScrolled) {
                 doc[i].isValidateClicked = !doc[i].isValidateClicked;
-                if(this.props.isMounted){
-                    this.setState({documents:doc});
+                if (this.props.isMounted) {
+                    this.setState({ documents: doc });
                 }
             }
         }
     }
 
     ratingHover = (pos, i, j) => {
-        if(this.props.isMounted){
+        if (this.props.isMounted) {
             let doc = this.state.documents;
-            if(pos === 0){
+            if (pos === 0) {
                 doc[i].ratingUnderstandingHover = j;
-            }else if(pos === 1){
+            } else if (pos === 1) {
                 doc[i].ratingQualityHover = j;
             }
-            this.setState({documents:doc});
+            this.setState({ documents: doc });
         }
     }
 
     ratingClick = (pos, i, j) => {
-        if(this.props.isMounted){
+        if (this.props.isMounted) {
             let doc = this.state.documents;
-            if(pos === 0){
+            if (pos === 0) {
                 doc[i].ratingUnderstanding = j;
-            }else if(pos === 1){
+            } else if (pos === 1) {
                 doc[i].ratingQuality = j;
             }
-            if(this.props.isMounted){
-                this.setState({documents:doc});
+            if (this.props.isMounted) {
+                this.setState({ documents: doc });
             }
         }
     }
 
     sendRating = (i) => {
-        if(this.props.isMounted){
+        if (this.props.isMounted) {
             let doc = this.state.documents;
-            if(doc[i].ratingQuality !== 0 && doc[i].ratingUnderstanding !== 0){
+            if (doc[i].ratingQuality !== 0 && doc[i].ratingUnderstanding !== 0) {
                 doc[i].isRated = true;
 
                 // request
 
                 // hide validate state
-                if(this.props.isMounted){
-                    this.setState({documents:doc});
+                if (this.props.isMounted) {
+                    this.setState({ documents: doc });
                 }
             }
         }
@@ -483,7 +491,7 @@ export default class Lectures extends Component {
                             height: styles.lecturesDocument.height[i]
                         }
                     }>
-                        {DocumentContainer(item, i, styles, this.scrollEv, leftsideScroll, rightsideScroll, fullPagoda, this.props.isOpen, this.state, this.hoverValButton, 
+                        {DocumentContainer(item, i, styles, this.scrollEv, leftsideScroll, rightsideScroll, fullPagoda, this.props.isOpen, this.hoverValButton,
                             this.hoverDelButton, this.clickDelete, this.clickValidate, this.ratingHover, this.ratingClick, this.sendRating)}
 
                         <div className={"document-separator"} style={

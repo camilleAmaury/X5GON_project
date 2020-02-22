@@ -31,27 +31,28 @@ export default class SwitchingForm extends Component {
     }
 
     handleSubmitSignUp = (obj) => {
-        axios.post('http://185.157.246.81:5000/register/register', obj)
+        axios.post('http://185.157.246.81:5000/user', obj)
         .then(request => {
-            let res = request.data;
-            if(res === -2){
-                this.setState({
-                    errorSignIn:"Empty field"
-                });
-            }else if(res === -1){
-                this.setState({
-                    errorSignIn:"Username already exists"
-                });
-            }
-            else{
-                localStorage.setItem("isConnected", {username:obj.username, password:obj.pwd});
-                this.setState({
-                    isLogged:true
-                });
-            }
+            console.log(request)
+            // let res = request.data;
+            // if(res === -2){
+            //     this.setState({
+            //         errorSignIn:"Empty field"
+            //     });
+            // }else if(res === -1){
+            //     this.setState({
+            //         errorSignIn:"Username already exists"
+            //     });
+            // }
+            // else{
+            //     localStorage.setItem("isConnected", {id:request.data.id_user});
+            //     this.setState({
+            //         isLogged:true
+            //     });
+            // }
         })
         .catch(error => {
-            console.log(error);
+            console.log(error.response);
             console.log("this doesn't work");
             this.setState({
                 errorSignIn:"Error from server"
@@ -63,7 +64,7 @@ export default class SwitchingForm extends Component {
         axios.get(`http://185.157.246.81:5000/login/${obj.username}/${obj.pwd}`)
         .then(request => {
             if(request.data){
-                localStorage.setItem("isConnected", {username:obj.username, password:obj.pwd});
+                localStorage.setItem("isConnected", {id:request.data.id_user});
                 this.setState({
                     isLogged:true
                 });
@@ -75,7 +76,7 @@ export default class SwitchingForm extends Component {
             
         })
         .catch(error => {
-            console.log(error);
+            console.log(error.response);
             console.log("this doesn't work");
             this.setState({
                 errorLogIn:"Error from server"
