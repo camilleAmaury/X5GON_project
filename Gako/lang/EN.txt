@@ -1,0 +1,4 @@
+register_message::Hi <username> ! I'm Gako and I will be your personal coach. If you want, I can stop to help and motivate you, just tell me on the website. My role will be to remind you to learn, it will be to suggest you a new subjects and of course motivate you to learn ! See you !
+motivation_message::How are you <username> ? 
+motivation_message::Don't forget that "It seems impossible until it’s done." Nelson Mandela
+motivation_message::I noticed that you were often connected at this time. I am at your disposal to help you in your learning. See you on the site! :)
