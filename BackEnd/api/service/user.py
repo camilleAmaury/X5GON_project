@@ -2,17 +2,21 @@ from flask import current_app, abort, jsonify, make_response
 from sqlalchemy import exc
 
 from api.database import db
-from api.database.model import User, Document, ScholarQuestion
+from api.database.model import User, Document, ScholarQuestion, Badge, Level
 from .authentication import generate_auth_token
 from .document import build_document_schema
 from .scholar_question import build_scholar_question_schema
 from .evaluation import build_evaluation_schema
+from .level import build_level_schema
+from . import badge as badge_service
 
 
 def build_user_schema(user):
     mod = {}
     mod['user_id'] = user.user_id
     mod['username'] = user.username
+    mod['phone'] = user.phone
+    mod['year'] = user.year
     return mod
 
 def get_user(user_id):
@@ -51,11 +55,21 @@ def create_user(data):
             }), 409))
 
         #Create user
+        level = Level.query.get(1)
+        if not level:
+            abort(make_response(jsonify({
+                "errors":{
+                    "sql":"Level 1 for new users not exist"
+                },
+                "message":"level 1 not exist"
+            }), 409))
         user = User(
             username=data.get('username'),
-            password=data.get('password'),
+            password=data.get('password')
         )
         db.session.add(user)
+
+        user.set_level(level)
         db.session.flush()
         db.session.commit()
         return {
@@ -116,7 +130,28 @@ def check_user_auth(username, password):
         }), 403))
     return generate_auth_token(user)
 
-def get_all_opened_documents(user_id):
+def get_user_info(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"Username not found"
+            },
+            "message":"User not found"
+        }), 409))
+    mod = {}
+    mod['experience'] = build_level_schema(user.get_level())
+    mod['experience']['experience'] = user.experience
+    mod['badge'] = badge_service.get_all_badges(user_id)
+    mod['skill'] = get_all_user_skills(user_id)
+    mod['search_history'] = get_all_user_searches(user_id)
+    return mod
+
+
+# User Opened Documents *******************************************************************************************************************************
+
+
+def get_all_opened_documents(user_id, isValidated):
     user = User.query.get(user_id)
     if not user:
         abort(make_response(jsonify({
@@ -125,11 +160,15 @@ def get_all_opened_documents(user_id):
             },
             "message":"User not found"
         }), 409))
+    if isValidated :
+        validated_documents = user.get_validated_documents()
 
     arr_opened_documents = []
     opened_documents = user.get_opened_documents()
     for opened_document in opened_documents:
         mod = build_document_schema(opened_document)
+        if validated_documents :
+            mod['isValidated'] = opened_document in validated_documents
         arr_opened_documents.append(mod)
     return arr_opened_documents
 
@@ -211,6 +250,110 @@ def remove_opened_document(user_id, graph_ref):
     user.remove_opened_document(document)
     db.session.commit()
     return True
+
+
+# User Validated Documents *******************************************************************************************************************************
+
+
+def get_all_validated_documents(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+
+    arr_validated_documents = []
+    validated_documents = user.get_validated_documents()
+    for validated_document in validated_documents:
+        mod = build_document_schema(validated_document)
+        arr_validated_documents.append(mod)
+    return arr_validated_documents
+
+def get_validated_document(user_id, graph_ref):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+    document = Document.query.filter_by(graph_ref=graph_ref).first()
+    if not document:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"Document not found"
+            },
+            "message":"Document not found"
+        }), 409))
+    if not (document in user.get_validated_documents()):
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User don't have validated this document"
+            },
+            "message":"User don't have validated this document"
+        }), 409))
+
+    return build_document_schema(document)
+
+def add_validated_document(user_id, graph_ref):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+    document = Document.query.filter_by(graph_ref=graph_ref).first()
+    if not document:
+        document = Document(
+            graph_ref=graph_ref
+        )
+        db.session.add(document)
+        db.session.flush()
+        db.session.commit()
+    if not (document in user.get_validated_documents()):
+        user.add_validated_document(document)
+        db.session.commit()
+
+    return build_document_schema(document)
+
+def remove_validated_document(user_id, graph_ref):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+    document = Document.query.filter_by(graph_ref=graph_ref).first()
+    if not document:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"Document not found"
+            },
+            "message":"Document not found"
+        }), 409))
+    if not (document in user.get_validated_documents()):
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User never validated this document"
+            },
+            "message":"User never validated this document"
+        }), 409))
+
+    user.remove_validated_document(document)
+    db.session.commit()
+    return True
+
+
+# User Questions *******************************************************************************************************************************
+
 
 def get_all_user_questions(user_id):
     user = User.query.get(user_id)
@@ -306,6 +449,107 @@ def remove_user_question(user_id, question_id):
     db.session.commit()
     return True
 
+
+# User Search *******************************************************************************************************************************
+
+
+def get_all_user_searches(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+
+    arr_user_searches = []
+    user_searches = user.get_user_searches()
+    for user_search in reversed(user_searches):
+        mod = build_user_search_schema(user_search)
+        arr_user_searches.append(mod)
+    return arr_user_searches
+
+def get_user_search(user_id, search_id):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+    search = UserSearch.query.get(search_id)
+    if not search:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"Search not found"
+            },
+            "message":"Search not found"
+        }), 409))
+    if not (search in user.get_user_searches()):
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User didn't do this search"
+            },
+            "message":"User didn't do this search"
+        }), 409))
+
+    return build_user_search_schema(search)
+
+def add_user_search(user_id, search_subject):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+    search = UserSearch(
+        search_subject=search_subject,
+        user_id=user_id
+    )
+    db.session.add(search)
+    db.session.flush()
+    db.session.commit()
+
+    return build_user_search_schema(search)
+
+def remove_user_search(user_id, search_id):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+    search = UserSearch.query.get(search_id)
+    if not search:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"Search not found"
+            },
+            "message":"Search not found"
+        }), 409))
+    if not (search in user.get_user_searches()):
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User never do this search"
+            },
+            "message":"User never do this search"
+        }), 409))
+
+    user.remove_user_search(search)
+    db.session.delete(search)
+    db.session.commit()
+    return True
+
+
+# User Evaluations *******************************************************************************************************************************
+
+
 def get_all_user_evaluations(user_id):
     user = User.query.get(user_id)
     if not user:
@@ -322,3 +566,174 @@ def get_all_user_evaluations(user_id):
         mod = build_evaluation_schema(document_evaluation)
         arr_document_evaluations.append(mod)
     return arr_document_evaluations
+
+
+# User Badges *******************************************************************************************************************************
+
+
+def get_all_user_badges(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+
+    arr_badges = []
+    badges = user.get_badges()
+    for badge in badges:
+        mod = build_badge_schema(badge)
+        arr_badges.append(mod)
+    return arr_badges
+
+def get_user_badge(user_id, badge_id):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+    badge = Badge.query.get(badge_id)
+    if not badge:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"Badge not found"
+            },
+            "message":"Badge not found"
+        }), 409))
+    if not (badge in user.get_badges()):
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User didn't have this badge"
+            },
+            "message":"User didn't have this badge"
+        }), 409))
+
+    return build_badge_schema(badge)
+
+def add_user_badge(user_id, badge_id):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+    badge = Badge.query.get(badge_id)
+    if not badge:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"Badge not found"
+            },
+            "message":"Badge not found"
+        }), 409))
+    if badge in user.get_badges():
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User already have this badge"
+            },
+            "message":"User already have this badge"
+        }), 409))
+    user.add_badge(badge)
+    db.session.flush()
+    db.session.commit()
+
+    return build_badge_schema(badge)
+
+def remove_user_badge(user_id, badge_id):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+    badge = Badge.query.get(badge_id)
+    if not badge:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"Question not found"
+            },
+            "message":"Question not found"
+        }), 409))
+    if not (badge in user.get_badges()):
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User didn't have this badge"
+            },
+            "message":"User didn't have this badge"
+        }), 409))
+
+    user.remove_badge(badge)
+    db.session.delete(badge)
+    db.session.commit()
+    return True
+
+
+# User Level *******************************************************************************************************************************
+
+
+def get_user_experience(user_id):
+    user = user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+    mod = build_level_schema(user.get_level())
+    mod['experience'] = user.experience
+    return mod
+
+def add_user_experience(user_id, experience):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+    user.add_experience(experience)
+    db.session.commit()
+
+
+def remove_user_experience(user_id, experience):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+    user.remove_experience(experience)
+    db.session.commit()
+
+
+# User Skill *******************************************************************************************************************************
+
+
+def get_all_user_skills(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+
+    arr_skills = []
+    document_skills = user.get_user_skills()
+    for document_skill in document_skills:
+        mod = build_skill_schema(document_skill)
+        arr_skills.append(mod)
+    return arr_skills

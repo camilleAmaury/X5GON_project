@@ -32,16 +32,24 @@ export default class SwitchingForm extends Component {
     handleSubmit = () => {
         let obj = {};
         if(!this.props.isSignIn){
-            let name = document.getElementById('name-field').value;
+            let phone = document.getElementById('phone-field').value;
             let identifier = document.getElementById('identifier-field').value;
             let email = document.getElementById('email-field').value;
             let pwd = document.getElementById('password-field').value;
             let year = parseInt(document.getElementById('year-field').value);
-            obj.name = name; obj.username = identifier; obj.pwd = sha256(pwd); obj.year = year; obj.email = email;
+            if(!isNaN(year)){
+                obj.year=year;
+            }
+            if(phone !== "" && phone !== undefined) obj.phone = phone;
+            if(identifier !== "" && identifier !== undefined) obj.username = identifier;
+            if(email !== "" && email !== undefined) obj.email = email;
+            if(pwd !== "" && pwd !== undefined) obj.pwd = sha256(pwd); 
+            console.log(obj)
         }else{
             let identifier = document.getElementById('identifier-field-log').value;
             let pwd = document.getElementById('password-field-log').value;
-            obj.username = identifier; obj.pwd = sha256(pwd);
+            if(identifier !== "" && identifier !== undefined) obj.username = identifier;
+            if(pwd !== "" && pwd !== undefined) obj.pwd = sha256(pwd); 
         }
         this.props.onSubmit(obj);
         this.setState({ isLoading: true });
@@ -57,7 +65,7 @@ export default class SwitchingForm extends Component {
                     {
                         !this.props.isSignIn ?
                         <Fragment>
-                            <input type={"text"} placeholder={"Name"} id={"name-field"} required/>
+                            <input type={"text"} placeholder={"Phone number"} id={"phone-field"} />
                             <input type={"email"} placeholder={"Email"} id={"email-field"} required/>
                             <input type={"username"} placeholder={"Username"} id={"identifier-field"} required/>
                             <input type={"password"} placeholder={"Password"} id={"password-field"} required/>

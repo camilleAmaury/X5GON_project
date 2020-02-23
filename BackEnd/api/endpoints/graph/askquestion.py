@@ -1,7 +1,6 @@
 from flask_restplus import Namespace, Resource, fields
 from SPARQLWrapper import SPARQLWrapper, JSON
 import re
-from .fastTextVectors import vectors
 import os
 import operator
 import datetime
@@ -15,18 +14,15 @@ import time
 import spacy
 import requests
 import bs4
-import torch
+# import torch
 import numpy as np
 import math
 from spacy import displacy
 from collections import Counter
-import en_core_web_sm
 import shlex
 import subprocess
 import copy
-import nltk
-from nltk.corpus import stopwords
-from transformers import BertTokenizer, BertForQuestionAnswering
+from . import stop_words, question_answering_tokenizer, question_answering_model, nlp, vec
 
 
 api = Namespace('askquestion', description='Ask a question to a ML Model')
@@ -46,22 +42,17 @@ class AskQuestion(Resource):
         server_URL = "http://localhost:3030/x5gon/"
         sparqlDbPediaEndpoint = "http://dbpedia.org/sparql"
         sparql = SPARQLWrapper(server_URL)
-        
+
         #hyperparameters
         SIZE_CHUNK = 500
         document = 5
-        
+
         #var to set global and vec of fasttext
         print("Charging models")
-        stop_words = set(stopwords.words('english'))
-        question_answering_tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-        question_answering_model = BertForQuestionAnswering.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
-        nlp = en_core_web_sm.load()
-        
-        vec = vectors
-        
+
+
         print("End charging model")
-        
+
         def splitTextByChunk(text_divide, s):
             chunk = [[]]
             i = 1
@@ -77,7 +68,7 @@ class AskQuestion(Resource):
                 i+=1
 
             return(chunk)
-        
+
         def TF(textDictio, corpus):
             tf = np.zeros((len(textDictio), len(corpus)))
             dictio = list(textDictio.keys())
@@ -87,7 +78,7 @@ class AskQuestion(Resource):
             #print(dictio)
 
             return(np.array(tf))
-            
+
         def IDF(textDictio, corpus):
             dictio = list(textDictio.keys())
             idf = [0 for x in range(len(dictio))]
@@ -97,10 +88,10 @@ class AskQuestion(Resource):
                   idf[i]+=1
             idf2 = [(math.log(len(corpus)/x) if x != 0 else x) for x in idf]
             return(np.array(idf2))
-            
+
         def TFIDF(text, corpus):
             return(TF(text, corpus).transpose() * IDF(text, corpus))
-            
+
         def getTheBestChunk(question, dictio, tfidf):
             words = list(set(question.split()))
             score = [0 for i in range(tfidf.shape[0])]
@@ -113,13 +104,13 @@ class AskQuestion(Resource):
                 return e_x / e_x.sum()
 
             return(np.argmax(softmax(score)))
-  
+
         def execQuery(sparql, query):
             sparql.setQuery(query)
             sparql.setReturnFormat(JSON)
             results = sparql.query().convert()
             return results
-            
+
         def getArticleContent(url):
             ret = requests.get(url)
 
@@ -131,15 +122,15 @@ class AskQuestion(Resource):
                   # just grab the text up to contents as stated in question
                 intro = '\n'.join([ para.text for para in paragraphs])
                 return(intro)
-                
+
         def euclidian_distance(a, b):
             sum = 0
             if(len(a) == len(b)):
                 for i in range(0, len(a)):
                     sum = sum + math.pow(a[i] - b[i], 2)
             return math.sqrt(sum)
-    
-            
+
+
         def getContentDocument(id, PLATFORM_URL):
             # initialise the endpoint
             get_specific_materials_endpoint = "/oer_materials/{}/contents/"
@@ -147,28 +138,28 @@ class AskQuestion(Resource):
             # get the material id of the first material returned from previous example
             test_material_id = id
 
-            # query for meta-information about this material, Note that there are no 
+            # query for meta-information about this material, Note that there are no
             # parameters for this endpoint
             response = requests.get(PLATFORM_URL + get_specific_materials_endpoint.format(test_material_id))
             ret = ""
-            
+
             if(response.status_code == 200):
                 r_json = response.json()
                 ret = str(r_json["oer_contents"][0]["value"]["value"])
             return(ret)
-            
+
         # The objective is to get a subgraph of our KG which contains some documents using tfidf
         # return : concatenation of all of the document into the subgraph
-       
-    
+
+
         def getPertinentDocument(question, idDoc):
             print(idDoc)
             PLATFORM_URL = "https://platform.x5gon.org/api/v1"
-            
+
             #doc = nlp(question)
             #print(doc.ents)
             #allEntities = ["<http://dbpedia.org/resource/"+X.text.replace(" ", "_").title()+">" for X in doc.ents]
-            
+
             res = requests.get("http://api.dbpedia-spotlight.org/en/annotate?text="+question+"&confidence=0.5&support=50", headers = {'Accept': 'application/json'}).json()
             resFormat = {}
             for r in res['Resources']:
@@ -176,14 +167,14 @@ class AskQuestion(Resource):
                     resFormat[r['@URI']] = max(r['@similarityScore'], resFormat[r['@URI']])
                 else:
                     resFormat[r['@URI']] = r['@similarityScore']
-            
+
             print(resFormat)
-            
-                
+
+
             resRet = []
             for key in resFormat:
                 resRet.append(key)
-            
+
             print(resRet)
             concatenationDocument = []
             if(idDoc == None):
@@ -265,8 +256,8 @@ class AskQuestion(Resource):
                 return corpus[np.argmin(distance)]
             else:
                 return ' '.join(concatenationDocument).replace("[", "").replace("]", "").replace("\\", "").replace("/", "")
-            
-            
+
+
 
         def askQuestionToBERT(question, idDoc):
             start = time.time()
@@ -274,7 +265,7 @@ class AskQuestion(Resource):
             end2 = time.time()
             print(corpusPertinent)
             print(len(corpusPertinent))
-            
+
             question_answering_tokenizer.pad_token = '<PAD>'
             question_answering_model.resize_token_embeddings(len(question_answering_tokenizer))
             print(len(question_answering_tokenizer))
@@ -287,10 +278,10 @@ class AskQuestion(Resource):
                 indexed_tokens = t_encoded_1+t_encoded_2
                 segments_ids = [0 for i in range(len(t_encoded_1))]+[1 for i in range(len(t_encoded_2))]
             print(len(indexed_tokens))
-            
+
             segments_tensors = torch.tensor([segments_ids])
             tokens_tensor = torch.tensor([indexed_tokens])
-            
+
             # Predict the start and end positions logits
             t = time.time()
             with torch.no_grad():

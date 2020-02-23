@@ -1,5 +1,6 @@
 from flask import abort, jsonify, make_response
 
+from . import user as user_service
 from api.database import db
 from api.database.model import User, Document, Evaluation
 
@@ -41,22 +42,18 @@ def add_evaluation(data):
             "message":"Document not found"
         }), 409))
     evaluation = Evaluation.query.filter_by(user_id=data.get('user_id'), document_ref=data.get('document_ref')).first()
-    if evaluation:
-        abort(make_response(jsonify({
-            "errors":{
-                0:"This user already evaluate this document"
-            },
-            "message":"This user already evaluate this document"
-        }), 409))
-    evaluation = Evaluation(
-        comprehension_rating=data.get('comprehension_rating'),
-        quality_rating=data.get('quality_rating'),
-        user_id=data.get('user_id'),
-        document_ref=data.get('document_ref')
-    )
-    db.session.add(evaluation)
-    db.session.flush()
-    db.session.commit()
+    if not evaluation:
+        evaluation = Evaluation(
+            comprehension_rating=data.get('comprehension_rating'),
+            quality_rating=data.get('quality_rating'),
+            user_id=data.get('user_id'),
+            document_ref=data.get('document_ref')
+        )
+        db.session.add(evaluation)
+        user_service.add_validated_document(user_id, document_ref)
+        db.session.flush()
+        db.session.commit()
+
 
     return build_evaluation_schema(evaluation)
 
