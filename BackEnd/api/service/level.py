@@ -32,22 +32,16 @@ def get_all_levels():
 def create_level(data):
     try:
         level = Level.query.get(data.get('level_number'))
-        if level:
-            abort(make_response(jsonify({
-                "errors":{
-                    "sql":"Level exist in DB"
-                },
-                "message":"Level exist"
-            }), 409))
+        if not level:
+            #Create level
+            level = Level(
+                level_number = data.get('level_number'),
+                next_stage = data.get('next_stage')
+            )
+            db.session.add(level)
+            db.session.flush()
+            db.session.commit()
 
-        #Create level
-        level = Level(
-            level_number = data.get('level_number'),
-            next_stage = data.get('next_stage')
-        )
-        db.session.add(level)
-        db.session.flush()
-        db.session.commit()
         return build_level_schema(level), 201
     except exc.DBAPIError as e:
         current_app.logger.error('Fail on create level %s' % str(e) )

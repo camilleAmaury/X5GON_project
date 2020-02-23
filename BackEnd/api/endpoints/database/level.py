@@ -31,6 +31,7 @@ class LevelsRoute(Resource):
     @api.marshal_with(level_schema)
     def post(self):
         validator.validate_payload(request.json, level_schema)
+        print(request.json)
         return create_level(data=request.json)
 
 @api.route("/<int:level_number>")

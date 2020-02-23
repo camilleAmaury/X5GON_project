@@ -28,8 +28,8 @@ class BadgesRoute(Resource):
             200 : 'Active badges list'
         }
     )
-    def get(self, user_id):
-        return get_all_badges(user_id)
+    def get(self):
+        return get_all_badges(request.args.get('user_id', None))
 
     @api.expect(badge_schema, validate=True, envelope='json')
     @api.doc(responses={
