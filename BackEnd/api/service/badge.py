@@ -1,5 +1,7 @@
 from flask import abort, jsonify, make_response
+from sqlalchemy import exc
 
+from api.database import db
 from api.database.model import Badge, User
 
 def build_badge_schema(badge):
@@ -22,6 +24,7 @@ def get_badge(badge_id):
     return build_badge_schema(badge)
 
 def get_all_badges(user_id):
+    user_badge_list = None
     if user_id :
         user_badge_list = User.query.get(user_id).get_badges()
     arr_badges = []
@@ -35,15 +38,17 @@ def get_all_badges(user_id):
 
 def create_badge(data):
     try:
-        #Create badge
-        badge = Badge(
-            badge_name = data.get('badge_name'),
-            description = data.get('description'),
-            image_adress = data.get('image_adress')
-        )
-        db.session.add(badge)
-        db.session.flush()
-        db.session.commit()
+        badge = Badge.query.filter_by(badge_name=data.get('badge_name')).first()
+        if not badge :
+            #Create badge
+            badge = Badge(
+                badge_name = data.get('badge_name'),
+                description = data.get('description'),
+                image_adress = data.get('image_adress')
+            )
+            db.session.add(badge)
+            db.session.flush()
+            db.session.commit()
         return build_badge_schema(badge), 201
     except exc.DBAPIError as e:
         current_app.logger.error('Fail on create badge %s' % str(e) )
