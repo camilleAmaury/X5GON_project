@@ -13,3 +13,15 @@ def initialize_askquestion_variables():
     question_answering_tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
     question_answering_model = BertForQuestionAnswering.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
     nlp = en_core_web_sm.load()
+
+def get_stop_words():
+    return stop_words
+
+def get_question_answering_tokenizer():
+    return question_answering_tokenizer
+
+def get_question_answering_model():
+    return question_answering_model
+
+def get_nlp():
+    return nlp

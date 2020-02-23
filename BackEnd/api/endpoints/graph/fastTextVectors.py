@@ -15,3 +15,6 @@ def load_vectors(fname):
             vector[tokens[0]] = map(float, tokens[1:])
             print(i, end='\r')
         i+=1
+
+def get_vectors():
+    return vectors
