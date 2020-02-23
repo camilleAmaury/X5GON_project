@@ -70,7 +70,7 @@ def stop():
 def register():
     global translations
     engine = create_engine('mysql://torilen:kiogre97@localhost/x5gon')
-    data = {'message' : translations[request.args.get('lang')]['register_message'].replace('<username>', request.args.get('username')), 'numero' : request.args.get('phone_number'), 'time' : datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'user_id' : request.args.get('user_id')}
+    data = {'message' : translations[request.args.get('lang')]['register_message'].replace('<username>', request.args.get('username')), 'numero' : request.args.get('phone'), 'time' : datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'user_id' : request.args.get('user_id')}
     statement = text("""INSERT INTO notifications_sms_hours(message, numero, time, user_id, type) VALUES(:message, :numero, :time, :user_id, 0)""")
     with engine.connect() as con:
         con.execute(statement, **data)
@@ -85,7 +85,7 @@ def unsubscribe():
     with engine.connect() as con:
         con.execute(statement, **data)
         
-    statement = text("""UPDATE users SET phone_number = "" WHERE user_id = :user_id""")
+    statement = text("""UPDATE users SET phone = "" WHERE user_id = :user_id""")
     with engine.connect() as con:
         con.execute(statement, **data)
 
@@ -95,8 +95,8 @@ def unsubscribe():
 def subscribe():
     engine = create_engine('mysql://torilen:kiogre97@localhost/x5gon')
     
-    data = {'user_id' : request.args.get('user_id'), 'phone_number' : request.args.get('phone_number')}
-    statement = text("""UPDATE users SET phone_number = :phone_number WHERE user_id = :user_id""")
+    data = {'user_id' : request.args.get('user_id'), 'phone' : request.args.get('phone')}
+    statement = text("""UPDATE users SET phone = :phone WHERE user_id = :user_id""")
     with engine.connect() as con:
         con.execute(statement, **data)
 

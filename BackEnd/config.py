@@ -10,4 +10,4 @@ ADMIN_TOKEN = 'eyJhbGciOiJIUzUxMiIsImlhdCI6MTU3ODQ4NjQ3NiwiZXhwIjoxNTc4NTA0NDc2f
 # Database configaration
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SQLALCHEMY_ECHO=False
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'flask_main.db')
+SQLALCHEMY_DATABASE_URI = 'mysql://torilen:kiogre97@localhost/x5gon'

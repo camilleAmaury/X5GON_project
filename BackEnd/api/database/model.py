@@ -22,10 +22,10 @@ class User(db.Model):
     __tablename__ = 'users'
 
     user_id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(), unique=True, nullable=False, index=True)
-    pwd = db.Column(db.String())
-    email = db.Column(db.String())
-    phone = db.Column(db.String())
+    username = db.Column(db.String(100), unique=True, nullable=False, index=True)
+    pwd = db.Column(db.String(500))
+    email = db.Column(db.String(100))
+    phone = db.Column(db.String(30))
     year = db.Column(db.Integer())
     opened_documents = db.relationship("Document", secondary=user_opened_documents)
     validated_documents = db.relationship("Document", secondary=user_validated_documents)
@@ -144,7 +144,7 @@ class Document(db.Model):
     __tablename__ = 'documents'
 
     document_id = db.Column(db.Integer, primary_key=True)
-    graph_ref = db.Column(db.String(), unique=True, nullable=False, index=True)
+    graph_ref = db.Column(db.String(100), unique=True, nullable=False, index=True)
     user_evaluations = db.relationship('Evaluation', backref='documents', lazy=True)
 
     def add_user_evaluation(self, user_evaluation):
@@ -160,15 +160,15 @@ class ScholarQuestion(db.Model):
     __tablename__ = 'scholar_questions'
 
     question_id = db.Column(db.Integer, primary_key=True)
-    question = db.Column(db.String(), nullable=False)
-    answer = db.Column(db.String())
+    question = db.Column(db.String(1000), nullable=False)
+    answer = db.Column(db.String(1000))
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
 
 class UserSearch(db.Model):
     __tablename__ = 'user_search'
 
     search_id = db.Column(db.Integer, primary_key=True)
-    search_subject = db.Column(db.String(), nullable=False)
+    search_subject = db.Column(db.String(300), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
 
 class Evaluation(db.Model):
@@ -184,9 +184,9 @@ class Badge(db.Model):
     __tablename__ = 'badges'
 
     badge_id = db.Column(db.Integer, primary_key=True)
-    badge_name = db.Column(db.String())
-    description = db.Column(db.String())
-    image_adress = db.Column(db.String())
+    badge_name = db.Column(db.String(100))
+    description = db.Column(db.String(300))
+    image_adress = db.Column(db.String(300))
 
 class Level(db.Model):
     __tablename__ = 'levels'
@@ -199,7 +199,7 @@ class Skill(db.Model):
     __tablename__ = 'skills'
 
     skill_id = db.Column(db.Integer, primary_key=True)
-    skill_name = db.Column(db.String(), unique=True, nullable=False, index=True)
+    skill_name = db.Column(db.String(100), unique=True, nullable=False, index=True)
 
 class User_skill(db.Model):
     __tablename__ = 'user_skills'
@@ -207,7 +207,7 @@ class User_skill(db.Model):
     user_skill_id = db.Column(db.Integer, primary_key=True)
     skill_level = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    skill_name = db.Column(db.String(), db.ForeignKey('skills.skill_name'))
+    skill_name = db.Column(db.String(100), db.ForeignKey('skills.skill_name'))
 
     def get_skill_level(self):
         return self.skill_level

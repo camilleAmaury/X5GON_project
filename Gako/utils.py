@@ -21,13 +21,13 @@ def motivate(translations):
     
     
     with engine.connect() as con:
-        resUsers = con.execute('SELECT * FROM users WHERE phone_number != ""')
+        resUsers = con.execute('SELECT * FROM users WHERE phone != ""')
         users = pd.DataFrame(resUsers.fetchall())
         users.columns = resUsers.keys()
         for index, row in users.iterrows():
             lang = row.lang
             username = row.username
-            numero = row.phone_number
+            phone = row.phone
             user_id = row.user_id
         
             res = con.execute('SELECT * FROM notifications_sms_hours WHERE type = 1 and user_id = {} and day(time) = day(now())'.format(user_id))
@@ -48,8 +48,8 @@ def motivate(translations):
                     if(hour < 10):
                         hour = "0"+str(hour)
                     motivation_messages = translations[lang]['motivation_message']
-                    data = {'message' : motivation_messages[random.randint(0, len(motivation_messages)-1)].replace('<username>', username), 'numero' : numero, 'time' : datetime.now().strftime('%Y-%m-%d '+str(hour)+':00:00'), 'user_id' : user_id}
-                    statement = text("""INSERT INTO notifications_sms_hours(message, numero, time, user_id, type) VALUES(:message, :numero, :time, :user_id, 1)""")
+                    data = {'message' : motivation_messages[random.randint(0, len(motivation_messages)-1)].replace('<username>', username), 'phone' : phone, 'time' : datetime.now().strftime('%Y-%m-%d '+str(hour)+':00:00'), 'user_id' : user_id}
+                    statement = text("""INSERT INTO notifications_sms_hours(message, phone, time, user_id, type) VALUES(:message, :phone, :time, :user_id, 1)""")
                     con.execute(statement, **data)
             
 def softmax(X, theta = 1.0, axis = None):
