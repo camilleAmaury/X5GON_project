@@ -22,8 +22,8 @@ from collections import Counter
 import shlex
 import subprocess
 import copy
-from . import stop_words, question_answering_tokenizer, question_answering_model, nlp, vec
-
+from . import stop_words, question_answering_tokenizer, question_answering_model, nlp
+from .fastTextVectors import vectors
 
 api = Namespace('askquestion', description='Ask a question to a ML Model')
 
@@ -47,7 +47,7 @@ class AskQuestion(Resource):
         SIZE_CHUNK = 500
         document = 5
 
-        #var to set global and vec of fasttext
+        #var to set global and vector of fasttext
         print("Charging models")
 
 
@@ -222,14 +222,14 @@ class AskQuestion(Resource):
                 text = ' '.join(textWithoutStopWords)
                 corpus = splitTextByChunk(text.split(" "), 500)
                 documentRepresentation = []
-                key = list(vec.keys())
-                print(len(vec))
+                key = list(vector.keys())
+                print(len(vector))
                 distance = 0
                 for doc in corpus:
                     words = []
                     for word in doc:
                         if(word in key):
-                            v = list(vec[word])
+                            v = list(vector[word])
                             if(len(v) > 0):
                                 words.append(v)
                     documentRepresentation.append([float(sum(col))/len(col) for col in zip(*words)])
@@ -239,7 +239,7 @@ class AskQuestion(Resource):
                 questionRepresentation = []
                 for wQ in question.split(" "):
                     if(wQ in key):
-                        v = list(vec[wQ])
+                        v = list(vector[wQ])
                         if(len(v) > 0):
                             questionRepresentation.append(v)
                             print(v)
@@ -250,7 +250,7 @@ class AskQuestion(Resource):
                 print("question")
                 distance = []
                 for vecs in documentRepresentation:
-                    #print(vec[:10])
+                    #print(vector[:10])
                     #print(questionVector[:10])
                     distance.append(euclidian_distance(vecs, questionVector))
                 return corpus[np.argmin(distance)]
