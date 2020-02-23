@@ -6,24 +6,27 @@ app = Flask(__name__)
 light_on = False
 
 @app.before_first_request
-def light_thread():
+def gako():
     def run():
         global light_on
+        print("Running...")
+        print(light_on)
         while light_on:
-            print("keep going!")
+            # CODE
             time.sleep(1)
-
+    print("Gako is started")
     thread = threading.Thread(target=run)
     thread.start()
 
 @app.route('/start')
 def start():
-    # stop the function test
+    global light_on
     light_on = True
     return "started"
 
 @app.route('/stop')
 def stop():
+    global light_on
     light_on = False
     return 'stopped'
 
