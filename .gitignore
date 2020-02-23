@@ -10,3 +10,4 @@ BackEnd/api/endpoints/database/__pycache__/
 BackEnd/api/endpoints/graph/__pycache__/
 BackEnd/api/service/__pycache__/
 BackEnd/api/utils/__pycache__/
+BackEnd/flask_main.db
