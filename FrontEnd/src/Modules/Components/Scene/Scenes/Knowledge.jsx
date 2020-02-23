@@ -47,12 +47,24 @@ export default class Knowledge extends Component {
             isClicked: false,
             // 0 = asking, 1 = waiting, 2 = answering
             librarianState: 0,
-            data: []
+            data: [],
+            server: "",
+            server2: "",
+            config: {}
         };
         this.askQuestion = this.askQuestion.bind(this);
     }
 
     componentDidMount = () => {
+        let server = (process.env.REACT_APP_DEV === "1" ? process.env.REACT_APP_SERVER_DEV : process.env.REACT_APP_SERVER);
+        let server2 = process.env.REACT_APP_SERVER2;
+        let config = {
+            headers: {
+                "Content-Type": "application/json",
+                'Access-Control-Allow-Origin': '*',
+            }
+        }
+        this.setState({ server: server, config: config, server2: server2 });
     }
 
     preparePositions = () => {
@@ -166,7 +178,7 @@ export default class Knowledge extends Component {
     }
 
     hover = (bool) => {
-        if(this.props.isMounted){
+        if (this.props.isMounted) {
             this.setState({
                 isHovered: bool
             });
@@ -174,7 +186,7 @@ export default class Knowledge extends Component {
     }
 
     handleClick = () => {
-        if(this.props.isMounted){
+        if (this.props.isMounted) {
             this.setState({
                 isClicked: !this.state.isClicked,
                 librarianState: this.state.librarianState === 2 ? 0 : this.state.librarianState
@@ -188,76 +200,79 @@ export default class Knowledge extends Component {
         let questionValue = question.value.replace(" ", "%20").replace(",", "%20").replace(".", "%20").replace("\n", "%20");
         if (!(questionValue === null || questionValue === undefined || questionValue === "")) {
             this.askQuestion(questionValue);
+            setTimeout(() => { question.value = "" }, 250)
         }
     }
+
+    _askQuestionRec = (obj, request1) => {
+        axios.post(`${this.state.server}users/${JSON.parse(localStorage.getItem("isConnected")).id}/searches`, obj, this.state.config)
+            .then(request => {
+                if (request.status === 201) {
+                    let documents = JSON.parse(request1.data);
+                    let data = [];
+                    for (let i = 0; i < documents.length; i++) {
+                        // check if the document exists in the API
+                        let documentId = documents[i][0];
+                        axios.get(`${this.state.server2}api/v1/oer_materials/${documentId}/contents/`)
+                            .then(request => {
+                                if (request.status === 200) {
+                                    data.push({ id: documents[i][0], title: documents[i][1], format: documents[i][3], keywords: documents[i][2].split(",") });
+                                    if (this.props.isMounted) {
+                                        this.setState({
+                                            data: data,
+                                            librarianState: 2
+                                        });
+                                    }
+                                }
+                            })
+                            .catch(error => {
+                                // error
+                                let temp_data = [{ id: 0, title: "Error Server", format: "None", keywords: ["Nothing was found"] }];
+                                this.setState({
+                                    data: temp_data,
+                                    librarianState: 2
+                                });
+                            });
+                    }
+                }
+            })
+            .catch(error => {
+                console.log("retrying ...");
+                // fun(server, obj, id, config);
+            });
+    }
+
     askQuestion = (value) => {
-        // this.props.handleLoading(this.props.data);
-        if(this.props.isMounted){
+        if (this.props.isMounted) {
             this.setState({
                 librarianState: 1,
                 data: [],
-                isClicked:true
+                isClicked: true
             }, () => {
-                axios.get(process.env.REACT_APP_SERVER + `search/${value}`)
+                axios.get(`http://185.157.246.81:5000/search/${value}`, this.state.config)
                     .then(request => {
-                        let documents = JSON.parse(request.data);
-                        let data = this.state.data;
-                        let temp_data = [];
-                        for (let i = 0; i < documents.length; i++) {
-                            // check if the document exists in the API
-                            let documentId = documents[i][0];
-                            axios.get(`https://platform.x5gon.org/api/v1/oer_materials/${documentId}/contents/`)
-                                .then(request => {
-                                    if (request.status !== 204) {
-                                        temp_data.push({ id: documents[i][0], title: documents[i][1], format: documents[i][3], keywords: documents[i][2].split(",") });
-                                    }
-
-                                    if (i === documents.length - 1 && this.props.isMounted) {
-                                        this.setState({
-                                            data: temp_data
-                                        }, () => {
-                                            console.log(`${this.state.data.length} documents readables`)
-                                        });
-
-                                    }
-                                    if (i === documents.length - 1 && this.props.isMounted) {
-                                        this.setState({
-                                            data: temp_data,
-                                            count: this.state.count + 1
-                                        }, () => {
-                                            console.log(`${this.state.data.length} documents readables`)
-                                        });
-                                    }
-                                })
-                                .catch(error => {
-                                    console.log(error)
-                                    console.log("this doesn't work");
-                                });
-                        }
-                        if(this.props.isMounted){
-                            this.setState({
-                                librarianState: 2,
-                                data: data
-                            }, () => {
-                                // this.props.handleNotification(this.props.data);
-                            });
-                        }
+                        let obj = { search_subject: value };
+                        this._askQuestionRec(obj, request);
                     })
                     .catch(error => {
                         console.log(error)
-                        let data = [
-                            { title: "No response for those keywords", author: "", keywords: [] }
+                        let temp_data = [
+                            { title: "No response for those keywords", format: "None", keywords: ["Nothing was found"] }
                         ];
-                        if(this.props.isMounted){
+                        if (this.props.isMounted) {
                             this.setState({
                                 librarianState: 2,
-                                data: data
-                            }, () => {
-                                // this.props.handleNotification(this.props.data);
+                                data: temp_data
                             });
                         }
                     });
             });
+        }
+    }
+
+    handleKeyEnter = event => {
+        if (event.key === 'Enter') {
+            this.ask();
         }
     }
 
@@ -400,7 +415,7 @@ export default class Knowledge extends Component {
                 <Popover id={"librarian-dialog"} target={styles.librarian} ratio={1 / 2} side={"left"} size={{ width: 450, height: 150 }}
                     isOpen={this.state.isClicked && this.props.isOpen && this.state.librarianState === 0} title={"Librarian"}>
                     <div>
-                        <textarea id={"question-knowledge"} placeholder={"Type keywords to look for documents"}></textarea>
+                        <textarea id={"question-knowledge"} placeholder={"Type keywords to look for documents"} onKeyPress={this.handleKeyEnter}></textarea>
                         <button onClick={this.ask}>ask</button>
                     </div>
                 </Popover>
