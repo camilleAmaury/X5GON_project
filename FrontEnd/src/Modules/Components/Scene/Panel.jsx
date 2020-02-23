@@ -59,6 +59,7 @@ export default class Panel extends Component {
                 ratio: panel.clientWidth / 1920
             });
         }
+        
     }
 
     componentWillUnmount() {

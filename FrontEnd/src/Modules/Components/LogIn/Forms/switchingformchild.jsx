@@ -37,12 +37,19 @@ export default class SwitchingForm extends Component {
             let email = document.getElementById('email-field').value;
             let pwd = document.getElementById('password-field').value;
             let year = parseInt(document.getElementById('year-field').value);
-            obj.phone = phone; obj.username = identifier; obj.pwd = sha256(pwd); obj.year = year; obj.email = email;
-            console.log()
+            if(!isNaN(year)){
+                obj.year=year;
+            }
+            if(phone !== "" && phone !== undefined) obj.phone = phone;
+            if(identifier !== "" && identifier !== undefined) obj.username = identifier;
+            if(email !== "" && email !== undefined) obj.email = email;
+            if(pwd !== "" && pwd !== undefined) obj.pwd = sha256(pwd); 
+            console.log(obj)
         }else{
             let identifier = document.getElementById('identifier-field-log').value;
             let pwd = document.getElementById('password-field-log').value;
-            obj.username = identifier; obj.pwd = sha256(pwd);
+            if(identifier !== "" && identifier !== undefined) obj.username = identifier;
+            if(pwd !== "" && pwd !== undefined) obj.pwd = sha256(pwd); 
         }
         this.props.onSubmit(obj);
         this.setState({ isLoading: true });

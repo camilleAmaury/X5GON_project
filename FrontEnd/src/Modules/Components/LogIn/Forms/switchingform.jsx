@@ -12,7 +12,9 @@ export default class SwitchingForm extends Component {
         this.state = {
             errorLogIn:"",
             errorSignIn:"",
-            isLogged:false
+            isLogged:false,
+            server:"",
+            config:{}
         }
     }
 
@@ -28,59 +30,80 @@ export default class SwitchingForm extends Component {
         signInButton.addEventListener('click', () => {
             container.classList.remove("right-panel-active");
         });
+        let server = (process.env.REACT_APP_DEV === "1" ? process.env.REACT_APP_SERVER_DEV : process.env.REACT_APP_SERVER);
+        let config = {
+            headers: {
+                "Content-Type": "application/json",
+                'Access-Control-Allow-Origin': '*',
+            }
+        }
+        this.setState({server:server, config:config});
     }
 
     handleSubmitSignUp = (obj) => {
-        axios.post('http://185.157.246.81:5000/user', obj)
+        axios.post(`${this.state.server}users`, obj, this.state.config)
         .then(request => {
-            console.log(request)
-            // let res = request.data;
-            // if(res === -2){
-            //     this.setState({
-            //         errorSignIn:"Empty field"
-            //     });
-            // }else if(res === -1){
-            //     this.setState({
-            //         errorSignIn:"Username already exists"
-            //     });
-            // }
-            // else{
-            //     localStorage.setItem("isConnected", {id:request.data.id_user});
-            //     this.setState({
-            //         isLogged:true
-            //     });
-            // }
+            if(request.status === 201){
+                let obj = JSON.stringify({id:request.data.user_id});
+                localStorage.setItem("isConnected", obj);
+                this.isConnected()
+            }else{
+                this.setState({
+                    errorSignIn:"Server Error, call a dev !"
+                });
+            }
         })
         .catch(error => {
-            console.log(error.response);
-            console.log("this doesn't work");
-            this.setState({
-                errorSignIn:"Error from server"
-            });
+            console.log(error.response)
+            if(error.response.status === 409){
+                this.setState({
+                    errorSignIn:"Username already existing"
+                });
+            }else if(error.response.status === 422){
+                this.setState({
+                    errorSignIn:error.response.data
+                });
+            }else{
+                this.setState({
+                    errorSignIn:"Server Error, call a dev !"
+                });
+            }
         });
     }
 
     handleSubmitSignIn = (obj) => {
-        axios.get(`http://185.157.246.81:5000/login/${obj.username}/${obj.pwd}`)
+        axios.post(`${this.state.server}authentication/login`, obj, this.state.config)
         .then(request => {
-            if(request.data){
-                localStorage.setItem("isConnected", {id:request.data.id_user});
+            if(request.status === 201){
+                let obj = JSON.stringify({id:request.data.user_id});
+                localStorage.setItem("isConnected", obj);
                 this.setState({
-                    isLogged:true
+                    errorLogIn:""
                 });
             }else{
                 this.setState({
-                    errorLogIn:"Username and password combination doesn't exists"
+                    errorLogIn:"Server Error, call a dev !"
                 });
             }
-            
         })
         .catch(error => {
-            console.log(error.response);
-            console.log("this doesn't work");
-            this.setState({
-                errorLogIn:"Error from server"
-            });
+            if(error.response.status === 409){
+                this.setState({
+                    errorLogIn:"Username not found"
+                });
+            }else if(error.response.status === 403){
+                this.setState({
+                    errorLogIn:"Wrong password"
+                });
+            }else if(error.response.status === 422){
+                this.setState({
+                    errorLogIn:"Input not specified"
+                });
+            }else{
+                this.setState({
+                    errorLogIn:"Server Error, call a dev !"
+                });
+            }
         });
     }
     isConnected = () => {
