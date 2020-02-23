@@ -50,7 +50,7 @@ export default class Scene extends Component {
                     left:styles.scene.left
                 }
             }>
-                <Profile isOpen={this.props.sceneOpened[0]} scene={styles.scene} ratio={this.props.ratio} knowledgeSearch={this.knowledgeSearch} isMounted={this.props.isMounted}></Profile>
+                {this.props.sceneOpened[0] ? <Profile isOpen={this.props.sceneOpened[0]} scene={styles.scene} ratio={this.props.ratio} knowledgeSearch={this.knowledgeSearch} isMounted={this.props.isMounted}></Profile> : ""}
                 <Knowledge isOpen={this.props.sceneOpened[1]} scene={styles.scene} ratio={this.props.ratio} setSearch={this.props.setSearch} ref={"knowledge"} isMounted={this.props.isMounted}></Knowledge>
                 <Community isOpen={this.props.sceneOpened[2]} scene={styles.scene} ratio={this.props.ratio} isMounted={this.props.isMounted}></Community>
                 <Scholar isOpen={this.props.sceneOpened[3]} scene={styles.scene} ratio={this.props.ratio} isMounted={this.props.isMounted}></Scholar>

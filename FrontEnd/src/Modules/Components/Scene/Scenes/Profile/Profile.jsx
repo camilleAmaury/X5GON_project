@@ -44,19 +44,36 @@ export default class Profile extends Component {
                 label:"Your Skills",
                 backgroundColor:"rgba(180,49,32,0.5)"
             }]},
-            keywords:["datascience", "deep learning", "machine learning", "decision tree", "datascience", "deep learning", "machine learning", "decision tree",
-            "datascience", "deep learning", "machine learning", "decision tree", "datascience", "deep learning", "machine learning", "decision tree"]
+            keywords:[],
+            server: "",
+            server2: "",
+            config: {}
         };
     }
 
     componentDidMount = () => {
+        let server = (process.env.REACT_APP_DEV === "1" ? process.env.REACT_APP_SERVER_DEV : process.env.REACT_APP_SERVER);
+        let config = {
+            headers: {
+                "Content-Type": "application/json",
+                'Access-Control-Allow-Origin': '*',
+            }
+        }
         if(this.props.isMounted){
-            this.setState({
-                maxXp:200,
-                currentXp:125,
-                currentLevel:4
+            this.setState({ server: server, config: config, server2: server2 }, () => {
+                if(this.props.isMounted){
+                    this.setState({
+                        maxXp:200,
+                        currentXp:125,
+                        currentLevel:4
+                    });
+                }
             });
         }
+    }
+
+    _loadKeywords = () => {
+
     }
 
     preparePositions = () => {
