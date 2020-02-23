@@ -251,7 +251,7 @@ export default class Knowledge extends Component {
             }, () => {
                 axios.get(`http://185.157.246.81:5000/search/${value}`, this.state.config)
                     .then(request => {
-                        let obj = { search_subject: value };
+                        let obj = { search_subject: value.replace("%20", " ")};
                         this._askQuestionRec(obj, request);
                     })
                     .catch(error => {
