@@ -2,7 +2,7 @@ from flask import request
 from flask_restplus import Namespace, Resource, fields
 
 from api.utils import validator
-from api.service.user import get_user, get_all_users, create_user, update_user, delete_user, get_all_opened_documents, add_opened_document, get_opened_document, remove_opened_document, get_all_user_questions, add_user_question, get_user_question, remove_user_question, get_all_user_evaluations, get_all_user_badges, get_user_badge, add_user_badge, remove_user_badge, get_user_experience, add_user_experience, remove_user_experience, get_user_info, get_all_user_searches, add_user_search, get_user_search, remove_user_search
+from api.service.user import get_user, get_all_users, create_user, update_user, delete_user, get_all_opened_documents, add_opened_document, get_opened_document, remove_opened_document, get_all_user_questions, add_user_question, get_user_question, remove_user_question, get_all_user_evaluations, get_all_user_badges, get_user_badge, add_user_badge, remove_user_badge, get_user_experience, add_user_experience, remove_user_experience, get_all_user_searches, add_user_search, get_user_search, remove_user_search
 from api.service.evaluation import get_evaluation, remove_evaluation
 from .document import document_schema
 from .scholar_question import scholar_question_schema
@@ -74,14 +74,6 @@ class UserRoute(Resource):
         delete_user(user_id=user_id)
         return '', 201
 
-
-@api.route("/<int:user_id>/info")
-class UserInfoRoute(Resource):
-
-    @api.response(200, 'Active user info')
-    @api.response(409, 'User not found')
-    def get(self, user_id):
-        return get_user_info(user_id)
 
 # User Opened Documents *******************************************************************************************************************************
 

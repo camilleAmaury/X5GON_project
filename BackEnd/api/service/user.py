@@ -9,7 +9,6 @@ from .scholar_question import build_scholar_question_schema
 from .user_search import build_user_search_schema
 from .evaluation import build_evaluation_schema
 from .level import build_level_schema
-from . import badge as badge_service
 
 
 def build_user_schema(user):
@@ -131,23 +130,6 @@ def check_user_auth(username, pwd):
             "message":"Invalide password"
         }), 403))
     return generate_auth_token(user)
-
-def get_user_info(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        abort(make_response(jsonify({
-            "errors":{
-                0:"Username not found"
-            },
-            "message":"User not found"
-        }), 409))
-    mod = {}
-    mod['experience'] = build_level_schema(user.get_level())
-    mod['experience']['experience'] = user.experience
-    mod['badge'] = badge_service.get_all_badges(user_id)
-    mod['skill'] = get_all_user_skills(user_id)
-    mod['search_history'] = get_all_user_searches(user_id)
-    return mod
 
 
 # User Opened Documents *******************************************************************************************************************************
