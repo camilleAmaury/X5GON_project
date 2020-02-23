@@ -21,7 +21,7 @@ class SkillsRoute(Resource):
     def get(self):
         return get_all_skills()
 
-    @api.expect(skill_schema, validate=True, envelope='json')
+    @api.expect(skill_schema, envelope='json')
     @api.doc(responses={
         201: 'Skill successfully created',
         409: 'Conflict, skill already exists',

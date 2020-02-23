@@ -12,7 +12,6 @@ badge_schema = api.model('Badge', {
     'badge_id': fields.Integer(required=False, description='ID of the badge', readonly=True),
     'badge_name': fields.String(required=True, description='Badge name'),
     'description': fields.String(required=True, description='Badge description'),
-    'image_adress': fields.String(required=True, description='image file adress in the front file system'),
     'possess_by_user': fields.Boolean(required=False, description='True if the submit user possess this badge', readonly=True)
 })
 
@@ -31,10 +30,9 @@ class BadgesRoute(Resource):
     def get(self):
         return get_all_badges(request.args.get('user_id', None))
 
-    @api.expect(badge_schema, validate=True, envelope='json')
+    @api.expect(badge_schema, envelope='json')
     @api.doc(responses={
         201: 'Badge successfully created',
-        409: 'Conflict, badge already exists',
         422: 'Validation Error'
     })
     @api.marshal_with(badge_schema)
