@@ -50,7 +50,11 @@ class AskQuestion(Resource):
         #var to set global and vector of fasttext
         print("Charging models")
 
-
+        print(vectors)
+        print(stop_words)
+        print(question_answering_tokenizer)
+        print(question_answering_model)
+        print(nlp)
         print("End charging model")
 
         def splitTextByChunk(text_divide, s):
@@ -222,14 +226,14 @@ class AskQuestion(Resource):
                 text = ' '.join(textWithoutStopWords)
                 corpus = splitTextByChunk(text.split(" "), 500)
                 documentRepresentation = []
-                key = list(vector.keys())
-                print(len(vector))
+                key = list(vectors.keys())
+                print(len(vectors))
                 distance = 0
                 for doc in corpus:
                     words = []
                     for word in doc:
                         if(word in key):
-                            v = list(vector[word])
+                            v = list(vectors[word])
                             if(len(v) > 0):
                                 words.append(v)
                     documentRepresentation.append([float(sum(col))/len(col) for col in zip(*words)])
@@ -239,20 +243,20 @@ class AskQuestion(Resource):
                 questionRepresentation = []
                 for wQ in question.split(" "):
                     if(wQ in key):
-                        v = list(vector[wQ])
+                        v = list(vectors[wQ])
                         if(len(v) > 0):
                             questionRepresentation.append(v)
                             print(v)
                 print(len(questionRepresentation))
                 print(len(questionRepresentation[0]))
-                questionVector = [float(sum(col))/len(col) for col in zip(*questionRepresentation)]
-                print(len(questionVector))
+                questionvectors = [float(sum(col))/len(col) for col in zip(*questionRepresentation)]
+                print(len(questionvectors))
                 print("question")
                 distance = []
                 for vecs in documentRepresentation:
-                    #print(vector[:10])
-                    #print(questionVector[:10])
-                    distance.append(euclidian_distance(vecs, questionVector))
+                    #print(vectors[:10])
+                    #print(questionvectors[:10])
+                    distance.append(euclidian_distance(vecs, questionvectors))
                 return corpus[np.argmin(distance)]
             else:
                 return ' '.join(concatenationDocument).replace("[", "").replace("]", "").replace("\\", "").replace("/", "")
@@ -263,7 +267,7 @@ class AskQuestion(Resource):
             start = time.time()
             corpusPertinent = getPertinentDocument(question, idDoc)
             end2 = time.time()
-            print(corpusPertinent)
+            print(corpusPertinent.encode('utf-8'))
             print(len(corpusPertinent))
 
             question_answering_tokenizer.pad_token = '<PAD>'
