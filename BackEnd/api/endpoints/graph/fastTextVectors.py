@@ -1,20 +1,18 @@
 import io
 import fasttext
 
-vectors = None
-
 def load_vectors(fname):
     import io
     fin = io.open(fname, 'r', encoding='utf-8', newline='\n', errors='ignore')
     n, d = map(int, fin.readline().split())
-    vector = {}
+    data = {}
     i = 0
     for line in fin:
         if(i < 80000):
             tokens = line.rstrip().split(' ')
-            vector[tokens[0]] = map(float, tokens[1:])
+            data[tokens[0]] = map(float, tokens[1:])
             print(i, end='\r')
         i+=1
+    return data
 
-def get_vectors():
-    return vectors
+vectors = load_vectors('endpoints/data/wiki-news-300d-1M.vec')

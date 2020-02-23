@@ -14,7 +14,7 @@ import time
 import spacy
 import requests
 import bs4
-# import torch
+import torch
 import numpy as np
 import math
 from spacy import displacy
@@ -22,8 +22,8 @@ from collections import Counter
 import shlex
 import subprocess
 import copy
-from . import get_stop_words, get_question_answering_tokenizer, get_question_answering_model, get_nlp
-from .fastTextVectors import get_vectors
+from . import stop_words, question_answering_tokenizer, question_answering_model, nlp
+from .fastTextVectors import vectors
 
 api = Namespace('askquestion', description='Ask a question to a ML Model')
 
@@ -49,12 +49,6 @@ class AskQuestion(Resource):
 
         #var to set global and vector of fasttext
         print("Charging models")
-
-        vectors = get_vectors()
-        stop_words = get_stop_words()
-        question_answering_tokenizer = get_question_answering_tokenizer()
-        question_answering_model = get_question_answering_model()
-        nlp = get_nlp()
 
         print(vectors)
         print(stop_words)
