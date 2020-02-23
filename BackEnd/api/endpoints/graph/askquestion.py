@@ -14,7 +14,7 @@ import time
 import spacy
 import requests
 import bs4
-# import torch
+import torch
 import numpy as np
 import math
 from spacy import displacy
