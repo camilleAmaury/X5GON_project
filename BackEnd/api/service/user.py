@@ -144,6 +144,7 @@ def get_all_opened_documents(user_id, isValidated):
             },
             "message":"User not found"
         }), 409))
+    validated_documents = None
     if isValidated :
         validated_documents = user.get_validated_documents()
 
@@ -151,7 +152,7 @@ def get_all_opened_documents(user_id, isValidated):
     opened_documents = user.get_opened_documents()
     for opened_document in opened_documents:
         mod = build_document_schema(opened_document)
-        if validated_documents :
+        if validated_documents != None :
             mod['isValidated'] = opened_document in validated_documents
         arr_opened_documents.append(mod)
     return arr_opened_documents
@@ -293,13 +294,20 @@ def add_validated_document(user_id, graph_ref):
             "message":"User not found"
         }), 409))
     document = Document.query.filter_by(graph_ref=graph_ref).first()
-    if not document:
-        document = Document(
-            graph_ref=graph_ref
-        )
-        db.session.add(document)
-        db.session.flush()
-        db.session.commit()
+    if not document :
+        abort(make_response(jsonify({
+            "errors":{
+                0:"Document not found"
+            },
+            "message":"Document not found"
+        }), 409))
+    if not document in user.get_opened_documents() :
+        abort(make_response(jsonify({
+            "errors":{
+                0:"This document is not opened by this user"
+            },
+            "message":"Document not opened"
+        }), 409))
     if not (document in user.get_validated_documents()):
         user.add_validated_document(document)
         db.session.commit()

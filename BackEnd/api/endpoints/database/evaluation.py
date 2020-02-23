@@ -16,7 +16,7 @@ evaluation_schema = api.model('Evaluation', {
 @api.route("/")
 class EvaluationRoute(Resource):
 
-    @api.expect(evaluation_schema, validate=True, envelope='json')
+    @api.expect(evaluation_schema, envelope='json')
     @api.doc(responses={
         201: 'Evaluation successfully created',
         409: 'Conflict, user not exists / document not exists / this user already evaluate this document',

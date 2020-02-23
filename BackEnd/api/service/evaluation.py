@@ -41,6 +41,20 @@ def add_evaluation(data):
             },
             "message":"Document not found"
         }), 409))
+    if not document in user.get_opened_documents() :
+        abort(make_response(jsonify({
+            "errors":{
+                0:"Document not opened by this user"
+            },
+            "message":"Document not opened"
+        }), 409))
+    if document in user.get_validated_documents() :
+        abort(make_response(jsonify({
+            "errors":{
+                0:"Document already validated by this user"
+            },
+            "message":"Document already validated"
+        }), 409))
     evaluation = Evaluation.query.filter_by(user_id=data.get('user_id'), document_ref=data.get('document_ref')).first()
     if not evaluation:
         evaluation = Evaluation(
@@ -50,7 +64,7 @@ def add_evaluation(data):
             document_ref=data.get('document_ref')
         )
         db.session.add(evaluation)
-        user_service.add_validated_document(user_id, document_ref)
+        user_service.add_validated_document(evaluation.user_id, evaluation.document_ref)
         db.session.flush()
         db.session.commit()
 

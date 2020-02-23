@@ -186,7 +186,6 @@ class Badge(db.Model):
     badge_id = db.Column(db.Integer, primary_key=True)
     badge_name = db.Column(db.String(100))
     description = db.Column(db.String(300))
-    image_adress = db.Column(db.String(300))
 
 class Level(db.Model):
     __tablename__ = 'levels'

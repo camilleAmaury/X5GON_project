@@ -9,7 +9,6 @@ def build_badge_schema(badge):
     mod['badge_id'] = badge.badge_id
     mod['badge_name'] = badge.badge_name
     mod['description'] = badge.description
-    mod['image_adress'] = badge.image_adress
     return mod
 
 def get_badge(badge_id):
@@ -43,8 +42,7 @@ def create_badge(data):
             #Create badge
             badge = Badge(
                 badge_name = data.get('badge_name'),
-                description = data.get('description'),
-                image_adress = data.get('image_adress')
+                description = data.get('description')
             )
             db.session.add(badge)
             db.session.flush()

@@ -62,7 +62,7 @@ authentication_schema = api.model('Authentication', {
 @api.route("/login")
 class UsersRoute(Resource):
 
-    @api.expect(authentication_schema, validate=True, envelope='json')
+    @api.expect(authentication_schema, envelope='json')
     @api.doc(responses={
         201: 'User successfully created',
         403: 'Invalide password',
