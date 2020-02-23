@@ -8,7 +8,7 @@ def load_vectors(fname):
     data = {}
     i = 0
     for line in fin:
-        if(i < 80000):
+        if(i < 150000):
             tokens = line.rstrip().split(' ')
             data[tokens[0]] = map(float, tokens[1:])
             print(i, end='\r')
@@ -16,3 +16,4 @@ def load_vectors(fname):
     return data
 
 vectors = load_vectors('endpoints/data/wiki-news-300d-1M.vec')
+#vectors = None
