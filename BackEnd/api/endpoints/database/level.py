@@ -22,10 +22,9 @@ class LevelsRoute(Resource):
     def get(self):
         return get_all_levels()
 
-    @api.expect(level_schema, validate=True, envelope='json')
+    @api.expect(level_schema, envelope='json')
     @api.doc(responses={
         201: 'Level successfully created',
-        409: 'Conflict, level already exists',
         422: 'Validation Error'
     })
     @api.marshal_with(level_schema)

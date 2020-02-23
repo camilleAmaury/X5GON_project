@@ -3,16 +3,16 @@ import React, { Component, Fragment } from 'react';
 import Popover from '../../../Popover/Popover';
 import {Radar} from 'react-chartjs-2';
 
+import axios from "axios";
+
 import './Profile.css';
 import './css-circular-prog-bar.css';
 
-import badgeApprentice from '../../../../../assets/Panel/Scene/Profile/badgeApprentice.png';
-import badgeHelp from '../../../../../assets/Panel/Scene/Profile/badgeHelp.png';
-import badgeEager from '../../../../../assets/Panel/Scene/Profile/badgeEager.png';
-import badgeMaster from '../../../../../assets/Panel/Scene/Profile/badgeMaster.png';
-import badgeArchitect from '../../../../../assets/Panel/Scene/Profile/badgeArchitect.png';
-
-// import axios from "axios";
+import badge1 from '../../../../../assets/Panel/Scene/Profile/badgeApprentice.png';
+import badge2 from '../../../../../assets/Panel/Scene/Profile/badgeHelp.png';
+import badge3 from '../../../../../assets/Panel/Scene/Profile/badgeEager.png';
+import badge4 from '../../../../../assets/Panel/Scene/Profile/badgeMaster.png';
+import badge5 from '../../../../../assets/Panel/Scene/Profile/badgeArchitect.png';
 
 export default class Profile extends Component {
     constructor(props) {
@@ -32,32 +32,78 @@ export default class Profile extends Component {
                 badge4:[240,124],
                 badge5:[194,299]
             },
-            badges:[
-                {name:"Apprentice", condition:"add 5 documents to your panel", texture:badgeApprentice, has:true, hovered:false},
-                {name:"Seeking for help", condition:"Ask 3 questions to the community", texture:badgeHelp, has:false, hovered:false},
-                {name:"Eager to learn", condition:"Ask 10 questions to the scholar", texture:badgeEager, has:false, hovered:false},
-                {name:"Path of mastership", condition:"Be the top answer of a community question", texture:badgeMaster, has:false, hovered:false},
-                {name:"Knowledge Architect", condition:"rate and validate 10 documents", texture:badgeArchitect, has:false, hovered:false}
-            ],
+            badges:[],
             skills:{labels:["None", "Politics", "Blowjob", "Computer science"], datasets:[{
                 data:[0,2,8,5], 
                 label:"Your Skills",
                 backgroundColor:"rgba(180,49,32,0.5)"
             }]},
-            keywords:["datascience", "deep learning", "machine learning", "decision tree", "datascience", "deep learning", "machine learning", "decision tree",
-            "datascience", "deep learning", "machine learning", "decision tree", "datascience", "deep learning", "machine learning", "decision tree"]
+            keywords:[],
+            server: "",
+            badgesTexture:[badge1, badge2, badge3, badge4, badge5],
+            config: {}
         };
     }
 
     componentDidMount = () => {
+        let server = (process.env.REACT_APP_DEV === "1" ? process.env.REACT_APP_SERVER_DEV : process.env.REACT_APP_SERVER);
+        let config = {
+            headers: {
+                "Content-Type": "application/json",
+                'Access-Control-Allow-Origin': '*',
+            }
+        }
         if(this.props.isMounted){
-            this.setState({
-                maxXp:200,
-                currentXp:125,
-                currentLevel:4
+            this.setState({ server: server, config: config }, () => {
+                this._loadExperience();
+                this._loadKeywords();
+                this._loadBadges();
+                if(this.props.isMounted){
+                    
+                }
             });
         }
     }
+
+    _loadKeywords = () => {
+        axios.get(`${this.state.server}users/${JSON.parse(localStorage.getItem("isConnected")).id}/searches`, this.state.config)
+        .then(request => {
+            this.setState({keywords: request.data});
+        })
+        .catch(error => {
+            // error
+        });
+    }
+
+    _loadExperience = () => {
+        axios.get(`${this.state.server}users/${JSON.parse(localStorage.getItem("isConnected")).id}/experience`, this.state.config)
+        .then(request => {
+            this.setState({
+                currentLevel:request.data.level_number,
+                maxXp:request.data.next_stage,
+                currentXp:request.data.experience
+            });
+        })
+        .catch(error => {
+            // error
+        });
+    }
+
+    _loadBadges = () => {
+        axios.get(`${this.state.server}badges?user_id=${JSON.parse(localStorage.getItem("isConnected")).id}`, this.state.config)
+        .then(request => {
+            let badges = request.data;
+            for(let i = 0; i < badges.length; i++){
+                badges[i].hovered = false;
+                badges[i].image_adress = this.state.badgesTexture[i];
+            }
+            this.setState({badges: request.data});
+        })
+        .catch(error => {
+            // error
+        });
+    }
+
 
     preparePositions = () => {
         let obj = {};
@@ -355,144 +401,48 @@ export default class Profile extends Component {
                             height: styles.badges.height,
                         }
                     }>
-                        {/* Apprentice */}
-                        <div className={"badge"} onMouseEnter={() => {this.hoverBadge(0, true)}} onMouseLeave={() => {this.hoverBadge(0, false)}} style={
-                            {
-                                left: styles.badge1.left,
-                                width: styles.badge1.width,
-                                height: styles.badge1.height,
-                                top: styles.badge1.top,
-                                borderRadius:"50%",
-                            }
-                        }>
-                            <div className={"badge1"} style={
-                                {
-                                    width: styles.badge1.width*0.8,
-                                    height: styles.badge1.height*0.8,
-                                    backgroundImage:`url(${this.state.badges[0].texture})`,
-                                    backgroundSize:"cover"
-                                }
-                            }></div>
-                            <div className={"silk"} style={
-                                {
-                                    borderRadius:"50%",
-                                    width: "100%",
-                                    height: "100%",
-                                    backgroundColor: this.state.badges[0].has ? (this.state.badges[0].hovered ? `rgba(0,0,0,0.1)` : `rgba(0,0,0,0)`) : (this.state.badges[0].hovered ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.3)`)
-                                }
-                            }></div>
-                        </div>
-                        <Popover color={"#334458"} id={"badge-hover-" + 0} ratio={1 / 2} side={"left"} size={{ width: 350, height: 100 }}
-                            target={{left: styles.badge1.left,width: styles.badge1.width,height: styles.badge1.height,top: styles.badge1.top}}
-                            isOpen={this.state.badges[0].hovered && this.props.isOpen} title={this.state.badges[0].name}>
-                            <div className={"badge-hover"}>
-                                <span>{this.state.badges[0].condition}</span>
-                            </div>
-                        </Popover>
-                        {/* Help */}
-                        <div className={"badge"} onMouseEnter={() => {this.hoverBadge(1, true)}} onMouseLeave={() => {this.hoverBadge(1, false)}} style={
-                            {
-                                left: styles.badge2.left,
-                                width: styles.badge2.width,
-                                height: styles.badge2.height,
-                                top: styles.badge2.top,
-                                backgroundImage:`url(${this.state.badges[1].texture})`,
-                                backgroundSize:"cover"
-                            }
-                        }>
-                            <div className={"silk"} style={
-                                {
-                                    width: "100%",
-                                    height: "100%",
-                                    backgroundColor: this.state.badges[1].has ? (this.state.badges[1].hovered ? `rgba(0,0,0,0.1)` : `rgba(0,0,0,0)`) : (this.state.badges[1].hovered ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.3)`)
-                                }
-                            }></div>
-                        </div>
-                        <Popover color={"#334458"} id={"badge-hover-" + 1} ratio={1 / 2} side={"left"} size={{ width: 350, height: 100 }}
-                            target={{left: styles.badge2.left,width: styles.badge2.width,height: styles.badge2.height,top: styles.badge2.top}}
-                            isOpen={this.state.badges[1].hovered && this.props.isOpen} title={this.state.badges[1].name}>
-                            <div className={"badge-hover"}>
-                                <span>{this.state.badges[1].condition}</span>
-                            </div>
-                        </Popover>
-                        {/* Eager */}
-                        <div className={"badge"} onMouseEnter={() => {this.hoverBadge(2, true)}} onMouseLeave={() => {this.hoverBadge(2, false)}} style={
-                            {
-                                left: styles.badge3.left,
-                                width: styles.badge3.width,
-                                height: styles.badge3.height,
-                                top: styles.badge3.top,
-                                backgroundImage:`url(${this.state.badges[2].texture})`,
-                                backgroundSize:"cover"
-                            }
-                        }>
-                            <div className={"silk"} style={
-                                {
-                                    width: "100%",
-                                    height: "100%",
-                                    backgroundColor: this.state.badges[2].has ? (this.state.badges[2].hovered ? `rgba(0,0,0,0.1)` : `rgba(0,0,0,0)`) : (this.state.badges[2].hovered ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.3)`)
-                                }
-                            }></div>
-                        </div>
-                        <Popover color={"#334458"} id={"badge-hover-" + 1} ratio={1 / 2} side={"left"} size={{ width: 350, height: 100 }}
-                            target={{left: styles.badge3.left,width: styles.badge3.width,height: styles.badge3.height,top: styles.badge3.top}}
-                            isOpen={this.state.badges[2].hovered && this.props.isOpen} title={this.state.badges[2].name}>
-                            <div className={"badge-hover"}>
-                                <span>{this.state.badges[2].condition}</span>
-                            </div>
-                        </Popover>
-                        {/* Master */}
-                        <div className={"badge"} onMouseEnter={() => {this.hoverBadge(3, true)}} onMouseLeave={() => {this.hoverBadge(3, false)}} style={
-                            {
-                                left: styles.badge4.left,
-                                width: styles.badge4.width,
-                                height: styles.badge4.height,
-                                top: styles.badge4.top,
-                                backgroundImage:`url(${this.state.badges[3].texture})`,
-                                backgroundSize:"cover"
-                            }
-                        }>
-                            <div className={"silk"} style={
-                                {
-                                    width: "100%",
-                                    height: "100%",
-                                    backgroundColor: this.state.badges[3].has ? (this.state.badges[3].hovered ? `rgba(0,0,0,0.1)` : `rgba(0,0,0,0)`) : (this.state.badges[3].hovered ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.3)`)
-                                }
-                            }></div>
-                        </div>
-                        <Popover color={"#334458"} id={"badge-hover-" + 1} ratio={1 / 2} side={"left"} size={{ width: 350, height: 100 }}
-                            target={{left: styles.badge4.left,width: styles.badge4.width,height: styles.badge4.height,top: styles.badge4.top}}
-                            isOpen={this.state.badges[3].hovered && this.props.isOpen} title={this.state.badges[3].name}>
-                            <div className={"badge-hover"}>
-                                <span>{this.state.badges[3].condition}</span>
-                            </div>
-                        </Popover>
-                        {/* Architect */}
-                        <div className={"badge"} onMouseEnter={() => {this.hoverBadge(4, true)}} onMouseLeave={() => {this.hoverBadge(4, false)}} style={
-                            {
-                                left: styles.badge5.left,
-                                width: styles.badge5.width,
-                                height: styles.badge5.height,
-                                top: styles.badge5.top,
-                                backgroundImage:`url(${this.state.badges[4].texture})`,
-                                backgroundSize:"cover"
-                            }
-                        }>
-                            <div className={"silk"} style={
-                                {
-                                    width: "100%",
-                                    height: "100%",
-                                    backgroundColor: this.state.badges[4].has ? (this.state.badges[4].hovered ? `rgba(0,0,0,0.1)` : `rgba(0,0,0,0)`) : (this.state.badges[4].hovered ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.3)`)
-                                }
-                            }></div>
-                        </div>
-                        <Popover color={"#334458"} id={"badge-hover-" + 1} ratio={1 / 2} side={"left"} size={{ width: 350, height: 100 }}
-                            target={{left: styles.badge5.left,width: styles.badge5.width,height: styles.badge5.height,top: styles.badge5.top}}
-                            isOpen={this.state.badges[4].hovered && this.props.isOpen} title={this.state.badges[4].name}>
-                            <div className={"badge-hover"}>
-                                <span>{this.state.badges[4].condition}</span>
-                            </div>
-                        </Popover>
+                        {this.state.badges.map((item, i) =>
+                            <Fragment key={i}>
+                                <div className={"badge"} onMouseEnter={() => {this.hoverBadge(i, true)}} onMouseLeave={() => {this.hoverBadge(i, false)}} style={
+                                    {
+                                        left: styles["badge"+item.badge_id].left,
+                                        width: styles["badge"+item.badge_id].width,
+                                        height: styles["badge"+item.badge_id].height,
+                                        top: styles["badge"+item.badge_id].top,
+                                        borderRadius:i === 0 ? "50%" : "0%",
+                                        backgroundImage:i !== 0 ? `url('${item.image_adress}')` : "linear-gradient(0.15turn, white, grey)",
+                                        backgroundSize:i !== 0 ? "cover":"none"
+                                    }
+                                }>
+                                    {i === 0 ?
+                                    <div className={"badge1"} style={
+                                        {
+                                            width: styles["badge"+item.badge_id].width*0.8,
+                                            height: styles["badge"+item.badge_id].height*0.8,
+                                            backgroundImage:`url('${item.image_adress}')`,
+                                            backgroundSize:"cover"
+                                        }
+                                    }></div> : ""
+                                    }
+                                    
+                                    <div className={"silk"} style={
+                                        {
+                                            borderRadius:i === 0 ? "50%" : "0%",
+                                            width: "100%",
+                                            height: "100%",
+                                            backgroundColor: item.possess_by_user ? (item.hovered ? `rgba(0,0,0,0.1)` : `rgba(0,0,0,0)`) : (item.hovered ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.3)`)
+                                        }
+                                    }></div>
+                                </div>
+                                <Popover color={"#334458"} id={"badge-hover-" + i} ratio={1 / 2} side={"left"} size={{ width: 350, height: 100 }}
+                                    target={{left: styles["badge"+item.badge_id].left,width: styles["badge"+item.badge_id].width,height: styles["badge"+item.badge_id].height,top: styles["badge"+item.badge_id].top}}
+                                    isOpen={item.hovered && this.props.isOpen} title={item.badge_name}>
+                                    <div className={"badge-hover"}>
+                                        <span>{item.description}</span>
+                                    </div>
+                                </Popover>
+                            </Fragment>
+                        )}
                     </div>
                     <div className={"badgesBar moduleTitle"} style={
                         {
@@ -559,10 +509,10 @@ export default class Profile extends Component {
                         }
                     }>
                         {this.state.keywords.map((item, i) => 
-                                <div className={"item"} key={i} onClick={() => this.props.knowledgeSearch(item)}>
+                                <div className={"item"} key={i} onClick={() => this.props.knowledgeSearch(item.search_subject)}>
                                     <div className={"item-number"}><span>{i+1}</span></div>
                                     <div className={"item-info"}>
-                                        <span className={"title"}>{item}</span>
+                                        <span className={"title"}>{item.search_subject}</span>
                                         <span></span>
                                     </div>
                                 </div>

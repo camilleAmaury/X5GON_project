@@ -2,7 +2,7 @@ from flask import request
 from flask_restplus import Namespace, Resource, fields
 
 from api.utils import validator
-from api.service.user import get_user, get_all_users, create_user, update_user, delete_user, get_all_opened_documents, add_opened_document, get_opened_document, remove_opened_document, get_all_user_questions, add_user_question, get_user_question, remove_user_question, get_all_user_evaluations, get_all_user_badges, get_user_badge, add_user_badge, remove_user_badge, get_user_experience, add_user_experience, remove_user_experience, get_user_info
+from api.service.user import get_user, get_all_users, create_user, update_user, delete_user, get_all_opened_documents, add_opened_document, get_opened_document, remove_opened_document, get_all_user_questions, add_user_question, get_user_question, remove_user_question, get_all_user_evaluations, get_all_user_badges, get_user_badge, add_user_badge, remove_user_badge, get_user_experience, add_user_experience, remove_user_experience, get_all_user_searches, add_user_search, get_user_search, remove_user_search, get_all_validated_documents, add_validated_document, get_validated_document, remove_validated_document
 from api.service.evaluation import get_evaluation, remove_evaluation
 from .document import document_schema
 from .scholar_question import scholar_question_schema
@@ -19,7 +19,10 @@ api = Namespace('users', description='Users CRUD operations')
 user_schema = api.model('User', {
     'user_id': fields.Integer(required=False, description='ID of the user', readonly=True),
     'username': fields.String(required=True, description='Username of the user'),
-    'password': fields.String(required=True, description='Password of the user')
+    'pwd': fields.String(required=True, description='Password of the user'),
+    'phone': fields.String(required=False, description='User phone number'),
+    'email': fields.String(required=True, description='User email'),
+    'year': fields.Integer(required=True, description='Number of years from the end of high school')
 })
 
 @api.route("/")
@@ -30,7 +33,7 @@ class UsersRoute(Resource):
     def get(self):
         return get_all_users()
 
-    @api.expect(user_schema, validate=True, envelope='json')
+    @api.expect(user_schema, envelope='json')
     @api.doc(responses={
         201: 'User successfully created',
         409: 'Conflict, user already exists',
@@ -52,7 +55,7 @@ class UserRoute(Resource):
     def get(self, user_id):
         return get_user(user_id)
 
-    @api.expect(user_schema, envelope='json', validate=False)
+    @api.expect(user_schema, envelope='json')
     @api.doc(responses={
         201: 'User successfully updated',
         409: 'User not found',
@@ -72,14 +75,6 @@ class UserRoute(Resource):
         return '', 201
 
 
-@api.route("/<int:user_id>/info")
-class UserInfoRoute(Resource):
-
-    @api.response(200, 'Active user info')
-    @api.response(409, 'User not found')
-    def get(self, user_id):
-        return get_user_info(user_id)
-
 # User Opened Documents *******************************************************************************************************************************
 
 
@@ -95,10 +90,10 @@ class UserOpenedDocumentsRoute(Resource):
             409: 'Conflict, user not exist'
         }
     )
-    def get(self, user_id, isValidated=None):
-        return get_all_opened_documents(user_id, isValidated)
+    def get(self, user_id):
+        return get_all_opened_documents(user_id, bool(request.args.get('isValidated', None)))
 
-    @api.expect(document_schema, validate=True, envelope='json')
+    @api.expect(document_schema, envelope='json')
     @api.doc(responses={
         201: 'Document successfully open by user',
         409: 'Conflict, user not exist',
@@ -135,7 +130,7 @@ class UserOpenedDocumentRoute(Resource):
 
 
 @api.route("/<int:user_id>/validated_documents")
-class UserOpenedDocumentsRoute(Resource):
+class UserValidatedDocumentsRoute(Resource):
     @api.marshal_with(document_schema, as_list=True)
     @api.doc(responses={
         200: 'Active user validated documents list',
@@ -144,10 +139,10 @@ class UserOpenedDocumentsRoute(Resource):
     def get(self, user_id):
         return get_all_validated_documents(user_id)
 
-    @api.expect(document_schema, validate=True, envelope='json')
+    @api.expect(document_schema, envelope='json')
     @api.doc(responses={
         201: 'Document successfully validate by user',
-        409: 'Conflict, user not exist',
+        409: 'Conflict, user not exist / document not exist / document not opened',
         422: 'Validation Error'
     })
     @api.marshal_with(document_schema)
@@ -156,7 +151,7 @@ class UserOpenedDocumentsRoute(Resource):
         return add_validated_document(user_id=user_id, graph_ref=request.json.get('graph_ref')), 201
 
 @api.route("/<int:user_id>/validated_documents/<string:graph_ref>")
-class UserOpenedDocumentRoute(Resource):
+class UserValidatedDocumentRoute(Resource):
 
     @api.marshal_with(document_schema)
     @api.response(200, 'Validated document info')
@@ -190,7 +185,7 @@ class UserScholarQuestionsRoute(Resource):
     def get(self, user_id):
         return get_all_user_questions(user_id)
 
-    @api.expect(scholar_question_schema, validate=True, envelope='json')
+    @api.expect(scholar_question_schema, envelope='json')
     @api.doc(responses={
         201: 'Question successfully ask by user',
         409: 'Conflict, user not exist',
@@ -235,7 +230,7 @@ class UserSearchesRoute(Resource):
     def get(self, user_id):
         return get_all_user_searches(user_id)
 
-    @api.expect(user_search_schema, validate=True, envelope='json')
+    @api.expect(user_search_schema, envelope='json')
     @api.doc(responses={
         201: 'Question successfully ask by user',
         409: 'Conflict, user not exist',
@@ -244,7 +239,7 @@ class UserSearchesRoute(Resource):
     @api.marshal_with(user_search_schema)
     def post(self, user_id):
         validator.validate_payload(request.json, user_search_schema)
-        return add_user_search(user_id=user_id, data=request.json.get("search_subject")), 201
+        return add_user_search(user_id=user_id, search_subject=request.json.get("search_subject")), 201
 
 @api.route("/<int:user_id>/searches/<int:search_id>")
 class UserSearcheRoute(Resource):
@@ -315,7 +310,7 @@ class UserBadgesRoute(Resource):
     def get(self, user_id):
         return get_all_user_badges(user_id)
 
-    @api.expect(badge_schema, validate=True, envelope='json')
+    @api.expect(badge_schema, envelope='json')
     @api.doc(responses={
         201: 'Badge successfully add by user',
         409: 'Conflict, user not exist / badge not exist / user already have this badge',
@@ -404,7 +399,7 @@ class UserSkillsRoute(Resource):
     def get(self, user_id):
         return get_all_user_skills(user_id)
 
-@api.route("/<int:user_id>/skills/<string:document_ref>")
+@api.route("/<int:user_id>/skills/<string:skill_name>")
 class UserSkillRoute(Resource):
 
     @api.marshal_with(skill_schema)
@@ -414,8 +409,8 @@ class UserSkillRoute(Resource):
         409: 'Conflict, this user not exist / this skill not exist',
         422: 'Validation Error'
     })
-    def get(self, user_id, document_ref):
-        return get_skill(user_id=user_id, document_ref=document_ref)
+    def get(self, user_id, skill_name):
+        return get_skill(user_id=user_id, skill_name=skill_name)
 
     @api.doc(
         params={
@@ -439,6 +434,6 @@ class UserSkillRoute(Resource):
             409: 'Conflict, user not exist / document not exist / skill not exist',
         }
     )
-    def delete(self, user_id, document_ref, nb_level=1):
-        remove_skill(user_id=user_id, document_ref=document_ref, nb_level=nb_level)
+    def delete(self, user_id, skill_name, nb_level=1):
+        remove_skill(user_id=user_id, skill_name=skill_name, nb_level=nb_level)
         return '', 201

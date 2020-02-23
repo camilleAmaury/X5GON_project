@@ -33,28 +33,23 @@ def db_admin(app, db):
         })
         create_badge({
             'badge_name' : 'Apprentice',
-            'description' : 'Ajout de 5 documents à la liste',
-            'image_adress' : '../../../../../assets/Panel/Scene/Profile/badgeApprentice.png'
+            'description' : 'Ajout de 5 documents à la liste'
         })
         create_badge({
             'badge_name' : 'Seeking for help',
-            'description' : 'Ask 3 questions to community',
-            'image_adress' : '../../../../../assets/Panel/Scene/Profile/badgeHelp.png'
+            'description' : 'Ask 3 questions to community'
         })
         create_badge({
             'badge_name' : 'Eager to learn',
-            'description' : 'Ask 10 questions to the scholar',
-            'image_adress' : '../../../../../assets/Panel/Scene/Profile/badgeEager.png'
+            'description' : 'Ask 10 questions to the scholar'
         })
         create_badge({
             'badge_name' : 'Path of mastership',
-            'description' : 'Be the top answer of a community question',
-            'image_adress' : '../../../../../assets/Panel/Scene/Profile/badgeMaster.png'
+            'description' : 'Be the top answer of a community question'
         })
         create_badge({
             'badge_name' : 'Knowledge architect',
-            'description' : 'Rate and validate 10 documents',
-            'image_adress' : '../../../../../assets/Panel/Scene/Profile/badgeArchitect.png'
+            'description' : 'Rate and validate 10 documents'
         })
 
     @app.cli.command()

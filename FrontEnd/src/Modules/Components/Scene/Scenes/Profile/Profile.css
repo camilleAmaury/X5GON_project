@@ -64,7 +64,6 @@
 }
 
 #profile .badge{
-    background-image:linear-gradient(0.15turn, white, grey);
     display: flex;
     align-items: center;
     justify-content: center;

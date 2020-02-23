@@ -9,7 +9,6 @@ def build_badge_schema(badge):
     mod['badge_id'] = badge.badge_id
     mod['badge_name'] = badge.badge_name
     mod['description'] = badge.description
-    mod['image_adress'] = badge.image_adress
     return mod
 
 def get_badge(badge_id):
@@ -25,13 +24,15 @@ def get_badge(badge_id):
 
 def get_all_badges(user_id):
     user_badge_list = None
-    if user_id :
-        user_badge_list = User.query.get(user_id).get_badges()
+    if user_id != None:
+        user = User.query.get(user_id)
+        if user:
+            user_badge_list = user.get_badges()
     arr_badges = []
     badges = Badge.query.order_by(Badge.badge_id).all()
     for badge in badges:
         mod = build_badge_schema(badge)
-        if user_badge_list :
+        if user_badge_list != None:
             mod['possess_by_user'] = badge in user_badge_list
         arr_badges.append(mod)
     return arr_badges
@@ -43,8 +44,7 @@ def create_badge(data):
             #Create badge
             badge = Badge(
                 badge_name = data.get('badge_name'),
-                description = data.get('description'),
-                image_adress = data.get('image_adress')
+                description = data.get('description')
             )
             db.session.add(badge)
             db.session.flush()

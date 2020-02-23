@@ -35,11 +35,21 @@ export default class ScholarPopover extends Component {
             sessionChat: [],
             scholarState: 0,
             isOpen: false,
-            corpusHoverEvent:false
+            corpusHoverEvent:false,
+            server: "",
+            config: {}
         }
     }
 
     componentDidMount = () => {
+        let server = (process.env.REACT_APP_DEV === "1" ? process.env.REACT_APP_SERVER_DEV : process.env.REACT_APP_SERVER);
+        let config = {
+            headers: {
+                "Content-Type": "application/json",
+                'Access-Control-Allow-Origin': '*',
+            }
+        };
+        this.setState({ server: server, config: config });
     }
 
     preparePositions = () => {
@@ -151,7 +161,7 @@ export default class ScholarPopover extends Component {
                 scholarState: 1,
                 sessionChat: chat
             }, () => {
-                axios.get(process.env.REACT_APP_SERVER + `askquestion/${question.value}`)
+                axios.get(`http://185.157.246.81:5000/askquestion/${questionValue}`)
                     .then(request => {
                         question.value = "";
                         let chat = this.state.sessionChat;
@@ -163,6 +173,18 @@ export default class ScholarPopover extends Component {
                             sessionChat: chat,
                             scholarState: 2,
                             corpusHoverEvent:true
+                        }, () => {
+                            if(JSON.parse(request.data)[0] !== "" && JSON.parse(request.data)[0] !== undefined){
+                                let obj = {question: questionValue, answer: JSON.parse(request.data)[0]}
+                                let fun = function(server, obj, config){
+                                    axios.post(`${server}users/${JSON.parse(localStorage.getItem("isConnected")).id}/scholar_questions`, obj, config)
+                                    .catch(error => {
+                                        console.log("bug")
+                                        // fun(server, obj, config);
+                                    });
+                                }
+                                fun(this.state.server, obj, this.state.config);
+                            }
                         });
                     })
                     .catch(error => {
