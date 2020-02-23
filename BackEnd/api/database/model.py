@@ -38,9 +38,11 @@ class User(db.Model):
     experience = db.Column(db.Integer)
     user_skills = db.relationship('User_skill', backref='users', lazy=True)
 
-    def __init__(self, username, pwd):
+    def __init__(self, username, pwd, email, year):
         self.username = username
         self.pwd = generate_password_hash(pwd)
+        self.email = email
+        self.year = year
 
     def __repr__(self):
         return '<User {}>'.format(self.user_id)
@@ -145,7 +147,11 @@ class Document(db.Model):
 
     document_id = db.Column(db.Integer, primary_key=True)
     graph_ref = db.Column(db.String(100), unique=True, nullable=False, index=True)
+    document_title = db.Column(db.String(100))
     user_evaluations = db.relationship('Evaluation', backref='documents', lazy=True)
+
+    def __init__(self, graph_ref):
+        self.graph_ref = graph_ref
 
     def add_user_evaluation(self, user_evaluation):
         self.user_evaluations.append(user_evaluation)
