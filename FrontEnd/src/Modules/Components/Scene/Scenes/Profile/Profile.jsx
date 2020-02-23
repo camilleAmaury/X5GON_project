@@ -510,7 +510,7 @@ export default class Profile extends Component {
                     }>
                         {this.state.keywords.map((item, i) => 
                                 <div className={"item"} key={i} onClick={() => this.props.knowledgeSearch(item.search_subject)}>
-                                    <div className={"item-number"}><span>{item.search_id}</span></div>
+                                    <div className={"item-number"}><span>{i+1}</span></div>
                                     <div className={"item-info"}>
                                         <span className={"title"}>{item.search_subject}</span>
                                         <span></span>

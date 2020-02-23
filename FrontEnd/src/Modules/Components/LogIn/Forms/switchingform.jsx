@@ -46,7 +46,9 @@ export default class SwitchingForm extends Component {
             if(request.status === 201){
                 let obj = JSON.stringify({id:request.data.user_id});
                 localStorage.setItem("isConnected", obj);
-                this.isConnected()
+                this.setState({
+                    errorSignIn:""
+                });
             }else{
                 this.setState({
                     errorSignIn:"Server Error, call a dev !"
