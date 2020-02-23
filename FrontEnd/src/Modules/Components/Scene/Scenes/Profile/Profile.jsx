@@ -61,6 +61,7 @@ export default class Profile extends Component {
         }
         if(this.props.isMounted){
             this.setState({ server: server, config: config, server2: server2 }, () => {
+                
                 if(this.props.isMounted){
                     this.setState({
                         maxXp:200,
