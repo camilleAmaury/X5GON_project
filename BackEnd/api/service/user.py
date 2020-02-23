@@ -2,19 +2,20 @@ from flask import current_app, abort, jsonify, make_response
 from sqlalchemy import exc
 
 from api.database import db
-from api.database.model import User, Document, ScholarQuestion, Badge, Level
+from api.database.model import User, Document, ScholarQuestion, Badge, Level, UserSearch
 from .authentication import generate_auth_token
 from .document import build_document_schema
 from .scholar_question import build_scholar_question_schema
+from .user_search import build_user_search_schema
 from .evaluation import build_evaluation_schema
 from .level import build_level_schema
-from . import badge as badge_service
 
 
 def build_user_schema(user):
     mod = {}
     mod['user_id'] = user.user_id
     mod['username'] = user.username
+    mod['email'] = user.email
     mod['phone'] = user.phone
     mod['year'] = user.year
     return mod
@@ -65,7 +66,7 @@ def create_user(data):
             }), 409))
         user = User(
             username=data.get('username'),
-            password=data.get('password')
+            pwd=data.get('pwd')
         )
         db.session.add(user)
 
@@ -95,7 +96,7 @@ def update_user(user_id, data):
             },
             "message":"User not found"
         }), 409))
-    user.set_password( data.get('password') if data.get('password') else user.password )
+    user.set_password( data.get('pwd') if data.get('pwd') else user.pwd )
     db.session.commit()
     return True
 
@@ -112,7 +113,7 @@ def delete_user(user_id):
     db.session.commit()
     return True
 
-def check_user_auth(username, password):
+def check_user_auth(username, pwd):
     user = User.query.filter_by(username=username).first()
     if not user:
         abort(make_response(jsonify({
@@ -121,7 +122,7 @@ def check_user_auth(username, password):
             },
             "message":"User not found"
         }), 409))
-    if not user.check_password(password):
+    if not user.check_password(pwd):
         abort(make_response(jsonify({
             "errors":{
                 0:"Invalide password"
@@ -129,23 +130,6 @@ def check_user_auth(username, password):
             "message":"Invalide password"
         }), 403))
     return generate_auth_token(user)
-
-def get_user_info(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        abort(make_response(jsonify({
-            "errors":{
-                0:"Username not found"
-            },
-            "message":"User not found"
-        }), 409))
-    mod = {}
-    mod['experience'] = build_level_schema(user.get_level())
-    mod['experience']['experience'] = user.experience
-    mod['badge'] = badge_service.get_all_badges(user_id)
-    mod['skill'] = get_all_user_skills(user_id)
-    mod['search_history'] = get_all_user_searches(user_id)
-    return mod
 
 
 # User Opened Documents *******************************************************************************************************************************

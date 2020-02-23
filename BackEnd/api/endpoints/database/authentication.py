@@ -53,14 +53,16 @@ def token_required(f):
 api = Namespace('authentication', description='Authentication methods')
 
 authentication_schema = api.model('Authentication', {
-    'token' : fields.String(required=True, description='Connection token for this user'),
-    'user_id': fields.Integer(required=True, description='User id')
+    'token' : fields.String(required=False, description='Connection token for this user', readonly=True),
+    'user_id': fields.Integer(required=False, description='User id', readonly=True),
+    'username': fields.String(required=True, description='Username of the user'),
+    'pwd': fields.String(required=True, description='Password of the user')
 })
 
 @api.route("/login")
 class UsersRoute(Resource):
 
-    @api.expect(user_schema, validate=True, envelope='json')
+    @api.expect(authentication_schema, validate=True, envelope='json')
     @api.doc(responses={
         201: 'User successfully created',
         403: 'Invalide password',
@@ -69,5 +71,5 @@ class UsersRoute(Resource):
     })
     @api.marshal_with(authentication_schema)
     def post(self):
-        validator.validate_payload(request.json, user_schema)
-        return check_user_auth(request.json.get('username'), request.json.get('password')), 201
+        validator.validate_payload(request.json, authentication_schema)
+        return check_user_auth(request.json.get('username'), request.json.get('pwd')), 201
