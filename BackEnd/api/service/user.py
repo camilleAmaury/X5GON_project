@@ -8,6 +8,7 @@ from .document import build_document_schema
 from .scholar_question import build_scholar_question_schema
 from .user_search import build_user_search_schema
 from .evaluation import build_evaluation_schema
+from .badge import build_badge_schema
 from .level import build_level_schema
 
 
@@ -66,8 +67,12 @@ def create_user(data):
             }), 409))
         user = User(
             username=data.get('username'),
-            pwd=data.get('pwd')
+            pwd=data.get('pwd'),
+            email=data.get('email'),
+            year=data.get('year')
         )
+        if data.get('phone') :
+            user.phone = data.get('phone')
         db.session.add(user)
 
         user.set_level(level)
@@ -184,7 +189,7 @@ def get_opened_document(user_id, graph_ref):
 
     return build_document_schema(document)
 
-def add_opened_document(user_id, graph_ref):
+def add_opened_document(user_id, data):
     user = User.query.get(user_id)
     if not user:
         abort(make_response(jsonify({
@@ -193,11 +198,13 @@ def add_opened_document(user_id, graph_ref):
             },
             "message":"User not found"
         }), 409))
-    document = Document.query.filter_by(graph_ref=graph_ref).first()
+    document = Document.query.filter_by(graph_ref=data.get("graph_ref")).first()
     if not document:
         document = Document(
-            graph_ref=graph_ref
+            graph_ref=data.get('graph_ref')
         )
+        if data.get('document_title') :
+            document.document_title = data.get('document_title')
         db.session.add(document)
         db.session.flush()
         db.session.commit()

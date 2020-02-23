@@ -22,7 +22,7 @@ def db_admin(app, db):
         user_validated_documents.create(bind=engine)
         user_badges.create(bind=engine)
         ScholarQuestion.__table__.create(bind=engine)
-        #Evaluation.__table__.create(bind=engine)
+        Evaluation.__table__.create(bind=engine)
         db.session.commit()
 
     @app.cli.command()

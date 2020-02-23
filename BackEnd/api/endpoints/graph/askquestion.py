@@ -14,7 +14,7 @@ import time
 import spacy
 import requests
 import bs4
-# import torch
+import torch
 import numpy as np
 import math
 from spacy import displacy
@@ -22,8 +22,8 @@ from collections import Counter
 import shlex
 import subprocess
 import copy
-# from . import stop_words, question_answering_tokenizer, question_answering_model, nlp
-# from .fastTextVectors import vectors
+from . import stop_words, question_answering_tokenizer, question_answering_model, nlp
+from .fastTextVectors import vectors
 
 api = Namespace('askquestion', description='Ask a question to a ML Model')
 
@@ -50,11 +50,11 @@ class AskQuestion(Resource):
         #var to set global and vector of fasttext
         print("Charging models")
 
-        print(vectors)
-        print(stop_words)
-        print(question_answering_tokenizer)
-        print(question_answering_model)
-        print(nlp)
+        #print(vectors)
+        #print(stop_words)
+        #print(question_answering_tokenizer)
+        #print(question_answering_model)
+        #print(nlp)
         print("End charging model")
 
         def splitTextByChunk(text_divide, s):
@@ -219,15 +219,19 @@ class AskQuestion(Resource):
             else:
                 concatenationDocument.append(getContentDocument(idDoc, PLATFORM_URL))
 
-            if(len(question.split(" ")) > 10):
+            if(len(question.split(" ")) > 0):
                 text = ' '.join(concatenationDocument).replace("[", "").replace("]", "").replace("\\", "").replace("/", "").lower()
                 text = text.split(" ")
                 textWithoutStopWords = [w for w in text if not w in stop_words]
                 text = ' '.join(textWithoutStopWords)
-                corpus = splitTextByChunk(text.split(" "), 500)
+                #text = text.decode('utf-8')
+                c = text.split(" ")
+                corpus = splitTextByChunk(c, 500)
+                print(len(corpus))
                 documentRepresentation = []
                 key = list(vectors.keys())
                 print(len(vectors))
+                print(len(corpus[0]))
                 distance = 0
                 for doc in corpus:
                     words = []
@@ -236,6 +240,7 @@ class AskQuestion(Resource):
                             v = list(vectors[word])
                             if(len(v) > 0):
                                 words.append(v)
+                    print(words)
                     documentRepresentation.append([float(sum(col))/len(col) for col in zip(*words)])
                 print(len(documentRepresentation))
                 print(len(documentRepresentation[0]))
@@ -247,19 +252,23 @@ class AskQuestion(Resource):
                         if(len(v) > 0):
                             questionRepresentation.append(v)
                             print(v)
-                print(len(questionRepresentation))
-                print(len(questionRepresentation[0]))
-                questionvectors = [float(sum(col))/len(col) for col in zip(*questionRepresentation)]
-                print(len(questionvectors))
-                print("question")
-                distance = []
-                for vecs in documentRepresentation:
-                    #print(vectors[:10])
-                    #print(questionvectors[:10])
-                    distance.append(euclidian_distance(vecs, questionvectors))
-                return corpus[np.argmin(distance)]
+                #print(len(questionRepresentation))
+                #print(len(questionRepresentation[0]))
+                if(len(questionRepresentation) > 0):
+                    questionvectors = [float(sum(col))/len(col) for col in zip(*questionRepresentation)]
+                    print(len(questionvectors))
+                    print("question")
+                    distance = []
+                    for vecs in documentRepresentation:
+                        #print(vectors[:10])
+                        #print(questionvectors[:10])
+                        distance.append(euclidian_distance(vecs, questionvectors))
+                    #print(corpus)
+                    return corpus[np.argmin(distance)]
+                else:
+                    return "empty"
             else:
-                return ' '.join(concatenationDocument).replace("[", "").replace("]", "").replace("\\", "").replace("/", "")
+                return "empty"
 
 
 
@@ -267,22 +276,17 @@ class AskQuestion(Resource):
             start = time.time()
             corpusPertinent = getPertinentDocument(question, idDoc)
             end2 = time.time()
-            print(corpusPertinent.encode('utf-8'))
-            print(len(corpusPertinent))
-
-            question_answering_tokenizer.pad_token = '<PAD>'
-            question_answering_model.resize_token_embeddings(len(question_answering_tokenizer))
-            print(len(question_answering_tokenizer))
-            t_encoded_1 = question_answering_tokenizer.encode(corpusPertinent)
-            t_encoded_2 = question_answering_tokenizer.encode(question)[1:]
-            if(len(t_encoded_1)+len(t_encoded_2) > 511):
-                indexed_tokens = t_encoded_1[:(511-len(t_encoded_2))]+t_encoded_2
-                segments_ids = [0 for i in range(len(t_encoded_1[:(511-len(t_encoded_2))]))]+[1 for i in range(len(t_encoded_2))]
+            #print(corpusPertinent)
+            if(isinstance(corpusPertinent, list)):
+                corpusPertinent = ' '.join([str(w) for w in corpusPertinent])
             else:
-                indexed_tokens = t_encoded_1+t_encoded_2
-                segments_ids = [0 for i in range(len(t_encoded_1))]+[1 for i in range(len(t_encoded_2))]
-            print(len(indexed_tokens))
-
+                corpusPertinent = str(corpusPertinent)
+            print(corpusPertinent.encode('utf-8'))
+            #print(corpusPertinent.encode('utf-8'))
+            '''t_encoded_1 = question_answering_tokenizer.encode(corpusPertinent)
+            t_encoded_2 = question_answering_tokenizer.encode(question)
+            indexed_tokens = question_answering_tokenizer.encode(corpusPertinent, question, add_special_tokens=True)
+            segments_ids = [0 for i in range(len(t_encoded_1))]+[1 for i in range(len(t_encoded_2)-1)]
             segments_tensors = torch.tensor([segments_ids])
             tokens_tensor = torch.tensor([indexed_tokens])
 
@@ -294,5 +298,30 @@ class AskQuestion(Resource):
             print("Start logits : {}".format(torch.argmax(start_logits)))
             print("End logits : {}".format(torch.argmax(end_logits)))
             #return('coucou')
+            #print(question_answering_tokenizer.decode(indexed_tokens[0:len(indexed_tokens)-1]))
             return(question_answering_tokenizer.decode(indexed_tokens[torch.argmax(start_logits):torch.argmax(end_logits)+1]))
+            '''
+            
+            
+            fileContent = "{\"version\": \"v2.0\",\"data\": [{\"title\": \"your_title\",\"paragraphs\": [{\"qas\": [{\"question\": \"<question>\",\"id\": \"0\",\"is_impossible\": \"\"}],\"context\": \"<content>\"}]}]}"	
+            fileContent = fileContent.replace("<question>", question, 1)	
+            fileContent = fileContent.replace("<content>", corpusPertinent.replace("\"", ""), 1)	
+            myfile = "endpoints/data/input_file.json"	
+            #print(fileContent)	
+            with open(myfile, "wb+") as f:	
+                data = f.read()	
+                f.seek(0)	
+                f.write(fileContent.encode('utf-8'))	
+                f.truncate()	
+            res = ""
+            start = time.time()
+            command = shlex.split("python3 endpoints/bert/run_squad.py --vocab_file="+os.path.abspath("endpoints/wwm_uncased_L-24_H-1024_A-16/vocab.txt")+" --bert_config_file="+os.path.abspath("endpoints/wwm_uncased_L-24_H-1024_A-16/bert_config.json")+" --init_checkpoint="+os.path.abspath("endpoints/data/model.ckpt-10859")+" --do_train=False --max_query_length=30 --do_predict=True --predict_file="+os.path.abspath("endpoints/data/input_file.json")+" --predict_batch_size=8 --n_best_size=3 --max_seq_length=384 --doc_stride=128 --output_dir="+os.path.abspath('endpoints/data/output/'))	
+            process = subprocess.Popen(command, stdout = subprocess.PIPE)
+            process.wait()
+            res = ""	
+            with open("endpoints/data/output/predictions.json", 'r+') as fin:
+                res = fin.read()
+            end = time.time()
+            print(str((end - start)/60)+" min")
+            return(res)
         return askQuestionToBERT(question, idDoc)

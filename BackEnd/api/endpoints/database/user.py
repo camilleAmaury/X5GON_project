@@ -102,7 +102,7 @@ class UserOpenedDocumentsRoute(Resource):
     @api.marshal_with(document_schema)
     def post(self, user_id):
         validator.validate_payload(request.json, document_schema)
-        return add_opened_document(user_id=user_id, graph_ref=request.json.get('graph_ref')), 201
+        return add_opened_document(user_id=user_id, data=request.json), 201
 
 @api.route("/<int:user_id>/opened_documents/<string:graph_ref>")
 class UserOpenedDocumentRoute(Resource):
