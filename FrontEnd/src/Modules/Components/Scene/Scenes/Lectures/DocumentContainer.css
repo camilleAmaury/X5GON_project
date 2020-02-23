@@ -52,24 +52,24 @@
 }
 
 .document-container .scroll-center .lectures-corpus{
-    overflow-y:scroll;
+    overflow:hidden;
     border: 1px solid black;
-    scroll-behavior: auto;
-    overflow: -moz-scrollbars-none;
-    -ms-overflow-style: none;
     display: flex;
     justify-content: center;
 }
-.document-container .scroll-center .lectures-corpus::-webkit-scrollbar { width: 0 !important }
 
 .document-container .scroll-center .lectures-corpus .span{
     text-align:justify;
     line-height: 26px;
     font-size: 20px;
     white-space: pre-line;
-    position: relative;
     width:95%;
+    overflow-y: scroll;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
 }
+
+.document-container .scroll-center .lectures-corpus .span::-webkit-scrollbar { width: 0 !important }
 
 .document-container .side1{
     position: absolute;

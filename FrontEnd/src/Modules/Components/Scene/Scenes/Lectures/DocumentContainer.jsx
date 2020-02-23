@@ -29,7 +29,7 @@ export default function DocumentContainer(item, i, styles, scrollEv, leftsideScr
                         width: styles.corpus.width
                     }
                 }>
-                    <div className={"span"}>{item.content}</div>
+                    <div className={"span"} dangerouslySetInnerHTML={{ __html: item.content }}></div>
                 </div>
                 {/* sides */}
                 <div className={"side1"} style={
