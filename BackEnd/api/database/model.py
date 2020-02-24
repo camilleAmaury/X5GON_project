@@ -1,16 +1,17 @@
 from werkzeug.security import generate_password_hash, check_password_hash
+import datetime
 
 from api.database import db
 
 #Many to many link
 user_opened_documents = db.Table('user_opened_documents',
     db.Column('user_id', db.Integer, db.ForeignKey('users.user_id')),
-    db.Column('document_id', db.Integer, db.ForeignKey('documents.document_id'))
+    db.Column('graph_ref', db.String(100), db.ForeignKey('documents.graph_ref'))
 )
 
 user_validated_documents = db.Table('user_validated_documents',
     db.Column('user_id', db.Integer, db.ForeignKey('users.user_id')),
-    db.Column('document_id', db.Integer, db.ForeignKey('documents.document_id'))
+    db.Column('graph_ref', db.String(100), db.ForeignKey('documents.graph_ref'))
 )
 
 user_badges = db.Table('user_badges',
@@ -27,15 +28,17 @@ class User(db.Model):
     email = db.Column(db.String(100))
     phone = db.Column(db.String(30))
     year = db.Column(db.Integer())
-    opened_documents = db.relationship("Document", secondary=user_opened_documents)
-    validated_documents = db.relationship("Document", secondary=user_validated_documents)
+    opened_documents = db.relationship('Document', secondary=user_opened_documents)
+    validated_documents = db.relationship('Document', secondary=user_validated_documents)
     scholar_questions = db.relationship('ScholarQuestion', backref='users', lazy=True)
     user_searches = db.relationship('UserSearch', backref='users', lazy=True)
     document_evaluations = db.relationship('Evaluation', backref='users', lazy=True)
-    badges = db.relationship("Badge", secondary=user_badges)
+    badges = db.relationship('Badge', secondary=user_badges)
     level_number = db.Column(db.Integer, db.ForeignKey('levels.level_number'))
-    level = db.relationship("Level", back_populates="users")
+    level = db.relationship('Level', back_populates='users')
     experience = db.Column(db.Integer)
+    user_questions = db.relationship('CommunityQuestion', backref='users')
+    user_comments = db.relationship('CommunityComment', backref='users')
 
     def __init__(self, username, pwd, email, year):
         self.username = username
@@ -138,8 +141,7 @@ class User(db.Model):
 class Document(db.Model):
     __tablename__ = 'documents'
 
-    document_id = db.Column(db.Integer, primary_key=True)
-    graph_ref = db.Column(db.String(100), unique=True, nullable=False, index=True)
+    graph_ref = db.Column(db.String(100), primary_key=True)
     document_title = db.Column(db.String(100))
     user_evaluations = db.relationship('Evaluation', backref='documents', lazy=True)
 
@@ -191,4 +193,38 @@ class Level(db.Model):
 
     level_number = db.Column(db.Integer, primary_key=True)
     next_stage = db.Column(db.Integer)
-    users = db.relationship("User", back_populates="level")
+    users = db.relationship('User', back_populates='level')
+
+class CommunityQuestion(db.Model):
+    __tablename__ = 'community_questions'
+
+    question_id = db.Column(db.Integer, primary_key=True)
+    question_title = db.Column(db.String(100), nullable=False)
+    question = db.Column(db.String(300), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    comments = db.relationship('CommunityComment', backref='community_comments')
+    date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+    def get_comments(self):
+        return self.comments
+
+class CommunityComment(db.Model):
+    __tablename__ = 'community_comments'
+
+    comment_id = db.Column(db.Integer, primary_key=True)
+    comment = db.Column(db.String(300), nullable=False)
+    like_count = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    question_id = db.Column(db.Integer, db.ForeignKey('community_questions.question_id'))
+    date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+    def addLike(self, like):
+        self.like_count += like
+
+class UserLike(db.Model):
+    __tablename__ = 'user_like'
+
+    like_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    comment_id = db.Column(db.Integer, db.ForeignKey('community_comments.comment_id'))
+    like_value = db.Column(db.Integer)

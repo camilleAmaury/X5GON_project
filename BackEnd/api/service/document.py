@@ -6,7 +6,6 @@ from .evaluation import build_evaluation_schema
 
 def build_document_schema(document):
     mod = {}
-    mod['document_id'] = document.document_id
     mod['graph_ref'] = document.graph_ref
     mod['document_title'] = document.document_title
     return mod

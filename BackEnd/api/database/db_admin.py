@@ -1,9 +1,12 @@
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import gen_salt
 
-from .model import User, Document, user_opened_documents, user_validated_documents, user_badges, ScholarQuestion, UserSearch, Evaluation, Badge, Level
+from .model import User, Document, user_opened_documents, user_validated_documents, user_badges, ScholarQuestion, UserSearch, Evaluation, Badge, Level, CommunityQuestion, CommunityComment, UserLike
 from api.service.level import create_level
 from api.service.badge import create_badge
+from api.service.community_question import create_community_question
+from api.service.community_comment import create_community_comment
+from api.service.user import create_user
 
 
 def db_admin(app, db):
@@ -20,7 +23,10 @@ def db_admin(app, db):
         user_validated_documents.create(bind=engine)
         user_badges.create(bind=engine)
         ScholarQuestion.__table__.create(bind=engine)
-        Evaluation.__table__.create(bind=engine)
+        # Evaluation.__table__.create(bind=engine)
+        CommunityQuestion.__table__.create(bind=engine)
+        CommunityComment.__table__.create(bind=engine)
+        UserLike.__table__.create(bind=engine)
         db.session.commit()
 
     @app.cli.command()
@@ -49,6 +55,66 @@ def db_admin(app, db):
             'badge_name' : 'Knowledge architect',
             'description' : 'Rate and validate 10 documents'
         })
+        create_user({
+            "username": "testUser1",
+            "pwd": "hello",
+            "phone": "0123456789",
+            "email": "azertyuiop",
+            "year": 3
+        })
+        create_user({
+            "username": "testUser2",
+            "pwd": "hello",
+            "phone": "0123456789",
+            "email": "azertyuiop",
+            "year": 3
+        })
+        create_community_question({
+            "question_title": "Is this a question ?",
+            "question": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "user_id": 1
+        })
+        create_community_comment({
+            "comment": "Well, yess",
+            "user_id": 2,
+            "question_id": 1
+        })
+        create_community_comment({
+            "comment": "Ok, thank's",
+            "user_id": 1,
+            "question_id": 1
+        })
+        create_community_question({
+            "question_title": "Are you sure ?",
+            "question": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "user_id": 1
+        })
+        create_community_comment({
+            "comment": "trust me, no problem",
+            "user_id": 2,
+            "question_id": 2
+        })
+        create_community_comment({
+            "comment": "Ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok",
+            "user_id": 1,
+            "question_id": 2
+        })
+        create_community_question({
+            "question_title": "Are we in an informatic simulation ?",
+            "question": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "user_id": 2
+        })
+        create_community_comment({
+            "comment": "Is this an answer ?",
+            "user_id": 1,
+            "question_id": 3
+        })
+        create_community_comment({
+            "comment": "In fact, it's seems like a question, but lets try again !",
+            "user_id": 2,
+            "question_id": 3
+        })
+
 
     @app.cli.command()
     def delete_tables():
@@ -59,8 +125,11 @@ def db_admin(app, db):
         User.__table__.drop(bind=engine)
         Document.__table__.drop(bind=engine)
         ScholarQuestion.__table__.drop(bind=engine)
-        Evaluation.__table__.drop(bind=engine)
+        # Evaluation.__table__.drop(bind=engine)
+        CommunityQuestion.__table__.drop(bind=engine)
+        CommunityComment.__table__.drop(bind=engine)
         UserSearch.__table__.drop(bind=engine)
         Badge.__table__.drop(bind=engine)
         Level.__table__.drop(bind=engine)
+        UserLike.__table__.drop(bind=engine)
         db.session.commit()
