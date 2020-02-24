@@ -88,75 +88,106 @@ export default class Lectures extends Component {
                 width: [241, 261, 293, 333],
                 height: [220, 97, 108, 122]
             },
-            floorTexture: [{ "base": PagodaFloor1, "hover": PagodaFloor1Hover }, { "base": PagodaFloor2, "hover": PagodaFloor2Hover }, { "base": PagodaFloor3, "hover": PagodaFloor3Hover },
-            { "base": PagodaFloor4, "hover": PagodaFloor4Hover }
-            ]
+            floorTexture: [
+                { "base": PagodaFloor1, "hover": PagodaFloor1Hover },
+                { "base": PagodaFloor2, "hover": PagodaFloor2Hover },
+                { "base": PagodaFloor3, "hover": PagodaFloor3Hover },
+                { "base": PagodaFloor4, "hover": PagodaFloor4Hover }
+            ],
+            server: "",
+            server2: "",
+            config: {}
         }
     }
 
     componentDidMount = () => {
-        let documentsId = [8160, 8160]
-        for (let i = 0; i < documentsId.length; i++) {
-            axios.get(`https://platform.x5gon.org/api/v1/oer_materials/${documentsId[i]}/contents/`)
-                .then(request1 => {
-                    if (this.props.isMounted) {
-                        // find the prerequisites
-                        axios.get(`http://185.157.246.81:5000/prerequisites/${documentsId[i]}`)
-                            .then(request2 => {
-                                let prerequisites = [];
-                                let datas = request2.data;
-                                let dataper2 = Math.ceil(datas.length / 2);
-                                for (let j = 0; j < dataper2; j++) {
-                                    let temp_array = [];
-                                    if (j === dataper2 - 1 && datas.length % 2 === 1) {
-                                        temp_array.push({ title: datas[2 * j][0], link: datas[2 * j][1] });
-                                    } else {
-                                        temp_array.push({ title: datas[2 * j][0], link: datas[2 * j][1] });
-                                        temp_array.push({ title: datas[2 * j + 1][0], link: datas[2 * j + 1][1] });
-                                    }
-                                    prerequisites.push(temp_array);
-                                }
-                                let doc = {
-                                    title: "A random title", id: documentsId[i], content: `\n${request1.data.oer_contents[0].value.value}\n\n`,
-                                    isScrolled: false, bgY1: 150, bgY2: 0, corpusTop: 0, isOpened: false, data: [], isDeleteHovered: false, isDeleteClicked: 0, isValidateHovered: false,
-                                    isValidateClicked: false, ratingUnderstanding: 0, ratingQuality: 0, ratingUnderstandingHover: 0, ratingQualityHover: 0, isRated: false
-                                };
-                                doc.data = prerequisites;
-                                let bool = [];
-                                let bool2 = [];
-                                for (let j = 0; j < doc.data.length; j++) {
-                                    bool.push(false);
-                                    bool2.push(false)
-                                }
-                                let floorhovered = this.state.isFloorHovered;
-                                let floorcliked = this.state.isFloorClicked;
-                                floorhovered.push(bool);
-                                floorcliked.push(bool2);
-                                if (this.props.isMounted) {
-                                    let arr = this.state.documents;
-                                    arr = arr.concat([doc]);
-                                    this.setState({ documents: arr, isFloorHovered: floorhovered, isFloorClicked: floorcliked }, () => {
-                                        try {
-                                            let list = document.getElementsByClassName("scrollUpper");
-                                            list[i * 2].addEventListener("click", this.scrollDocument);
-                                            list[i * 2 + 1].addEventListener("click", this.scrollDocument);
-                                        } catch (error) {
-                                            console.log(error);
-                                        }
-                                    });
-                                }
-                            })
-                            .catch(error => {
-                                console.log(error)
-                                console.log("this doesn't work");
-                            });
-                    }
-                })
-                .catch(error => {
-                    console.log(error)
-                    console.log("this doesn't work");
-                });
+        let server = (process.env.REACT_APP_DEV === "1" ? process.env.REACT_APP_SERVER_DEV : process.env.REACT_APP_SERVER);
+        let server2 = process.env.REACT_APP_SERVER2;
+        let config = {
+            headers: {
+                "Content-Type": "application/json",
+                'Access-Control-Allow-Origin': '*',
+            }
         }
+        this.setState({ server: server, config: config, server2: server2 }, () => {
+            this._loadDocument();
+        });
+    }
+
+    _loadDocument = () => {
+        axios.get(`${this.state.server}users/${JSON.parse(localStorage.getItem("isConnected")).id}/opened_documents?isValidated=True`)
+            .then(request => {
+                let documentsId = [];
+                for (let i = 0; i < request.data.length; i++) {
+                    documentsId.push({ id: request.data[i].graph_ref, title: request.data[i].document_title, isRated: request.data[i].isValidated});
+                }
+                let documents = [];
+                for (let i = 0; i < documentsId.length; i++) {
+                    axios.get(`${this.state.server2}api/v1/oer_materials/${documentsId[i].id}/contents/`)
+                        .then(request1 => {
+                            if (this.props.isMounted) {
+                                // find the prerequisites
+                                axios.get(`http://185.157.246.81:5000/prerequisites/${documentsId[i].id}`)
+                                    .then(request2 => {
+                                        let prerequisites = [];
+                                        let datas = request2.data;
+                                        let dataper2 = Math.ceil(datas.length / 2);
+                                        for (let j = 0; j < dataper2; j++) {
+                                            let temp_array = [];
+                                            if (j === dataper2 - 1 && datas.length % 2 === 1) {
+                                                temp_array.push({ title: datas[2 * j][0], link: datas[2 * j][1] });
+                                            } else {
+                                                temp_array.push({ title: datas[2 * j][0], link: datas[2 * j][1] });
+                                                temp_array.push({ title: datas[2 * j + 1][0], link: datas[2 * j + 1][1] });
+                                            }
+                                            prerequisites.push(temp_array);
+                                        }
+                                        let doc = {
+                                            title: documentsId[i].title, id: documentsId[i].id, content: `\n${request1.data.oer_contents[0].value.value}\n\n`, isTitleHover:false,
+                                            isScrolled: false, bgY1: 150, bgY2: 0, corpusTop: 0, isOpened: false, data: [], isDeleteHovered: false, isDeleteClicked: 0, isValidateHovered: false,
+                                            isValidateClicked: false, ratingUnderstanding: 0, ratingQuality: 0, ratingUnderstandingHover: 0, ratingQualityHover: 0, isRated: documentsId[i].isRated
+                                        };
+                                        doc.data = prerequisites;
+                                        let bool = [];
+                                        let bool2 = [];
+                                        for (let j = 0; j < doc.data.length; j++) {
+                                            bool.push(false);
+                                            bool2.push(false);
+                                        }
+                                        let floorhovered = this.state.isFloorHovered;
+                                        let floorcliked = this.state.isFloorClicked;
+                                        floorhovered.push(bool);
+                                        floorcliked.push(bool2);
+                                        if (this.props.isMounted) {
+                                            let ind = documents.push(doc) - 1;
+                                            this.setState({ documents: documents, isFloorHovered: floorhovered, isFloorClicked: floorcliked }, () => {
+                                                try {
+                                                    setTimeout(() => {
+                                                        let list = document.getElementsByClassName("scrollUpper");
+                                                        list[ind * 2].addEventListener("click", this.scrollDocument);
+                                                        list[ind * 2 + 1].addEventListener("click", this.scrollDocument);
+                                                    }, 500);
+                                                } catch (error) {
+                                                    // console.log(error);
+                                                }
+                                            });
+                                        }
+                                    })
+                                    .catch(error => {
+                                        // console.log(error)
+                                        console.log("Can't load prerequisites");
+                                    });
+                            }
+                        })
+                        .catch(error => {
+                            // console.log(error)
+                            console.log("Can't load document");
+                        });
+                }
+            })
+            .catch(error => {
+                console.log("pd")
+            });
     }
 
     scrollDocument = event => {
@@ -180,13 +211,14 @@ export default class Lectures extends Component {
         let btnVal = document.getElementsByClassName("validateButton")[nb];
         let btnDel = document.getElementsByClassName("deleteButton")[nb];
         let popDel = document.getElementById("popover-delete-hover2-" + nb);
+        let poptitle = document.getElementById("popover-title-hover-" + nb);
         // transition
-        if(!documents[nb].isScrolled){
+        if (!documents[nb].isScrolled) {
             btn1.removeEventListener('click', this.changeScene);
             btn2.removeEventListener('click', this.changeScene);
         }
-        upper_scroll.removeEventListener('click', this.scrollDocument);
-        lower_scroll.removeEventListener('click', this.scrollDocument);
+        upper_scroll.removeEventListener('click', () => documents[nb].isScrolled ? this.changeScene : () => {});
+        lower_scroll.removeEventListener('click', () => documents[nb].isScrolled ? this.changeScene : () => {});
         lower_scroll.style.transition = "1.5s top";
         lower_texture.style.transition = "1.5s background-position-y";
         documentContainer.style.transition = "1.5s height";
@@ -199,6 +231,7 @@ export default class Lectures extends Component {
         btnDel.style.transition = "1.5s top";
         popDel.style.transition = "1.5s top";
         corpus.style.transition = "1.5s height";
+        poptitle.style.transition = "1.5s top";
         document.getElementsByClassName("side1")[nb].style.transition = "1.5s height";
         document.getElementsByClassName("side2")[nb].style.transition = "1.5s height";
         if (this.props.isMounted) {
@@ -209,8 +242,8 @@ export default class Lectures extends Component {
                     document.getElementById("lectures").scrollTo(0, document.getElementsByClassName("lectures-document")[nb].offsetTop);
                     // transition out 
                     if (documents[nb].isScrolled) {
-                        btn1.addEventListener('click', this.changeScene);
-                        btn2.addEventListener('click', this.changeScene);
+                        btn1.addEventListener('click', () => documents[nb].isScrolled ? this.changeScene : () => {});
+                        btn2.addEventListener('click', () => documents[nb].isScrolled ? this.changeScene : () => {});
                     }
                     upper_scroll.addEventListener('click', this.scrollDocument);
                     lower_scroll.addEventListener('click', this.scrollDocument);
@@ -225,6 +258,7 @@ export default class Lectures extends Component {
                     btnVal.style.transition = "none";
                     btnDel.style.transition = "none";
                     popDel.style.transition = "none";
+                    poptitle.style.transition = "none";
                     document.getElementsByClassName("side1")[nb].style.transition = "none";
                     document.getElementsByClassName("side2")[nb].style.transition = "none";
                     corpus.style.transition = "none";
@@ -237,7 +271,7 @@ export default class Lectures extends Component {
         let documents = this.state.documents;
         let nb = parseInt(event.currentTarget.dataset.key);
         // get scrolling speed
-        var st = event.currentTarget.scrollTop;
+        var st = event.currentTarget.children[0].scrollTop;
         let speed = 8;
         if (st > documents[nb].corpusTop) {
             speed *= 1;
@@ -245,24 +279,22 @@ export default class Lectures extends Component {
             speed *= -1;
         }
 
-        let size = document.getElementsByClassName("lectures-corpus")[nb].children[0].offsetHeight;
+        let size = document.getElementsByClassName("lectures-corpus")[nb].children[0].scrollHeight;
         size -= document.getElementsByClassName("lectures-corpus")[nb].offsetHeight - 20;
-        if (this.props.isMounted) {
-            if (st > 0 && Math.sign(speed) === -1) {
-                documents[nb].bgY1 += speed;
-                documents[nb].bgY2 += speed;
-                documents[nb].corpusTop = st;
-                this.setState({
-                    documents: documents
-                });
-            } else if (st < size && Math.sign(speed) === 1) {
-                documents[nb].bgY1 += speed;
-                documents[nb].bgY2 += speed;
-                documents[nb].corpusTop = st;
-                this.setState({
-                    documents: documents
-                });
-            }
+        if (st > 0 && Math.sign(speed) === -1) {
+            documents[nb].bgY1 += speed;
+            documents[nb].bgY2 += speed;
+            documents[nb].corpusTop = st;
+            this.setState({
+                documents: documents
+            });
+        } else if (st < size && Math.sign(speed) === 1) {
+            documents[nb].bgY1 += speed;
+            documents[nb].bgY2 += speed;
+            documents[nb].corpusTop = st;
+            this.setState({
+                documents: documents
+            });
         }
     }
 
@@ -282,9 +314,9 @@ export default class Lectures extends Component {
         let btn1 = document.getElementsByClassName("changeButton")[nb];
         let btn2 = document.getElementsByClassName("changeButton-two")[nb];
         // transition
-        if(documents[nb].isScrolled){
-            btn1.removeEventListener('click', this.changeScene);
-            btn2.removeEventListener('click', this.changeScene);
+        if (documents[nb].isScrolled) {
+            btn1.removeEventListener('click', () => documents[nb].isScrolled ? this.changeScene : () => {});
+            btn2.removeEventListener('click', () => documents[nb].isScrolled ? this.changeScene : () => {});
         }
         upper_scroll.removeEventListener('click', this.scrollDocument);
         lower_scroll.removeEventListener('click', this.scrollDocument);
@@ -304,9 +336,9 @@ export default class Lectures extends Component {
                 setTimeout(() => {
                     document.getElementById("lectures").scrollTo(0, document.getElementsByClassName("lectures-document")[nb].offsetTop);
                     // transition out 
-                    if(documents[nb].isScrolled){
-                        btn1.addEventListener('click', this.changeScene);
-                        btn2.addEventListener('click', this.changeScene);
+                    if (documents[nb].isScrolled) {
+                        btn1.addEventListener('click', () => documents[nb].isScrolled ? this.changeScene : () => {});
+                        btn2.addEventListener('click', () => documents[nb].isScrolled ? this.changeScene : () => {});
                     }
                     upper_scroll.addEventListener('click', this.scrollDocument);
                     lower_scroll.addEventListener('click', this.scrollDocument);
@@ -386,16 +418,25 @@ export default class Lectures extends Component {
                         }
                         if (arr[i].isDeleteClicked === 2) {
                             // request sent to server
+                            axios.delete(`${this.state.server}users/${JSON.parse(localStorage.getItem("isConnected")).id}/opened_documents/${arr[i].id}`)
+                                .then(request => {
+                                    if (request.status === 201) {
+                                        
+                                        // process front end
+                                        let doc1 = this.state.isFloorClicked;
+                                        let doc2 = this.state.isFloorHovered;
+                                        arr.splice(i, 1);
+                                        doc1.splice(i, 1);
+                                        doc2.splice(i, 1);
+                                        if (this.props.isMounted) {
+                                            this.setState({ documents: arr, isFloorClicked: doc1, isFloorHovered: doc2 });
+                                        }
+                                    }
+                                })
+                                .catch(error => {
+                                    // nothing to do
+                                });
 
-                            // process front end
-                            let doc1 = this.state.isFloorClicked;
-                            let doc2 = this.state.isFloorHovered;
-                            arr.splice(i, 1);
-                            doc1.splice(i, 1);
-                            doc2.splice(i, 1);
-                            if (this.props.isMounted) {
-                                this.setState({ documents: arr, isFloorClicked: doc1, isFloorHovered: doc2 });
-                            }
                         }
                     });
                 }
@@ -465,16 +506,35 @@ export default class Lectures extends Component {
         if (this.props.isMounted) {
             let doc = this.state.documents;
             if (doc[i].ratingQuality !== 0 && doc[i].ratingUnderstanding !== 0) {
-                doc[i].isRated = true;
 
                 // request
-
-                // hide validate state
-                if (this.props.isMounted) {
-                    this.setState({ documents: doc });
+                let obj = {
+                    graph_ref:doc[i].id,
+                    user_id:JSON.parse(localStorage.getItem("isConnected")).id,
+                    comprehension_rating:doc[i].ratingUnderstanding,
+                    quality_rating:doc[i].ratingQuality
                 }
+                axios.post(`${this.state.server}evaluations`, obj, this.state.config)
+                    .then(request => {
+                        if (request.status === 201) {
+                            // hide validate state
+                            doc[i].isRated = true;
+                            if (this.props.isMounted) {
+                                this.setState({ documents: doc });
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        // nothing to do
+                    });
             }
         }
+    }
+
+    hoverTitle = (i, bool) => {
+        let doc = this.state.documents;
+        doc[i].isTitleHover = bool;
+        this.setState({documents:doc});
     }
 
     render() {
@@ -492,7 +552,7 @@ export default class Lectures extends Component {
                         }
                     }>
                         {DocumentContainer(item, i, styles, this.scrollEv, leftsideScroll, rightsideScroll, fullPagoda, this.props.isOpen, this.hoverValButton,
-                            this.hoverDelButton, this.clickDelete, this.clickValidate, this.ratingHover, this.ratingClick, this.sendRating)}
+                            this.hoverDelButton, this.clickDelete, this.clickValidate, this.ratingHover, this.ratingClick, this.sendRating, this.hoverTitle)}
 
                         <div className={"document-separator"} style={
                             {
@@ -502,7 +562,8 @@ export default class Lectures extends Component {
                             }
                         }></div>
 
-                        {PagodaContainer(item, i, styles, this.hoverPagoda, this.unhoverPagoda, this.clickPagoda, this.state, PagodaFloor, encens, table, reverseScroll, this.props.isOpen)}
+                        {PagodaContainer(item, i, styles, this.hoverPagoda, this.unhoverPagoda, this.clickPagoda, this.state, PagodaFloor, 
+                            encens, table, reverseScroll, this.props.isOpen)}
 
                         <div className={"document-separator"} style={
                             {

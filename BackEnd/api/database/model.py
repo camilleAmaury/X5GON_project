@@ -36,11 +36,12 @@ class User(db.Model):
     level_number = db.Column(db.Integer, db.ForeignKey('levels.level_number'))
     level = db.relationship("Level", back_populates="users")
     experience = db.Column(db.Integer)
-    user_skills = db.relationship('User_skill', backref='users', lazy=True)
 
-    def __init__(self, username, pwd):
+    def __init__(self, username, pwd, email, year):
         self.username = username
         self.pwd = generate_password_hash(pwd)
+        self.email = email
+        self.year = year
 
     def __repr__(self):
         return '<User {}>'.format(self.user_id)
@@ -134,18 +135,16 @@ class User(db.Model):
         self.level = level
         self.experience = 0
 
-    def get_user_skills(self):
-        return self.user_skills
-
-    def remove_user_skills(self, skill):
-        self.user_skills.remove(skill)
-
 class Document(db.Model):
     __tablename__ = 'documents'
 
     document_id = db.Column(db.Integer, primary_key=True)
     graph_ref = db.Column(db.String(100), unique=True, nullable=False, index=True)
+    document_title = db.Column(db.String(100))
     user_evaluations = db.relationship('Evaluation', backref='documents', lazy=True)
+
+    def __init__(self, graph_ref):
+        self.graph_ref = graph_ref
 
     def add_user_evaluation(self, user_evaluation):
         self.user_evaluations.append(user_evaluation)
@@ -178,7 +177,7 @@ class Evaluation(db.Model):
     comprehension_rating = db.Column(db.Integer)
     quality_rating = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    document_ref = db.Column(db.Integer, db.ForeignKey('documents.graph_ref'))
+    graph_ref = db.Column(db.Integer, db.ForeignKey('documents.graph_ref'))
 
 class Badge(db.Model):
     __tablename__ = 'badges'
@@ -193,26 +192,3 @@ class Level(db.Model):
     level_number = db.Column(db.Integer, primary_key=True)
     next_stage = db.Column(db.Integer)
     users = db.relationship("User", back_populates="level")
-
-class Skill(db.Model):
-    __tablename__ = 'skills'
-
-    skill_id = db.Column(db.Integer, primary_key=True)
-    skill_name = db.Column(db.String(100), unique=True, nullable=False, index=True)
-
-class User_skill(db.Model):
-    __tablename__ = 'user_skills'
-
-    user_skill_id = db.Column(db.Integer, primary_key=True)
-    skill_level = db.Column(db.Integer)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    skill_name = db.Column(db.String(100), db.ForeignKey('skills.skill_name'))
-
-    def get_skill_level(self):
-        return self.skill_level
-
-    def increase_level(self, nb_level):
-        self.skill_level += nb_level
-
-    def decrease_level(self, nb_level):
-        self.skill_level -= nb_level

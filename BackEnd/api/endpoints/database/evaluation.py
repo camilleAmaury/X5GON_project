@@ -7,10 +7,10 @@ from api.service.evaluation import add_evaluation
 api = Namespace('evaluations', description='Evaluation operations')
 
 evaluation_schema = api.model('Evaluation', {
-    'user_id': fields.Integer(required=False, description='ID of the user'),
-    'document_ref': fields.String(required=False, description='ID of the document in the graph'),
-    'comprehension_rating': fields.Integer(required=False, description='Comprehension rating of this document'),
-    'quality_rating': fields.Integer(required=False, description='Quality rating of this document')
+    'user_id': fields.Integer(required=True, description='ID of the user'),
+    'graph_ref': fields.String(required=True, description='ID of the document in the graph'),
+    'comprehension_rating': fields.Integer(required=True, description='Comprehension rating of this document'),
+    'quality_rating': fields.Integer(required=True, description='Quality rating of this document')
 })
 
 @api.route("/")
@@ -25,4 +25,4 @@ class EvaluationRoute(Resource):
     @api.marshal_with(evaluation_schema)
     def post(self):
         validator.validate_payload(request.json, evaluation_schema)
-        return add_evaluation(data=request.json)
+        return add_evaluation(data=request.json),201

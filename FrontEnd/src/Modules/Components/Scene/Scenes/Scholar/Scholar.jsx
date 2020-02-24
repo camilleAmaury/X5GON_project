@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './Scholar.css';
 
-// import axios from "axios";
+import axios from "axios";
 
 import Popover from '../../../Popover/Popover';
 
@@ -41,21 +41,45 @@ export default class Scholar extends Component {
             },
             isHovered: false,
             isClicked: false,
-            questions:[]
+            questions:[],
+            server:"",
+            config:{}
         };
     }
 
     componentDidMount = () => {
-        let questions = [
-            {question:"What is earth ?", answer:"Mdr, tu sais pas ce qu'est la terre ? t'es qui en fait ... don't even talk to me bitch"},
-            {question:"What sounds greater than poulet aux ananas ?", answer:"Nothing, except chèvre au miel !"}
-        ];
-        if(questions.length === 0){
-            questions.push({question:"No question available", answer:"You never ask me something !"})
+        let server = (process.env.REACT_APP_DEV === "1" ? process.env.REACT_APP_SERVER_DEV : process.env.REACT_APP_SERVER);
+        let config = {
+            headers: {
+                "Content-Type": "application/json",
+                'Access-Control-Allow-Origin': '*',
+            }
         }
-        if(this.props.isMounted){
-            this.setState({questions:questions});
-        }
+        this.setState({ server: server, config: config }, () => {
+            axios.get(`${this.state.server}users/${JSON.parse(localStorage.getItem("isConnected")).id}/scholar_questions`, this.state.config)
+            .then(request => {
+                if (request.status === 200) {
+                    let questions = request.data;
+                    if(questions.length === 0){
+                        questions.push({question:"No question available", answer:"You never ask me something !"})
+                    }
+                    if(this.props.isMounted){
+                        this.setState({questions:questions});
+                    }
+                }
+            })
+            .catch(error => {
+                let questions = [];
+                if(questions.length === 0){
+                    questions.push({question:"No question available", answer:"Error from the server"})
+                }
+                if(this.props.isMounted){
+                    this.setState({questions:questions});
+                }
+            });
+        });
+        
+        
     }
 
     preparePositions = () => {

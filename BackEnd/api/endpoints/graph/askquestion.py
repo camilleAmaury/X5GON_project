@@ -330,4 +330,5 @@ class AskQuestion(Resource):
                 return(res)
             else:
                 return "empty"
+
         return askQuestionToBERT(question, idDoc)

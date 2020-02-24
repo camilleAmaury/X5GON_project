@@ -275,8 +275,8 @@ export default class Knowledge extends Component {
         }
     }
 
-    handleOpenDocument = (id) => {
-        let obj = {graph_ref:id};
+    handleOpenDocument = (id, title) => {
+        let obj = {graph_ref:id, document_title:title};
         axios.post(`${this.state.server}users/${JSON.parse(localStorage.getItem("isConnected")).id}/opened_documents`, obj, this.state.config)
             .then(request => {
                 if (request.status === 201) {
@@ -443,7 +443,7 @@ export default class Knowledge extends Component {
                     isOpen={this.state.isClicked && this.props.isOpen && this.state.librarianState === 2} title={"Librarian"}>
                     <div id={"librarian-answering-list"}>
                         {this.state.data.map((item, i) =>
-                            <div className={"librarian-answering-item"} onClick={() => this.handleOpenDocument(item.id)} key={i} data-key={item.id}>
+                            <div className={"librarian-answering-item"} onClick={() => this.handleOpenDocument(item.id, item.title)} key={i} data-key={item.id}>
                                 <div className={"librarian-answering-item-number"}><span>{i}</span></div>
                                 <div className={"librarian-answering-item-info"}>
                                     <span className={"librarian-answering-item-info-title"}>{item.title}</span>
