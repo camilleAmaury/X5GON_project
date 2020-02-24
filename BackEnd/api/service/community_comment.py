@@ -2,7 +2,7 @@ from flask import current_app, abort, jsonify, make_response
 from sqlalchemy import exc
 
 from api.database import db
-from api.database.model import User, CommunityQuestion, CommunityComment
+from api.database.model import User, CommunityQuestion, CommunityComment, UserLike
 
 def build_comment_schema(comment):
     mod = {}
@@ -55,3 +55,42 @@ def create_community_comment(data):
 
 
 # Likes ******************************************************************************************************
+
+
+def modify_comment_likes(comment_id, data):
+    user = User.query.get(data.get('user_id'))
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                "sql":"User not exist in DB"
+            },
+            "message":"User not exist"
+        }), 409))
+    comment = CommunityComment.query.get(comment_id)
+    if not comment:
+        abort(make_response(jsonify({
+            "errors":{
+                "sql":"Comment not exist in DB"
+            },
+            "message":"Comment not exist"
+        }), 409))
+    like = UserLike.query.filter_by(user_id=date.get('user_id'), comment_id=comment_id).first()
+    if like :
+        if like.like_value == data.get('like_value') :
+            if like.like_value == 1 :
+                comment.addLike(-1)
+            elif like.like_value == -1 :
+                comment.addLike(1)
+        else:
+            comment.addLike(- like.like_value + data.get('like_value'))
+    else :
+        like = new UserLike(
+            user_id=data.get('user_id'),
+            comment_id=comment_id,
+            like_value=data.get('like_value')
+        )
+        db.session.add(like)
+        comment.addLike(like.like_value)
+    db.session.flush()
+    db.session.commit()
+    return build_like_schema(like)

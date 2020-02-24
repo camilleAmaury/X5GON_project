@@ -199,6 +199,7 @@ class CommunityQuestion(db.Model):
     __tablename__ = 'community_questions'
 
     question_id = db.Column(db.Integer, primary_key=True)
+    question_title = db.Column(db.String(100), nullable=False)
     question = db.Column(db.String(300), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     comments = db.relationship('CommunityComment', backref='community_comments')
@@ -216,3 +217,14 @@ class CommunityComment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     question_id = db.Column(db.Integer, db.ForeignKey('community_questions.question_id'))
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+    def addLike(self, like):
+        self.like_count += like
+
+class UserLike(db.Model):
+    __tablename__ = 'user_like'
+
+    like_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    comment_id = db.Column(db.Integer, db.ForeignKey('community_comments.comment_id'))
+    like_value = db.Column(db.Integer)

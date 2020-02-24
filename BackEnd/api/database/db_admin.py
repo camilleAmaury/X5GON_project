@@ -1,7 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import gen_salt
 
-from .model import User, Document, user_opened_documents, user_validated_documents, user_badges, ScholarQuestion, UserSearch, Evaluation, Badge, Level, CommunityQuestion, CommunityComment
+from .model import User, Document, user_opened_documents, user_validated_documents, user_badges, ScholarQuestion, UserSearch, Evaluation, Badge, Level, CommunityQuestion, CommunityComment, UserLike
 from api.service.level import create_level
 from api.service.badge import create_badge
 from api.service.community_question import create_community_question
@@ -26,6 +26,7 @@ def db_admin(app, db):
         # Evaluation.__table__.create(bind=engine)
         CommunityQuestion.__table__.create(bind=engine)
         CommunityComment.__table__.create(bind=engine)
+        UserLike.__table__.create(bind=engine)
         db.session.commit()
 
     @app.cli.command()
@@ -69,7 +70,8 @@ def db_admin(app, db):
             "year": 3
         })
         create_community_question({
-            "question": "Is this a question ?",
+            "question_title": "Is this a question ?",
+            "question": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
             "user_id": 1
         })
         create_community_comment({
@@ -83,7 +85,8 @@ def db_admin(app, db):
             "question_id": 1
         })
         create_community_question({
-            "question": "Are you sure ?",
+            "question_title": "Are you sure ?",
+            "question": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
             "user_id": 1
         })
         create_community_comment({
@@ -97,7 +100,8 @@ def db_admin(app, db):
             "question_id": 2
         })
         create_community_question({
-            "question": "Are we in an informatic simulation ?",
+            "question_title": "Are we in an informatic simulation ?",
+            "question": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
             "user_id": 2
         })
         create_community_comment({
@@ -127,4 +131,5 @@ def db_admin(app, db):
         UserSearch.__table__.drop(bind=engine)
         Badge.__table__.drop(bind=engine)
         Level.__table__.drop(bind=engine)
+        UserLike.__table__.drop(bind=engine)
         db.session.commit()
