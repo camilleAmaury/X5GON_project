@@ -84,7 +84,7 @@ def modify_comment_likes(comment_id, data):
         else:
             comment.addLike(- like.like_value + data.get('like_value'))
     else :
-        like = new UserLike(
+        like = UserLike(
             user_id=data.get('user_id'),
             comment_id=comment_id,
             like_value=data.get('like_value')
