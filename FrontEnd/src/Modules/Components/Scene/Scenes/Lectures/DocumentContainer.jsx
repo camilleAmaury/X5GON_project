@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import Popover from '../../../Popover/Popover';
 
 export default function DocumentContainer(item, i, styles, scrollEv, leftsideScroll, rightsideScroll, fullPagoda, isOpen, hoverValButton, hoverDelButton,
-    clickDelete, clickValidate, ratingHover, ratingClick, sendRating) {
+    clickDelete, clickValidate, ratingHover, ratingClick, sendRating, hoverTitle) {
 
     let lantern = [1, 2, 3, 4, 5];
     return (
@@ -48,7 +48,7 @@ export default function DocumentContainer(item, i, styles, scrollEv, leftsideScr
             </div>
 
             {/* top scroll */}
-            <div className={"scrollUpper"} data-key={i} style={
+            <div className={"scrollUpper"} data-key={i} onMouseEnter={() => hoverTitle(i, true)} onMouseLeave={() => hoverTitle(i, false)} style={
                 {
                     height: styles.upper.height,
                     width: styles.upper.width,
@@ -68,14 +68,7 @@ export default function DocumentContainer(item, i, styles, scrollEv, leftsideScr
                     <span>{item.title}</span>
                 </div>
             </div>
-            {/* <Popover color={"#334458"} id={"validate-hover-" + i}
-                target={{ left: styles.valdelButton.left, top: styles.valdelButton.top1[i], width: styles.valdelButton.width, height: styles.valdelButton.height }}
-                ratio={1 / 2} side={"right"} size={{ width: 350, height: 100 }}
-                isOpen={item.isValidateHovered && !item.isValidateClicked && isOpen} title={"Validate Document"}>
-                <div className={"button-hover"}>
-                    <span>{!item.isScrolled ? 'Scroll to see more ...' : 'Have you finish to read ? just click !'}</span>
-                </div>
-            </Popover> */}
+
             <img className={"scrollSide"} src={leftsideScroll} alt={"side-scroll"} style={
                 {
                     height: styles.scrollSide.height,
@@ -93,7 +86,7 @@ export default function DocumentContainer(item, i, styles, scrollEv, leftsideScr
                 }
             }></img>
             {/* bottom scroll */}
-            <div className={"scrollUpper"} data-key={i} style={
+            <div className={"scrollUpper"} data-key={i} onMouseEnter={() => hoverTitle(i, true)} onMouseLeave={() => hoverTitle(i, false)} style={
                 {
                     height: styles.upper.height,
                     width: styles.upper.width,
@@ -129,6 +122,14 @@ export default function DocumentContainer(item, i, styles, scrollEv, leftsideScr
                 }
             }></img>
 
+            <Popover id={"title-hover-" + i} zIndex={15} pointerEvents={false}
+                target={{ height: styles.upper.height, width: styles.upper.width, top: styles.upper.top2[i], left: styles.upper.left }}
+                ratio={1 / 2} side={"top"} size={{ width: 350, height: 100 }}
+                isOpen={item.isTitleHover && isOpen} title={"Click to scroll"}>
+                <div className={"title-hover"}>
+                    <span>{item.title}</span>
+                </div>
+            </Popover>
             {/* Changing button */}
             <div className={"changeButton"} data-key={i} style={
                 {

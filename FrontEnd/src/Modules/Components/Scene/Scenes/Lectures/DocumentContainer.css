@@ -232,4 +232,21 @@
     background-color: #b43e3e;
 }
 
+.document-container .title-hover{
+    display: flex;
+    direction: ltr;
+    align-items: center;
+    justify-content: center;
+    width: 95%;
+    height: calc(100% - 10px);
+    overflow: hidden;
+    z-index:15;
+}
+
+.document-container .title-hover span{
+    font-family: 'Roboto';
+    font-size: 16px;
+    color:white;
+}
+
 

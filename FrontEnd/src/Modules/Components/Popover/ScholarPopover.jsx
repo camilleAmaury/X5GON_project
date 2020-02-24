@@ -165,25 +165,28 @@ export default class ScholarPopover extends Component {
                     .then(request => {
                         question.value = "";
                         let chat = this.state.sessionChat;
+                        let answer = JSON.parse(request.data)[0] === "empty" ? "" : JSON.parse(request.data)[0];
                         chat.push(
                             { message: "Well, it was a hard time to remember this ...", scholar: "scholar" },
-                            { message: JSON.parse(request.data)[0], scholar: "scholar" }
+                            { message: answer, scholar: "scholar" }
                         );
                         this.setState({
                             sessionChat: chat,
                             scholarState: 2,
                             corpusHoverEvent:true
                         }, () => {
-                            if(JSON.parse(request.data)[0] !== "" && JSON.parse(request.data)[0] !== undefined){
-                                let obj = {question: questionValue, answer: JSON.parse(request.data)[0]}
-                                let fun = function(server, obj, config){
+                            if(answer !== "" && answer !== undefined){
+                                let obj = {question: questionValue, answer: answer}
+                                let fun = function(server, obj, config, i){
                                     axios.post(`${server}users/${JSON.parse(localStorage.getItem("isConnected")).id}/scholar_questions`, obj, config)
                                     .catch(error => {
-                                        console.log("bug")
-                                        // fun(server, obj, config);
+                                        // retry max 3 times
+                                        if(i < 3){
+                                            fun(server, obj, config, i+1);
+                                        }
                                     });
                                 }
-                                fun(this.state.server, obj, this.state.config);
+                                fun(this.state.server, obj, this.state.config, 0);
                             }
                         });
                     })
