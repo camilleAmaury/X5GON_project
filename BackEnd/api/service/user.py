@@ -366,7 +366,7 @@ def get_all_user_questions(user_id):
         }), 409))
 
     arr_scholar_questions = []
-    scholar_questions = user.get_scholar_questions()
+    scholar_questions = user.get_scholar_questions().reverse()
     for scholar_question in scholar_questions:
         mod = build_scholar_question_schema(scholar_question)
         arr_scholar_questions.append(mod)
@@ -734,4 +734,4 @@ def get_all_user_skills(user_id):
     id_arr = []
     for document in validated_documents :
         id_arr.append(document.graph_ref)
-    return build_skills_schema(getKeywords(id_arr))
+    return build_skills_schema(getKeywords(id_arr))    
