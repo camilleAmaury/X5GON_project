@@ -4,6 +4,9 @@ from werkzeug.security import gen_salt
 from .model import User, Document, user_opened_documents, user_validated_documents, user_badges, ScholarQuestion, UserSearch, Evaluation, Badge, Level, CommunityQuestion, CommunityComment
 from api.service.level import create_level
 from api.service.badge import create_badge
+from api.service.community_question import create_community_question
+from api.service.community_comment import create_community_comment
+from api.service.user import create_user
 
 
 def db_admin(app, db):
@@ -20,7 +23,6 @@ def db_admin(app, db):
         user_validated_documents.create(bind=engine)
         user_badges.create(bind=engine)
         ScholarQuestion.__table__.create(bind=engine)
-
         # Evaluation.__table__.create(bind=engine)
         CommunityQuestion.__table__.create(bind=engine)
         CommunityComment.__table__.create(bind=engine)
@@ -52,6 +54,63 @@ def db_admin(app, db):
             'badge_name' : 'Knowledge architect',
             'description' : 'Rate and validate 10 documents'
         })
+        create({
+            "username": "testUser1",
+            "pwd": "hello",
+            "phone": "0123456789",
+            "email": "azertyuiop",
+            "year": 3
+        })
+        create({
+            "username": "testUser2",
+            "pwd": "hello",
+            "phone": "0123456789",
+            "email": "azertyuiop",
+            "year": 3
+        })
+        create_community_question({
+            "question": "Is this a question ?",
+            "user_id": 1
+        })
+        create_community_comment({
+            "comment": "Well, yess",
+            "user_id": 2,
+            "question_id": 1
+        })
+        create_community_comment({
+            "comment": "Ok, thank's",
+            "user_id": 1,
+            "question_id": 1
+        })
+        create_community_question({
+            "question": "Are you sure ?",
+            "user_id": 1
+        })
+        create_community_comment({
+            "comment": "trust me, no problem",
+            "user_id": 2,
+            "question_id": 2
+        })
+        create_community_comment({
+            "comment": "Ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok",
+            "user_id": 1,
+            "question_id": 2
+        })
+        create_community_question({
+            "question": "Are we in an informatic simulation ?",
+            "user_id": 2
+        })
+        create_community_comment({
+            "comment": "Is this an answer ?",
+            "user_id": 1,
+            "question_id": 3
+        })
+        create_community_comment({
+            "comment": "In fact, it's seems like a question, but lets try again !",
+            "user_id": 2,
+            "question_id": 3
+        })
+
 
     @app.cli.command()
     def delete_tables():

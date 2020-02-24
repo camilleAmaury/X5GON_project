@@ -16,7 +16,6 @@ def build_comment_schema(comment):
 
 def create_community_comment(data):
     try:
-        #Validate if the username exist
         user = User.query.get(data.get('user_id'))
         if not user:
             abort(make_response(jsonify({
@@ -26,7 +25,7 @@ def create_community_comment(data):
                 "message":"User not exist"
             }), 409))
         question = CommunityQuestion.query.get(data.get('question_id'))
-        if not user:
+        if not question:
             abort(make_response(jsonify({
                 "errors":{
                     "sql":"Question not exist in DB"
@@ -53,3 +52,35 @@ def create_community_comment(data):
             },
             "message":"Error in database"
         }), 409))
+
+
+# Likes ******************************************************************************************************
+
+
+def modify_comment_likes(comment_id, data):
+    user = User.query.get(data.get('user_id'))
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                "sql":"User not exist in DB"
+            },
+            "message":"User not exist"
+        }), 409))
+    comment = CommunityComment.query.get(comment_id)
+    if not comment:
+        abort(make_response(jsonify({
+            "errors":{
+                "sql":"Comment not exist in DB"
+            },
+            "message":"Comment not exist"
+        }), 409))
+    like = UserLike.query.filter_by(user_id=date.get('user_id'), comment_id=comment_id).first()
+    if like :
+        d
+    else :
+        like = new Like(
+            user_id=data.get('user_id'),
+            comment_id=comment_id,
+            like_value=data.get('like_value')
+        )
+    return build_like_schema(like)
