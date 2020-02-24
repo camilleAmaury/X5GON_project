@@ -156,7 +156,7 @@ class AskQuestion(Resource):
         # return : concatenation of all of the document into the subgraph
 
 
-        def getPertinentDocument(question, idDoc):
+        def getPertinentDocument(question, idDoc, split=True):
             print(idDoc)
             PLATFORM_URL = "https://platform.x5gon.org/api/v1"
 
@@ -164,13 +164,15 @@ class AskQuestion(Resource):
             #print(doc.ents)
             #allEntities = ["<http://dbpedia.org/resource/"+X.text.replace(" ", "_").title()+">" for X in doc.ents]
 
-            res = requests.get("http://api.dbpedia-spotlight.org/en/annotate?text="+question+"&confidence=0.5&support=50", headers = {'Accept': 'application/json'}).json()
+            res = requests.get("http://api.dbpedia-spotlight.org/en/annotate?text="+question.lower()+"&confidence=0.5&support=50", headers = {'Accept': 'application/json'}).json()
             resFormat = {}
-            for r in res['Resources']:
-                if(r['@URI'] in list(resFormat.keys())):
-                    resFormat[r['@URI']] = max(r['@similarityScore'], resFormat[r['@URI']])
-                else:
-                    resFormat[r['@URI']] = r['@similarityScore']
+            print(res)
+            if('Resources' in list(res.keys())):
+                for r in res['Resources']:
+                    if(r['@URI'] in list(resFormat.keys())):
+                        resFormat[r['@URI']] = max(r['@similarityScore'], resFormat[r['@URI']])
+                    else:
+                        resFormat[r['@URI']] = r['@similarityScore']
 
             print(resFormat)
 
@@ -218,63 +220,65 @@ class AskQuestion(Resource):
                             #concatenationDocument.append(getArticleContent("https://en.wikipedia.org/wiki/"+entity.replace('<http://dbpedia.org/resource/', '').replace('>', '')))
             else:
                 concatenationDocument.append(getContentDocument(idDoc, PLATFORM_URL))
-
-            if(len(question.split(" ")) > 0):
-                text = ' '.join(concatenationDocument).replace("[", "").replace("]", "").replace("\\", "").replace("/", "").lower()
-                text = text.split(" ")
-                textWithoutStopWords = [w for w in text if not w in stop_words]
-                text = ' '.join(textWithoutStopWords)
-                #text = text.decode('utf-8')
-                c = text.split(" ")
-                corpus = splitTextByChunk(c, 500)
-                print(len(corpus))
-                documentRepresentation = []
-                key = list(vectors.keys())
-                print(len(vectors))
-                print(len(corpus[0]))
-                distance = 0
-                for doc in corpus:
-                    words = []
-                    for word in doc:
-                        if(word in key):
-                            v = list(vectors[word])
+            if(split):
+                if(len(question.split(" ")) > 0):
+                    text = ' '.join(concatenationDocument).replace("[", "").replace("]", "").replace("\\", "").replace("/", "").lower()
+                    text = text.split(" ")
+                    textWithoutStopWords = [w for w in text if not w in stop_words]
+                    text = ' '.join(textWithoutStopWords)
+                    #text = text.decode('utf-8')
+                    c = text.split(" ")
+                    corpus = splitTextByChunk(c, 500)
+                    print(len(corpus))
+                    documentRepresentation = []
+                    key = list(vectors.keys())
+                    print(len(vectors))
+                    print(len(corpus[0]))
+                    distance = 0
+                    for doc in corpus:
+                        words = []
+                        for word in doc:
+                            if(word in key):
+                                v = list(vectors[word])
+                                if(len(v) > 0):
+                                    words.append(v)
+                        print(words)
+                        documentRepresentation.append([float(sum(col))/len(col) for col in zip(*words)])
+                    print(len(documentRepresentation))
+                    print(len(documentRepresentation[0]))
+                    print("doc")
+                    questionRepresentation = []
+                    for wQ in question.split(" "):
+                        if(wQ in key):
+                            v = list(vectors[wQ])
                             if(len(v) > 0):
-                                words.append(v)
-                    print(words)
-                    documentRepresentation.append([float(sum(col))/len(col) for col in zip(*words)])
-                print(len(documentRepresentation))
-                print(len(documentRepresentation[0]))
-                print("doc")
-                questionRepresentation = []
-                for wQ in question.split(" "):
-                    if(wQ in key):
-                        v = list(vectors[wQ])
-                        if(len(v) > 0):
-                            questionRepresentation.append(v)
-                            print(v)
-                #print(len(questionRepresentation))
-                #print(len(questionRepresentation[0]))
-                if(len(questionRepresentation) > 0):
-                    questionvectors = [float(sum(col))/len(col) for col in zip(*questionRepresentation)]
-                    print(len(questionvectors))
-                    print("question")
-                    distance = []
-                    for vecs in documentRepresentation:
-                        #print(vectors[:10])
-                        #print(questionvectors[:10])
-                        distance.append(euclidian_distance(vecs, questionvectors))
-                    #print(corpus)
-                    return corpus[np.argmin(distance)]
+                                questionRepresentation.append(v)
+                                print(v)
+                    #print(len(questionRepresentation))
+                    #print(len(questionRepresentation[0]))
+                    if(len(questionRepresentation) > 0):
+                        questionvectors = [float(sum(col))/len(col) for col in zip(*questionRepresentation)]
+                        print(len(questionvectors))
+                        print("question")
+                        distance = []
+                        for vecs in documentRepresentation:
+                            #print(vectors[:10])
+                            #print(questionvectors[:10])
+                            distance.append(euclidian_distance(vecs, questionvectors))
+                        #print(corpus)
+                        return corpus[np.argmin(distance)]
+                    else:
+                        return "empty"
                 else:
                     return "empty"
             else:
-                return "empty"
+                return ' '.join(concatenationDocument).replace("[", "").replace("]", "").replace("\\", "").replace("/", "").lower()
 
 
 
         def askQuestionToBERT(question, idDoc):
             start = time.time()
-            corpusPertinent = getPertinentDocument(question, idDoc)
+            corpusPertinent = getPertinentDocument(question, idDoc, False)
             end2 = time.time()
             #print(corpusPertinent)
             if(isinstance(corpusPertinent, list)):
@@ -302,26 +306,28 @@ class AskQuestion(Resource):
             return(question_answering_tokenizer.decode(indexed_tokens[torch.argmax(start_logits):torch.argmax(end_logits)+1]))
             '''
             
-            
-            fileContent = "{\"version\": \"v2.0\",\"data\": [{\"title\": \"your_title\",\"paragraphs\": [{\"qas\": [{\"question\": \"<question>\",\"id\": \"0\",\"is_impossible\": \"\"}],\"context\": \"<content>\"}]}]}"	
-            fileContent = fileContent.replace("<question>", question, 1)	
-            fileContent = fileContent.replace("<content>", corpusPertinent.replace("\"", ""), 1)	
-            myfile = "endpoints/data/input_file.json"	
-            #print(fileContent)	
-            with open(myfile, "wb+") as f:	
-                data = f.read()	
-                f.seek(0)	
-                f.write(fileContent.encode('utf-8'))	
-                f.truncate()	
-            res = ""
-            start = time.time()
-            command = shlex.split("python3 endpoints/bert/run_squad.py --vocab_file="+os.path.abspath("endpoints/wwm_uncased_L-24_H-1024_A-16/vocab.txt")+" --bert_config_file="+os.path.abspath("endpoints/wwm_uncased_L-24_H-1024_A-16/bert_config.json")+" --init_checkpoint="+os.path.abspath("endpoints/data/model.ckpt-10859")+" --do_train=False --max_query_length=30 --do_predict=True --predict_file="+os.path.abspath("endpoints/data/input_file.json")+" --predict_batch_size=8 --n_best_size=3 --max_seq_length=384 --doc_stride=128 --output_dir="+os.path.abspath('endpoints/data/output/'))	
-            process = subprocess.Popen(command, stdout = subprocess.PIPE)
-            process.wait()
-            res = ""	
-            with open("endpoints/data/output/predictions.json", 'r+') as fin:
-                res = fin.read()
-            end = time.time()
-            print(str((end - start)/60)+" min")
-            return(res)
+            if(corpusPertinent != "empty" and corpusPertinent != ""):
+                fileContent = "{\"version\": \"v2.0\",\"data\": [{\"title\": \"your_title\",\"paragraphs\": [{\"qas\": [{\"question\": \"<question>\",\"id\": \"0\",\"is_impossible\": \"\"}],\"context\": \"<content>\"}]}]}"	
+                fileContent = fileContent.replace("<question>", question, 1)	
+                fileContent = fileContent.replace("<content>", corpusPertinent.replace("\"", ""), 1)	
+                myfile = "endpoints/data/input_file.json"	
+                #print(fileContent)	
+                with open(myfile, "wb+") as f:	
+                    data = f.read()	
+                    f.seek(0)	
+                    f.write(fileContent.encode('utf-8'))	
+                    f.truncate()	
+                res = ""
+                start = time.time()
+                command = shlex.split("python3 endpoints/bert/run_squad.py --vocab_file="+os.path.abspath("endpoints/wwm_uncased_L-24_H-1024_A-16/vocab.txt")+" --bert_config_file="+os.path.abspath("endpoints/wwm_uncased_L-24_H-1024_A-16/bert_config.json")+" --init_checkpoint="+os.path.abspath("endpoints/data/model.ckpt-10859")+" --do_train=False --max_query_length=30 --do_predict=True --predict_file="+os.path.abspath("endpoints/data/input_file.json")+" --predict_batch_size=8 --n_best_size=3 --max_seq_length=384 --doc_stride=128 --output_dir="+os.path.abspath('endpoints/data/output/'))	
+                process = subprocess.Popen(command, stdout = subprocess.PIPE)
+                process.wait()
+                res = ""	
+                with open("endpoints/data/output/predictions.json", 'r+') as fin:
+                    res = fin.read()
+                end = time.time()
+                print(str((end - start)/60)+" min")
+                return(res)
+            else:
+                return "empty"
         return askQuestionToBERT(question, idDoc)
