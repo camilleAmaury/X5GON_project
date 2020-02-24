@@ -54,14 +54,14 @@ def db_admin(app, db):
             'badge_name' : 'Knowledge architect',
             'description' : 'Rate and validate 10 documents'
         })
-        create({
+        create_user({
             "username": "testUser1",
             "pwd": "hello",
             "phone": "0123456789",
             "email": "azertyuiop",
             "year": 3
         })
-        create({
+        create_user({
             "username": "testUser2",
             "pwd": "hello",
             "phone": "0123456789",
