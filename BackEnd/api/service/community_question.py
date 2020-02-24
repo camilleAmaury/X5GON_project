@@ -8,6 +8,7 @@ from .community_comment import build_comment_schema
 def build_question_schema(question):
     mod = {}
     mod['question_id'] = question.question_id
+    mod['question_title'] = question.question_title
     mod['question'] = question.question
     mod['user_id'] = question.user_id
     mod['date'] = question.date

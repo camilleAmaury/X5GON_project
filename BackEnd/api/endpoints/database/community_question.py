@@ -11,6 +11,7 @@ api = Namespace('community_questions', description='Community questions CRUD ope
 
 community_question_schema = api.model('CommunityQuestion', {
     'question_id': fields.Integer(required=False, description='Id of this question', readonly=True),
+    'question_title': fields.String(required=True, description='Question title'),
     'question': fields.String(required=True, description='Question content'),
     'user_id': fields.Integer(required=True, description='Id of the user who ask this question'),
     'username': fields.String(required=False, description='Username of the user who ask this question', readonly=True),
