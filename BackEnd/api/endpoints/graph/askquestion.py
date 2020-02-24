@@ -14,7 +14,7 @@ import time
 import spacy
 import requests
 import bs4
-import torch
+# import torch
 import numpy as np
 import math
 from spacy import displacy
@@ -22,8 +22,8 @@ from collections import Counter
 import shlex
 import subprocess
 import copy
-from . import stop_words, question_answering_tokenizer, question_answering_model, nlp
-from .fastTextVectors import vectors
+# from . import stop_words, question_answering_tokenizer, question_answering_model, nlp
+# from .fastTextVectors import vectors
 
 api = Namespace('askquestion', description='Ask a question to a ML Model')
 

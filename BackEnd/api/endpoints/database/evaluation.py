@@ -25,4 +25,4 @@ class EvaluationRoute(Resource):
     @api.marshal_with(evaluation_schema)
     def post(self):
         validator.validate_payload(request.json, evaluation_schema)
-        return add_evaluation(data=request.json)
+        return add_evaluation(data=request.json),201

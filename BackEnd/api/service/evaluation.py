@@ -33,7 +33,7 @@ def add_evaluation(data):
             },
             "message":"User not found"
         }), 409))
-    document = Document.query.filter_by(graph_ref=data.get('document_ref')).first()
+    document = Document.query.filter_by(graph_ref=data.get('graph_ref')).first()
     if not document:
         abort(make_response(jsonify({
             "errors":{
@@ -55,13 +55,13 @@ def add_evaluation(data):
             },
             "message":"Document already validated"
         }), 409))
-    evaluation = Evaluation.query.filter_by(user_id=data.get('user_id'), document_ref=data.get('document_ref')).first()
+    evaluation = Evaluation.query.filter_by(user_id=data.get('user_id'), document_ref=data.get('graph_ref')).first()
     if not evaluation:
         evaluation = Evaluation(
             comprehension_rating=data.get('comprehension_rating'),
             quality_rating=data.get('quality_rating'),
             user_id=data.get('user_id'),
-            document_ref=data.get('document_ref')
+            document_ref=data.get('graph_ref')
         )
         db.session.add(evaluation)
         user_service.add_validated_document(evaluation.user_id, evaluation.document_ref)

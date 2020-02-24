@@ -32,6 +32,10 @@
 .document-container .scrollTexture span{
     font-family: 'Roboto';
     font-size: 25px;
+    overflow: hidden;
+    height: 30px;
+    width: 85%;
+    text-align: center;
 }
 .document-container .scrollTexture2{
     position: absolute;
