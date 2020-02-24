@@ -32,8 +32,9 @@ def getKeywords(listIdDoc):
     print(query)
     
     res = execQuery(sparql, query)['results']['bindings']
-    for i in range(len(res)):
+    print(res)
+    '''for i in range(len(res)):
         resultat[res[i]['key']['value']] = res[i]['val']['value']
-
+'''
     print(resultat)
     return resultat
