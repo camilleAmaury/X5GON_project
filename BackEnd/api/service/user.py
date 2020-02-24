@@ -10,6 +10,7 @@ from .user_search import build_user_search_schema
 from .evaluation import build_evaluation_schema
 from .badge import build_badge_schema
 from .level import build_level_schema
+from .skill import getKeywords, build_skills_schema
 
 
 def build_user_schema(user):
@@ -722,17 +723,15 @@ def remove_user_experience(user_id, experience):
 
 def get_all_user_skills(user_id):
     user = User.query.get(user_id)
-    if not user:
+    if not user :
         abort(make_response(jsonify({
             "errors":{
                 0:"User not found"
             },
             "message":"User not found"
         }), 409))
-
-    arr_skills = []
-    document_skills = user.get_user_skills()
-    for document_skill in document_skills:
-        mod = build_skill_schema(document_skill)
-        arr_skills.append(mod)
-    return arr_skills
+    validated_documents = user.get_validated_documents()
+    id_arr = []
+    for document in validated_documents :
+        id_arr.append(document.graph_ref)
+    return build_skills_schema(getKeywords(id_arr))

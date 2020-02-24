@@ -2,7 +2,7 @@ from flask import request
 from flask_restplus import Namespace, Resource, fields
 
 from api.utils import validator
-from api.service.user import get_user, get_all_users, create_user, update_user, delete_user, get_all_opened_documents, add_opened_document, get_opened_document, remove_opened_document, get_all_user_questions, add_user_question, get_user_question, remove_user_question, get_all_user_evaluations, get_all_user_badges, get_user_badge, add_user_badge, remove_user_badge, get_user_experience, add_user_experience, remove_user_experience, get_all_user_searches, add_user_search, get_user_search, remove_user_search, get_all_validated_documents, add_validated_document, get_validated_document, remove_validated_document
+from api.service.user import get_user, get_all_users, create_user, update_user, delete_user, get_all_opened_documents, add_opened_document, get_opened_document, remove_opened_document, get_all_user_questions, add_user_question, get_user_question, remove_user_question, get_all_user_evaluations, get_all_user_badges, get_user_badge, add_user_badge, remove_user_badge, get_user_experience, add_user_experience, remove_user_experience, get_all_user_searches, add_user_search, get_user_search, remove_user_search, get_all_validated_documents, add_validated_document, get_validated_document, remove_validated_document, get_all_user_skills
 from api.service.evaluation import get_evaluation, remove_evaluation
 from .document import document_schema
 from .scholar_question import scholar_question_schema
@@ -275,7 +275,7 @@ class UserEvaluationsRoute(Resource):
     def get(self, user_id):
         return get_all_user_evaluations(user_id)
 
-@api.route("/<int:user_id>/evaluations/<string:document_ref>")
+@api.route("/<int:user_id>/evaluations/<string:graph_ref>")
 class UserEvaluationRoute(Resource):
 
     @api.marshal_with(evaluation_schema)
@@ -285,15 +285,15 @@ class UserEvaluationRoute(Resource):
         409: 'Conflict, this evaluation not exist',
         422: 'Validation Error'
     })
-    def get(self, user_id, document_ref):
-        return get_evaluation(user_id=user_id, document_ref=document_ref)
+    def get(self, user_id, graph_ref):
+        return get_evaluation(user_id=user_id, graph_ref=graph_ref)
 
     @api.doc(responses={
         201: 'Evaluation successfully deleted from user',
         409: 'Conflict, user not exist / document not exist / evaluation not exist',
     })
-    def delete(self, user_id, document_ref):
-        remove_evaluation(user_id=user_id, document_ref=document_ref)
+    def delete(self, user_id, graph_ref):
+        remove_evaluation(user_id=user_id, graph_ref=graph_ref)
         return '', 201
 
 
@@ -398,42 +398,3 @@ class UserSkillsRoute(Resource):
     })
     def get(self, user_id):
         return get_all_user_skills(user_id)
-
-@api.route("/<int:user_id>/skills/<string:skill_name>")
-class UserSkillRoute(Resource):
-
-    @api.marshal_with(skill_schema)
-    @api.response(200, 'Skill info')
-    @api.doc(responses={
-        200: 'Skill info',
-        409: 'Conflict, this user not exist / this skill not exist',
-        422: 'Validation Error'
-    })
-    def get(self, user_id, skill_name):
-        return get_skill(user_id=user_id, skill_name=skill_name)
-
-    @api.doc(
-        params={
-            'nb_level' : 'Level number to add to this skill (default value : 1)'
-        },
-        responses={
-            201: 'Skill successfully add to user',
-            409: 'Conflict, user not exist'
-        }
-    )
-    def post(self, user_id, nb_experience, nb_level=1):
-        add_user_experience(user_id=user_id, nb_experience=nb_experience, nb_level=nb_level)
-        return '', 201
-
-    @api.doc(
-        params={
-            'nb_level' : 'Level number to remove to this skill (default value : 1)'
-        },
-        responses={
-            201: 'Skill successfully deleted from user',
-            409: 'Conflict, user not exist / document not exist / skill not exist',
-        }
-    )
-    def delete(self, user_id, skill_name, nb_level=1):
-        remove_skill(user_id=user_id, skill_name=skill_name, nb_level=nb_level)
-        return '', 201

@@ -7,13 +7,13 @@ from api.database.model import User, Document, Evaluation
 def build_evaluation_schema(evaluation):
     mod = {}
     mod['user_id'] = evaluation.user_id
-    mod['document_ref'] = evaluation.document_ref
+    mod['graph_ref'] = evaluation.graph_ref
     mod['comprehension_rating'] = evaluation.comprehension_rating
     mod['quality_rating'] = evaluation.quality_rating
     return mod
 
-def get_evaluation(user_id, document_ref):
-    evaluation = Evaluation.query.filter_by(user_id=user_id, document_ref=document_ref).first()
+def get_evaluation(user_id, graph_ref):
+    evaluation = Evaluation.query.filter_by(user_id=user_id, graph_ref=graph_ref).first()
     if not evaluation:
         abort(make_response(jsonify({
             "errors":{
@@ -55,23 +55,23 @@ def add_evaluation(data):
             },
             "message":"Document already validated"
         }), 409))
-    evaluation = Evaluation.query.filter_by(user_id=data.get('user_id'), document_ref=data.get('graph_ref')).first()
+    evaluation = Evaluation.query.filter_by(user_id=data.get('user_id'), graph_ref=data.get('graph_ref')).first()
     if not evaluation:
         evaluation = Evaluation(
             comprehension_rating=data.get('comprehension_rating'),
             quality_rating=data.get('quality_rating'),
             user_id=data.get('user_id'),
-            document_ref=data.get('graph_ref')
+            graph_ref=data.get('graph_ref')
         )
         db.session.add(evaluation)
-        user_service.add_validated_document(evaluation.user_id, evaluation.document_ref)
+        user_service.add_validated_document(evaluation.user_id, evaluation.graph_ref)
         db.session.flush()
         db.session.commit()
 
 
     return build_evaluation_schema(evaluation)
 
-def remove_evaluation(user_id, document_ref):
+def remove_evaluation(user_id, graph_ref):
     user = User.query.get(user_id)
     if not user:
         abort(make_response(jsonify({
@@ -80,7 +80,7 @@ def remove_evaluation(user_id, document_ref):
             },
             "message":"User not found"
         }), 409))
-    document = Document.query.filter_by(graph_ref=document_ref).first()
+    document = Document.query.filter_by(graph_ref=graph_ref).first()
     if not document:
         abort(make_response(jsonify({
             "errors":{
@@ -88,7 +88,7 @@ def remove_evaluation(user_id, document_ref):
             },
             "message":"Document not found"
         }), 409))
-    evaluation = Evaluation.query.filter_by(user_id=user_id, document_ref=document_ref).first()
+    evaluation = Evaluation.query.filter_by(user_id=user_id, graph_ref=graph_ref).first()
     if not evaluation:
         abort(make_response(jsonify({
             "errors":{
