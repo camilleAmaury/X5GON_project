@@ -19,12 +19,13 @@ def get_all_community_questions(get_comments):
     for question in questions :
         mod = build_question_schema(question)
         if get_comments :
-            mod['comments'] = get_all_question_comments(question.question_id)
+            list = get_all_question_comments(question.question_id)
+            print(list)
+            mod['comments'] = list
         user = User.query.get(question.user_id)
         if user :
             mod['username'] = user.username
         arr_questions.append(mod)
-    print(arr_questions)
     return arr_questions
 
 def create_community_question(data):
@@ -47,7 +48,7 @@ def create_community_question(data):
         db.session.add(question)
         db.session.flush()
         db.session.commit()
-        return ''
+        return build_question_schema(question)
     except exc.DBAPIError as e:
         current_app.logger.error('Fail on create user %s' % str(e) )
         db.session().rollback()
@@ -71,11 +72,12 @@ def get_all_question_comments(question_id) :
             },
             "message":"Question not exist"
         }), 409))
-    comments = CommunityComment.query.all()
+    comments = CommunityComment.query.filter_by(question_id=question_id).order_by(CommunityComment.date.desc()).all()
     arr_comments = []
     for comment in comments :
         mod = build_comment_schema(comment)
         user = User.query.get(comment.user_id)
         if user :
             mod["username"] = user.username
+        arr_comments.append(mod)
     return arr_comments

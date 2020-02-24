@@ -38,6 +38,7 @@ class CommunityQuestionsRoute(Resource):
         409: 'Conflict, User not exist',
         422: 'Validation Error'
     })
+    @api.marshal_with(community_question_schema)
     def post(self):
         validator.validate_payload(request.json, community_question_schema)
         return create_community_question(data=request.json), 201

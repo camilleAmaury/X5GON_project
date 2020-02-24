@@ -16,7 +16,6 @@ def build_comment_schema(comment):
 
 def create_community_comment(data):
     try:
-        #Validate if the username exist
         user = User.query.get(data.get('user_id'))
         if not user:
             abort(make_response(jsonify({
@@ -26,7 +25,7 @@ def create_community_comment(data):
                 "message":"User not exist"
             }), 409))
         question = CommunityQuestion.query.get(data.get('question_id'))
-        if not user:
+        if not question:
             abort(make_response(jsonify({
                 "errors":{
                     "sql":"Question not exist in DB"
@@ -43,7 +42,7 @@ def create_community_comment(data):
         db.session.add(comment)
         db.session.flush()
         db.session.commit()
-        return ''
+        return build_comment_schema(comment)
     except exc.DBAPIError as e:
         current_app.logger.error('Fail on create user %s' % str(e) )
         db.session().rollback()
@@ -53,3 +52,6 @@ def create_community_comment(data):
             },
             "message":"Error in database"
         }), 409))
+
+
+# Likes ******************************************************************************************************

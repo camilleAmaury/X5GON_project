@@ -13,7 +13,7 @@ community_comment_schema = api.model('CommunityComment', {
     'comment': fields.String(required=True, description='Content of the comment'),
     'like_count': fields.Integer(required=False, description='Number of like on this comment', readonly=True),
     'user_id': fields.Integer(required=True, description='Id of the user who post this comment'),
-    'username': fields.Integer(required=False, description='Username of the user who post this comment', readonly=True),
+    'username': fields.String(required=False, description='Username of the user who post this comment', readonly=True),
     'question_id': fields.Integer(required=True, description='Id of the question concerned by this comment')
 })
 
@@ -26,6 +26,7 @@ class CommunityCommentsRoute(Resource):
         409: 'Conflict, Question not exist / User not exist',
         422: 'Validation Error'
     })
+    @api.marshal_with(community_comment_schema)
     def post(self):
         validator.validate_payload(request.json, community_comment_schema)
         return create_community_comment(data=request.json), 201
