@@ -1,7 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import gen_salt
 
-from .model import User, Document, user_opened_documents, user_validated_documents, user_badges, ScholarQuestion, UserSearch, Evaluation, Badge, Level
+from .model import User, Document, user_opened_documents, user_validated_documents, user_badges, ScholarQuestion, UserSearch, Evaluation, Badge, Level, CommunityQuestion, CommunityComment
 from api.service.level import create_level
 from api.service.badge import create_badge
 
@@ -20,7 +20,9 @@ def db_admin(app, db):
         user_validated_documents.create(bind=engine)
         user_badges.create(bind=engine)
         ScholarQuestion.__table__.create(bind=engine)
-        Evaluation.__table__.create(bind=engine)
+        # Evaluation.__table__.create(bind=engine)
+        CommunityQuestion.__table__.create(bind=engine)
+        CommunityComment.__table__.create(bind=engine)
         db.session.commit()
 
     @app.cli.command()
@@ -59,7 +61,9 @@ def db_admin(app, db):
         User.__table__.drop(bind=engine)
         Document.__table__.drop(bind=engine)
         ScholarQuestion.__table__.drop(bind=engine)
-        Evaluation.__table__.drop(bind=engine)
+        # Evaluation.__table__.drop(bind=engine)
+        CommunityQuestion.__table__.drop(bind=engine)
+        CommunityComment.__table__.drop(bind=engine)
         UserSearch.__table__.drop(bind=engine)
         Badge.__table__.drop(bind=engine)
         Level.__table__.drop(bind=engine)
