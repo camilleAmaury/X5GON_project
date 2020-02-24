@@ -44,7 +44,8 @@ def create_community_question(data):
         #Create user
         question = CommunityQuestion(
             question=data.get('question'),
-            user_id=data.get('user_id')
+            user_id=data.get('user_id'),
+            question_title=data.get('question_title')
         )
         db.session.add(question)
         db.session.flush()
