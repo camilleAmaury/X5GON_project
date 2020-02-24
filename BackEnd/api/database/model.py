@@ -6,12 +6,12 @@ from api.database import db
 #Many to many link
 user_opened_documents = db.Table('user_opened_documents',
     db.Column('user_id', db.Integer, db.ForeignKey('users.user_id')),
-    db.Column('graph_ref', db.Integer, db.ForeignKey('documents.graph_ref'))
+    db.Column('graph_ref', db.String(100), db.ForeignKey('documents.graph_ref'))
 )
 
 user_validated_documents = db.Table('user_validated_documents',
     db.Column('user_id', db.Integer, db.ForeignKey('users.user_id')),
-    db.Column('graph_ref', db.Integer, db.ForeignKey('documents.graph_ref'))
+    db.Column('graph_ref', db.String(100), db.ForeignKey('documents.graph_ref'))
 )
 
 user_badges = db.Table('user_badges',

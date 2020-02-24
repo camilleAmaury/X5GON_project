@@ -164,7 +164,7 @@ class AskQuestion(Resource):
             #print(doc.ents)
             #allEntities = ["<http://dbpedia.org/resource/"+X.text.replace(" ", "_").title()+">" for X in doc.ents]
 
-            res = requests.get("http://api.dbpedia-spotlight.org/en/annotate?text="+question.lower()+"&confidence=0.5&support=50", headers = {'Accept': 'application/json'}).json()
+            res = requests.get("http://api.dbpedia-spotlight.org/en/annotate?text="+question+"&confidence=0.5&support=50", headers = {'Accept': 'application/json'}).json()
             resFormat = {}
             print(res)
             if('Resources' in list(res.keys())):

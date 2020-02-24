@@ -367,9 +367,11 @@ def get_all_user_questions(user_id):
 
     arr_scholar_questions = []
     scholar_questions = user.get_scholar_questions().reverse()
-    for scholar_question in scholar_questions:
-        mod = build_scholar_question_schema(scholar_question)
-        arr_scholar_questions.append(mod)
+    if(scholar_questions != None):
+        for scholar_question in scholar_questions:
+            mod = build_scholar_question_schema(scholar_question)
+            arr_scholar_questions.append(mod)
+    
     return arr_scholar_questions
 
 def get_user_question(user_id, question_id):
