@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 
 import './Community.css';
 
-// import axios from "axios";
+import axios from "axios";
 
 export default class Community extends Component {
     constructor(props) {
@@ -10,11 +10,24 @@ export default class Community extends Component {
         this.state = {
             questions: [],
             panelOpened: [true, false],
-            isAnimating: false
+            isAnimating: false,
+            server: "",
+            config: {}
         };
     }
 
     componentDidMount = () => {
+        let server = (process.env.REACT_APP_DEV === "1" ? process.env.REACT_APP_SERVER_DEV : process.env.REACT_APP_SERVER);
+        let server2 = process.env.REACT_APP_SERVER2;
+        let config = {
+            headers: {
+                "Content-Type": "application/json",
+                'Access-Control-Allow-Origin': '*',
+            }
+        }
+        this.setState({ server: server, config: config, server2: server2 }, () => {
+            this._loadQuestions();
+        });
         let questions = [
             {
                 question: "How to toncler some mother ?", questionContent: `dddddddddddddddddddddd ddddddddddddddddddddd dddddddddddddddddddd ddddddddddddddddddddddddd
@@ -34,6 +47,16 @@ export default class Community extends Component {
         if(this.props.isMounted){
             this.setState({ questions: questions });
         }
+    }
+
+    _loadQuestions = () => {
+        axios.get(`${this.state.server}community_questions?get_comment=true`, this.state.config)
+            .then(request => {
+                console.log(request.data);
+            })
+            .catch(error => {
+                //
+            });
     }
 
     preparePositions = () => {
@@ -183,7 +206,7 @@ export default class Community extends Component {
                             height: styles.panel.height,
                             width: styles.panel.width,
                             left: styles.panel.left,
-                            top: styles.panel.top,
+                            top: styles.panel.top
                         }
                     }>
                         <div className={"sub-panel"} id={"community-questions"} style={

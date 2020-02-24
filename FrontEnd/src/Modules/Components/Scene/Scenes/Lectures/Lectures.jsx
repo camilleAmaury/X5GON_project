@@ -217,8 +217,8 @@ export default class Lectures extends Component {
             btn1.removeEventListener('click', this.changeScene);
             btn2.removeEventListener('click', this.changeScene);
         }
-        upper_scroll.removeEventListener('click', () => documents[nb].isScrolled ? this.changeScene : () => {});
-        lower_scroll.removeEventListener('click', () => documents[nb].isScrolled ? this.changeScene : () => {});
+        upper_scroll.removeEventListener('click',  documents[nb].isScrolled ? this.changeScene : () => {});
+        lower_scroll.removeEventListener('click', documents[nb].isScrolled ? this.changeScene : () => {});
         lower_scroll.style.transition = "1.5s top";
         lower_texture.style.transition = "1.5s background-position-y";
         documentContainer.style.transition = "1.5s height";
@@ -242,8 +242,8 @@ export default class Lectures extends Component {
                     document.getElementById("lectures").scrollTo(0, document.getElementsByClassName("lectures-document")[nb].offsetTop);
                     // transition out 
                     if (documents[nb].isScrolled) {
-                        btn1.addEventListener('click', () => documents[nb].isScrolled ? this.changeScene : () => {});
-                        btn2.addEventListener('click', () => documents[nb].isScrolled ? this.changeScene : () => {});
+                        btn1.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => {});
+                        btn2.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => {});
                     }
                     upper_scroll.addEventListener('click', this.scrollDocument);
                     lower_scroll.addEventListener('click', this.scrollDocument);
@@ -298,7 +298,7 @@ export default class Lectures extends Component {
         }
     }
 
-    changeScene = event => {
+    changeScene = (event) => {
         let documents = this.state.documents;
         let nb = parseInt(event.currentTarget.dataset.key);
         documents[nb].isOpened = !documents[nb].isOpened;
@@ -315,8 +315,8 @@ export default class Lectures extends Component {
         let btn2 = document.getElementsByClassName("changeButton-two")[nb];
         // transition
         if (documents[nb].isScrolled) {
-            btn1.removeEventListener('click', () => documents[nb].isScrolled ? this.changeScene : () => {});
-            btn2.removeEventListener('click', () => documents[nb].isScrolled ? this.changeScene : () => {});
+            btn1.removeEventListener('click', documents[nb].isScrolled ? this.changeScene : () => {});
+            btn2.removeEventListener('click', documents[nb].isScrolled ? this.changeScene : () => {});
         }
         upper_scroll.removeEventListener('click', this.scrollDocument);
         lower_scroll.removeEventListener('click', this.scrollDocument);
@@ -337,8 +337,8 @@ export default class Lectures extends Component {
                     document.getElementById("lectures").scrollTo(0, document.getElementsByClassName("lectures-document")[nb].offsetTop);
                     // transition out 
                     if (documents[nb].isScrolled) {
-                        btn1.addEventListener('click', () => documents[nb].isScrolled ? this.changeScene : () => {});
-                        btn2.addEventListener('click', () => documents[nb].isScrolled ? this.changeScene : () => {});
+                        btn1.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => {});
+                        btn2.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => {});
                     }
                     upper_scroll.addEventListener('click', this.scrollDocument);
                     lower_scroll.addEventListener('click', this.scrollDocument);
@@ -514,7 +514,7 @@ export default class Lectures extends Component {
                     comprehension_rating:doc[i].ratingUnderstanding,
                     quality_rating:doc[i].ratingQuality
                 }
-                axios.post(`${this.state.server}evaluations`, obj, this.state.config)
+                axios.post(`${this.state.server}evaluations/`, obj, this.state.config)
                     .then(request => {
                         if (request.status === 201) {
                             // hide validate state
