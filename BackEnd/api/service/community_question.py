@@ -21,7 +21,6 @@ def get_all_community_questions(get_comments):
         mod = build_question_schema(question)
         if get_comments :
             list = get_all_question_comments(question.question_id)
-            print(list)
             mod['comments'] = list
         user = User.query.get(question.user_id)
         if user :

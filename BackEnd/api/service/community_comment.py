@@ -3,6 +3,7 @@ from sqlalchemy import exc
 
 from api.database import db
 from api.database.model import User, CommunityQuestion, CommunityComment, UserLike
+from .like import build_like_schema
 
 def build_comment_schema(comment):
     mod = {}
@@ -57,7 +58,7 @@ def create_community_comment(data):
 # Likes ******************************************************************************************************
 
 
-def modify_comment_likes(comment_id, data):
+def modify_comment_likes(data):
     user = User.query.get(data.get('user_id'))
     if not user:
         abort(make_response(jsonify({
@@ -66,7 +67,7 @@ def modify_comment_likes(comment_id, data):
             },
             "message":"User not exist"
         }), 409))
-    comment = CommunityComment.query.get(comment_id)
+    comment = CommunityComment.query.get(data.get('comment_id'))
     if not comment:
         abort(make_response(jsonify({
             "errors":{
@@ -74,22 +75,28 @@ def modify_comment_likes(comment_id, data):
             },
             "message":"Comment not exist"
         }), 409))
-    like = UserLike.query.filter_by(user_id=date.get('user_id'), comment_id=comment_id).first()
+    like = UserLike.query.filter_by(user_id=data.get('user_id'), comment_id=data.get('comment_id')).first()
     if like :
         if like.like_value == data.get('like_value') :
             if like.like_value == 1 :
+                print('a')
                 comment.addLike(-1)
             elif like.like_value == -1 :
+                print('b')
                 comment.addLike(1)
+            like.like_value = 0
         else:
+            print('c')
             comment.addLike(- like.like_value + data.get('like_value'))
+            like.like_value = data.get('like_value')
     else :
         like = UserLike(
             user_id=data.get('user_id'),
-            comment_id=comment_id,
+            comment_id=data.get('comment_id'),
             like_value=data.get('like_value')
         )
         db.session.add(like)
+        print('d')
         comment.addLike(like.like_value)
     db.session.flush()
     db.session.commit()

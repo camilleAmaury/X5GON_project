@@ -14,7 +14,8 @@ community_comment_schema = api.model('CommunityComment', {
     'like_count': fields.Integer(required=False, description='Number of like on this comment', readonly=True),
     'user_id': fields.Integer(required=True, description='Id of the user who post this comment'),
     'username': fields.String(required=False, description='Username of the user who post this comment', readonly=True),
-    'question_id': fields.Integer(required=True, description='Id of the question concerned by this comment')
+    'question_id': fields.Integer(required=True, description='Id of the question concerned by this comment'),
+    'date': fields.DateTime(required=False, description='Date time of the post of this comment', readonly=True)
 })
 
 @api.route("/")
