@@ -7,6 +7,8 @@ def build_skills_schema(skills_dictionary):
             'skill_name' : key,
             'skill_level' : skills_dictionary.get(key)
         }
+        arr.append(mod)
+
     return arr
 
 def execQuery(sparql, query):
@@ -32,10 +34,9 @@ def getKeywords(listIdDoc):
     print(query)
     
     res = execQuery(sparql, query)['results']['bindings']
-    print(res)
+
     if("key" in list(res[0])):
         for i in range(len(res)):
             resultat[res[i]['key']['value']] = res[i]['val']['value']
 
-    print(resultat)
     return resultat
