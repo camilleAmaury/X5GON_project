@@ -1,3 +1,4 @@
+from SPARQLWrapper import SPARQLWrapper, JSON
 from flask import abort, jsonify, make_response
 
 from api.database.model import Document

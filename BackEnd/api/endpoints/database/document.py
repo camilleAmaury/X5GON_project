@@ -35,12 +35,12 @@ class DocumentEvaluationRoute(Resource):
         422: 'Validation Error'
     })
     def get(self, graph_ref, user_id):
-        return get_evaluation(user_id=user_id, document_ref=graph_ref)
+        return get_evaluation(user_id=user_id, graph_ref=graph_ref)
 
     @api.doc(responses={
         201: 'Evaluation successfully deleted from document',
         409: 'Conflict, user not exist / document not exist / evaluation not exist',
     })
     def delete(self, graph_ref, user_id):
-        remove_evaluation(user_id=user_id, document_ref=graph_ref)
+        remove_evaluation(user_id=user_id, graph_ref=graph_ref)
         return '', 201

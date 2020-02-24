@@ -14,7 +14,7 @@ import time
 import spacy
 import requests
 import bs4
-# import torch
+import torch
 import numpy as np
 import math
 from spacy import displacy
@@ -22,8 +22,8 @@ from collections import Counter
 import shlex
 import subprocess
 import copy
-# from . import stop_words, question_answering_tokenizer, question_answering_model, nlp
-# from .fastTextVectors import vectors
+from . import stop_words, question_answering_tokenizer, question_answering_model, nlp
+from .fastTextVectors import vectors
 
 api = Namespace('askquestion', description='Ask a question to a ML Model')
 
@@ -301,24 +301,24 @@ class AskQuestion(Resource):
             #print(question_answering_tokenizer.decode(indexed_tokens[0:len(indexed_tokens)-1]))
             return(question_answering_tokenizer.decode(indexed_tokens[torch.argmax(start_logits):torch.argmax(end_logits)+1]))
             '''
-            
-            
-            fileContent = "{\"version\": \"v2.0\",\"data\": [{\"title\": \"your_title\",\"paragraphs\": [{\"qas\": [{\"question\": \"<question>\",\"id\": \"0\",\"is_impossible\": \"\"}],\"context\": \"<content>\"}]}]}"	
-            fileContent = fileContent.replace("<question>", question, 1)	
-            fileContent = fileContent.replace("<content>", corpusPertinent.replace("\"", ""), 1)	
-            myfile = "endpoints/data/input_file.json"	
-            #print(fileContent)	
-            with open(myfile, "wb+") as f:	
-                data = f.read()	
-                f.seek(0)	
-                f.write(fileContent.encode('utf-8'))	
-                f.truncate()	
+
+
+            fileContent = "{\"version\": \"v2.0\",\"data\": [{\"title\": \"your_title\",\"paragraphs\": [{\"qas\": [{\"question\": \"<question>\",\"id\": \"0\",\"is_impossible\": \"\"}],\"context\": \"<content>\"}]}]}"
+            fileContent = fileContent.replace("<question>", question, 1)
+            fileContent = fileContent.replace("<content>", corpusPertinent.replace("\"", ""), 1)
+            myfile = "endpoints/data/input_file.json"
+            #print(fileContent)
+            with open(myfile, "wb+") as f:
+                data = f.read()
+                f.seek(0)
+                f.write(fileContent.encode('utf-8'))
+                f.truncate()
             res = ""
             start = time.time()
-            command = shlex.split("python3 endpoints/bert/run_squad.py --vocab_file="+os.path.abspath("endpoints/wwm_uncased_L-24_H-1024_A-16/vocab.txt")+" --bert_config_file="+os.path.abspath("endpoints/wwm_uncased_L-24_H-1024_A-16/bert_config.json")+" --init_checkpoint="+os.path.abspath("endpoints/data/model.ckpt-10859")+" --do_train=False --max_query_length=30 --do_predict=True --predict_file="+os.path.abspath("endpoints/data/input_file.json")+" --predict_batch_size=8 --n_best_size=3 --max_seq_length=384 --doc_stride=128 --output_dir="+os.path.abspath('endpoints/data/output/'))	
+            command = shlex.split("python3 endpoints/bert/run_squad.py --vocab_file="+os.path.abspath("endpoints/wwm_uncased_L-24_H-1024_A-16/vocab.txt")+" --bert_config_file="+os.path.abspath("endpoints/wwm_uncased_L-24_H-1024_A-16/bert_config.json")+" --init_checkpoint="+os.path.abspath("endpoints/data/model.ckpt-10859")+" --do_train=False --max_query_length=30 --do_predict=True --predict_file="+os.path.abspath("endpoints/data/input_file.json")+" --predict_batch_size=8 --n_best_size=3 --max_seq_length=384 --doc_stride=128 --output_dir="+os.path.abspath('endpoints/data/output/'))
             process = subprocess.Popen(command, stdout = subprocess.PIPE)
             process.wait()
-            res = ""	
+            res = ""
             with open("endpoints/data/output/predictions.json", 'r+') as fin:
                 res = fin.read()
             end = time.time()
