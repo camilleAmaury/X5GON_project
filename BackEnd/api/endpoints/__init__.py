@@ -23,6 +23,7 @@ from .database.doc_see_by_user import api as doc_see_by_user_api
 from .database.community_question import api as community_question_api
 from .database.community_comment import api as community_comment_api
 from .database.like import api as comment_like_api
+from .database.remove_my_data import api as remove_my_data_api
 
 api = Api(
     title='X5GON API',
@@ -50,4 +51,8 @@ api.add_namespace(user_search_api)
 api.add_namespace(doc_see_by_user_api)
 api.add_namespace(community_question_api)
 api.add_namespace(community_comment_api)
+<<<<<<< HEAD
 api.add_namespace(comment_like_api)
+=======
+api.add_namespace(remove_my_data_api)
+>>>>>>> origin/master

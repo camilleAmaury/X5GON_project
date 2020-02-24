@@ -33,11 +33,7 @@ export default class Profile extends Component {
                 badge5:[194,299]
             },
             badges:[],
-            skills:{labels:["None", "Politics", "Blowjob", "Computer science"], datasets:[{
-                data:[0,2,8,5], 
-                label:"Your Skills",
-                backgroundColor:"rgba(180,49,32,0.5)"
-            }]},
+            skills:{},
             keywords:[],
             server: "",
             badgesTexture:[badge1, badge2, badge3, badge4, badge5],
@@ -58,6 +54,7 @@ export default class Profile extends Component {
                 this._loadExperience();
                 this._loadKeywords();
                 this._loadBadges();
+                this._loadRadar();
                 if(this.props.isMounted){
                     
                 }
@@ -69,6 +66,32 @@ export default class Profile extends Component {
         axios.get(`${this.state.server}users/${JSON.parse(localStorage.getItem("isConnected")).id}/searches`, this.state.config)
         .then(request => {
             this.setState({keywords: request.data});
+        })
+        .catch(error => {
+            // error
+        });
+    }
+
+    _loadRadar = () => {
+        axios.get(`${this.state.server}users/${JSON.parse(localStorage.getItem("isConnected")).id}/skills`, this.state.config)
+        .then(request => {
+            let res = request.data;
+            let skills = {
+                labels:[], datasets:[
+                    {
+                        data:[], 
+                        label:"Your Skills",
+                        backgroundColor:"rgba(180,49,32,0.5)"
+                    }
+                ]
+            };
+            console.log(skills)
+            for(let i = 0; i < res.length; i++){
+                skills.labels.push(res[i].skill_name);
+                skills.datasets[0].data.push(res[i].skill_level);
+            }
+            console.log(skills)
+            this.setState({skills: skills});
         })
         .catch(error => {
             // error
@@ -333,7 +356,7 @@ export default class Profile extends Component {
                             height: styles.experience.height,
                         }
                     }>
-                        <div className={"progress-circle"} style={
+                    <div className={"progress-circle"} style={
                             {
                                 left: styles.progressCircle.left,
                                 top: styles.progressCircle.top,

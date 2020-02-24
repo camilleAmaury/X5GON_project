@@ -142,7 +142,7 @@ class Document(db.Model):
     __tablename__ = 'documents'
 
     graph_ref = db.Column(db.String(100), primary_key=True)
-    document_title = db.Column(db.String(100))
+    document_title = db.Column(db.String(1000))
     user_evaluations = db.relationship('Evaluation', backref='documents', lazy=True)
 
     def __init__(self, graph_ref):
