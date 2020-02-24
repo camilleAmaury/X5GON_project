@@ -124,7 +124,7 @@ export default function DocumentContainer(item, i, styles, scrollEv, leftsideScr
 
             <Popover id={"title-hover-" + i} zIndex={15} pointerEvents={false}
                 target={{ height: styles.upper.height, width: styles.upper.width, top: styles.upper.top2[i], left: styles.upper.left }}
-                ratio={1 / 2} side={"top"} size={{ width: 350, height: 100 }}
+                ratio={1 / 2} side={"top"} size={{ width: 450, height: 100 }}
                 isOpen={item.isTitleHover && isOpen} title={"Click to scroll"}>
                 <div className={"title-hover"}>
                     <span>{item.title}</span>

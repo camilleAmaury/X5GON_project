@@ -41,7 +41,7 @@ export default class SwitchingForm extends Component {
     }
 
     handleSubmitSignUp = (obj) => {
-        axios.post(`${this.state.server}users`, obj, this.state.config)
+        axios.post(`${this.state.server}users/`, obj, this.state.config)
         .then(request => {
             if(request.status === 201){
                 let obj = JSON.stringify({id:request.data.user_id});
@@ -56,14 +56,13 @@ export default class SwitchingForm extends Component {
             }
         })
         .catch(error => {
-            console.log(error.response)
-            if(error.response.status === 409){
+            if(error.status === 409){
                 this.setState({
                     errorSignIn:"Username already existing"
                 });
-            }else if(error.response.status === 422){
+            }else if(error.status === 422){
                 this.setState({
-                    errorSignIn:error.response.data
+                    errorSignIn:error.data
                 });
             }else{
                 this.setState({
@@ -89,15 +88,15 @@ export default class SwitchingForm extends Component {
             }
         })
         .catch(error => {
-            if(error.response.status === 409){
+            if(error.status === 409){
                 this.setState({
                     errorLogIn:"Username not found"
                 });
-            }else if(error.response.status === 403){
+            }else if(error.status === 403){
                 this.setState({
                     errorLogIn:"Wrong password"
                 });
-            }else if(error.response.status === 422){
+            }else if(error.status === 422){
                 this.setState({
                     errorLogIn:"Input not specified"
                 });

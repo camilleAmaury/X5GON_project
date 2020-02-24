@@ -43,8 +43,7 @@ export default class SwitchingForm extends Component {
             if(phone !== "" && phone !== undefined) obj.phone = phone;
             if(identifier !== "" && identifier !== undefined) obj.username = identifier;
             if(email !== "" && email !== undefined) obj.email = email;
-            if(pwd !== "" && pwd !== undefined) obj.pwd = sha256(pwd); 
-            console.log(obj)
+            if(pwd !== "" && pwd !== undefined) obj.pwd = sha256(pwd);
         }else{
             let identifier = document.getElementById('identifier-field-log').value;
             let pwd = document.getElementById('password-field-log').value;
