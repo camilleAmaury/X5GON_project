@@ -43,7 +43,7 @@ def create_community_comment(data):
         db.session.add(comment)
         db.session.flush()
         db.session.commit()
-        return ''
+        return build_comment_schema(comment)
     except exc.DBAPIError as e:
         current_app.logger.error('Fail on create user %s' % str(e) )
         db.session().rollback()
