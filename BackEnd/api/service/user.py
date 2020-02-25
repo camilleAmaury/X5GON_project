@@ -139,7 +139,7 @@ def check_user_auth(username, pwd):
         }), 403))
     return generate_auth_token(user)
 
-def get_user_image(user_id):
+def set_user_image(user_id, user_image):
     user = User.query.get(user_id)
     if not user:
         abort(make_response(jsonify({
@@ -148,18 +148,7 @@ def get_user_image(user_id):
             },
             "message":"User not found"
         }), 409))
-    return user.user_image
-
-def set_user_image(user_id, image):
-    user = User.query.get(user_id)
-    if not user:
-        abort(make_response(jsonify({
-            "errors":{
-                0:"User not found"
-            },
-            "message":"User not found"
-        }), 409))
-    user.set_image(image)
+    user.user_image = user_image
     db.session.commit()
     return ''
 

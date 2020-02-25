@@ -74,6 +74,18 @@ def delete_badge(badge_id):
     db.session.commit()
     return True
 
+def set_badge_image(badge_id, badge_image):
+    badge = Badge.query.get(badge_id)
+    if not badge:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"Badge not found"
+            },
+            "message":"Badge not found"
+        }), 409))
+    badge.badge_image = badge_image
+    db.session.commit()
+    return ''
 
 # Badge Condition Verification ******************************************************************************************
 

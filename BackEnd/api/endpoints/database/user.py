@@ -2,7 +2,7 @@ from flask import request, send_file
 from flask_restplus import Namespace, Resource, fields
 
 from api.utils import validator
-from api.service.user import get_user, get_all_users, create_user, update_user, delete_user, get_all_opened_documents, add_opened_document, get_opened_document, remove_opened_document, get_all_user_questions, add_user_question, get_user_question, remove_user_question, get_all_user_evaluations, get_all_user_badges, get_user_badge, add_user_badge, remove_user_badge, get_user_experience, add_user_experience, remove_user_experience, get_all_user_searches, add_user_search, get_user_search, remove_user_search, get_all_validated_documents, add_validated_document, get_validated_document, remove_validated_document, get_all_user_skills
+from api.service.user import get_user, get_all_users, create_user, update_user, delete_user, set_user_image, get_all_opened_documents, add_opened_document, get_opened_document, remove_opened_document, get_all_user_questions, add_user_question, get_user_question, remove_user_question, get_all_user_evaluations, get_all_user_badges, get_user_badge, add_user_badge, remove_user_badge, get_user_experience, add_user_experience, remove_user_experience, get_all_user_searches, add_user_search, get_user_search, remove_user_search, get_all_validated_documents, add_validated_document, get_validated_document, remove_validated_document, get_all_user_skills
 from api.service.evaluation import get_evaluation, remove_evaluation
 from .document import document_schema
 from .scholar_question import scholar_question_schema
@@ -25,6 +25,11 @@ user_schema = api.model('User', {
     'email': fields.String(required=True, description='User email'),
     'year': fields.Integer(required=True, description='Number of years from the end of high school'),
     'user_image': fields.String(required=False, decription='File path of the user_image')
+})
+
+user_image_schema = api.model('User_image', {
+    'user_id': fields.Integer(required=False, description='ID of the user', readonly=True),
+    'user_image': fields.String(required=True, decription='File path of the user_image')
 })
 
 @api.route("/")
@@ -79,20 +84,13 @@ class UserRoute(Resource):
 @api.route("/<int:user_id>/image")
 class UserImageRoute(Resource):
 
-    @api.doc(responses={
-        200: 'User image',
-        409: 'User not found'
-    })
-    def get(self, user_id):
-        return send_file(get_user_image(user_id))
-
+    @api.expect(user_image_schema, envelope='json')
     @api.doc(responses={
         201: 'User image successfully added',
         409: 'User not found'
     })
-    def post(self, user_id):
-        image = request.files['user_image']
-        return set_user_image(user_id, image), 201
+    def put(self, user_id):
+        return set_user_image(user_id, request.json.get('user_image')), 201
 
 
 # User Opened Documents *******************************************************************************************************************************
