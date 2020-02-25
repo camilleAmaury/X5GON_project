@@ -44,7 +44,7 @@ export default class SwitchingForm extends Component {
         axios.post(`${this.state.server}users/`, obj, this.state.config)
         .then(request => {
             if(request.status === 201){
-                let obj = JSON.stringify({id:request.data.user_id});
+                let obj = JSON.stringify({id:request.data.user_id, username:request.data.username});
                 localStorage.setItem("isConnected", obj);
                 this.setState({
                     errorSignIn:""
