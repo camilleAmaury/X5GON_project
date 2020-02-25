@@ -14,7 +14,16 @@ import badge3 from '../../../../../assets/Panel/Scene/Profile/badgeEager.png';
 import badge4 from '../../../../../assets/Panel/Scene/Profile/badgeMaster.png';
 import badge5 from '../../../../../assets/Panel/Scene/Profile/badgeArchitect.png';
 
-
+import im1 from '../../../../../assets/Img/_1.png';
+import im2 from '../../../../../assets/Img/_2.png';
+import im3 from '../../../../../assets/Img/_3.png';
+import im4 from '../../../../../assets/Img/_4.png';
+import im5 from '../../../../../assets/Img/_5.png';
+import im6 from '../../../../../assets/Img/_6.png';
+import im7 from '../../../../../assets/Img/_7.png';
+import im8 from '../../../../../assets/Img/_8.png';
+import im9 from '../../../../../assets/Img/_9.png';
+import im10 from '../../../../../assets/Img/_10.png';
 
 export default class Profile extends Component {
     constructor(props) {
@@ -40,7 +49,7 @@ export default class Profile extends Component {
             server: "",
             badgesTexture: [badge1, badge2, badge3, badge4, badge5],
             config: {},
-            images:[]
+            images:[im1,im2,im3,im4,im5,im6,im7,im8,im9,im10]
         };
     }
 
@@ -401,7 +410,7 @@ export default class Profile extends Component {
                                 {
                                     width: styles.centerCircle.width,
                                     height: styles.centerCircle.height,
-                                    backgroundImage: `url('${this.state.imageUpload}')`,
+                                    backgroundImage: `url('${this.state.images[JSON.parse(localStorage.getItem("isConnected")).image]}')`,
                                     backgroundSize: "cover"
                                 }
                             }></div>
