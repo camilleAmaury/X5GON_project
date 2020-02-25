@@ -34,23 +34,25 @@ def motivate(translations):
             resToList = list(res)
             if(len(resToList) < MAX_MOTIVATION_MESSAGE_PER_DAY):
                 resTrace = con.execute("SELECT * FROM trace_navigation_users WHERE user_id = {}".format(user_id))
-                df = pd.DataFrame(resTrace.fetchall())
-                df.columns = resTrace.keys()
-                t = [i for i in range(24)]
-                for index, row in df.iterrows():
-                  t_add = datetime.strptime(row["timestamp"].split('.')[0], '%Y-%m-%d %H:%M:%S')
-                  t[t_add.hour] += 1
-                t = softmax(np.array(t), theta=0.1)
-                t = np.array([t])
-                bestHours = list((-t).argsort()[0])[:MAX_MOTIVATION_MESSAGE_PER_DAY-len(resToList)]
-                print(bestHours)
-                for hour in bestHours:
-                    if(hour < 10):
-                        hour = "0"+str(hour)
-                    motivation_messages = translations[lang]['motivation_message']
-                    data = {'message' : motivation_messages[random.randint(0, len(motivation_messages)-1)].replace('<username>', username), 'phone' : phone, 'time' : datetime.now().strftime('%Y-%m-%d '+str(hour)+':00:00'), 'user_id' : user_id}
-                    statement = text("""INSERT INTO notifications_sms_hours(message, phone, time, user_id, type) VALUES(:message, :phone, :time, :user_id, 1)""")
-                    con.execute(statement, **data)
+                df = pd.DataFrame(resTrace.fetchall(), columns=resTrace.keys())
+                #print(resTrace.keys())
+                if(True):
+                    t = [i for i in range(24)]
+                    for index, row in df.iterrows():
+                      t_add = datetime.strptime(row["timestamp"].split('.')[0], '%Y-%m-%d %H:%M:%S')
+                      t[t_add.hour] += 1
+                    t = softmax(np.array(t), theta=0.1)
+                    t = np.array([t])
+                    bestHours = list((-t).argsort()[0])[:MAX_MOTIVATION_MESSAGE_PER_DAY-len(resToList)]
+                    print(bestHours)
+                    for hour in bestHours:
+                        if(hour >= datetime.now().hour):
+                            if(hour < 10):
+                                hour = "0"+str(hour)
+                            motivation_messages = translations[lang]['motivation_message']
+                            data = {'message' : motivation_messages[random.randint(0, len(motivation_messages)-1)].replace('<username>', username), 'phone' : phone, 'time' : datetime.now().strftime('%Y-%m-%d '+str(hour)+':00:00'), 'user_id' : user_id}
+                            statement = text("""INSERT INTO notifications_sms_hours(message, phone, time, user_id, type, send) VALUES(:message, :phone, :time, :user_id, 1, 0)""")
+                            con.execute(statement, **data)
             
 def softmax(X, theta = 1.0, axis = None):
     """

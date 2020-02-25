@@ -2,3 +2,4 @@ register_message::Hi <username> ! I'm Gako and I will be your personal coach. If
 motivation_message::How are you <username> ? 
 motivation_message::Don't forget that "It seems impossible until it’s done." Nelson Mandela
 motivation_message::I noticed that you were often connected at this time. I am at your disposal to help you in your learning. See you on the site! :)
+motivation_message::Oops je crois que l'api bug, des bisous
