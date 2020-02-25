@@ -111,7 +111,7 @@ def modify_comment_likes(data):
     db.session.flush()
     db.session.commit()
     badge_possession_verification(like.user_id, 'Path of mastership', {
-        'question_id': question.question_id,
+        'question_id': comment.question_id,
         'comment_id': like.comment_id
     })
     return build_like_schema(like)
