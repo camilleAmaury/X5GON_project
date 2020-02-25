@@ -29,6 +29,10 @@ export default class Community extends Component {
         this.setState({ server: server, config: config, server2: server2 }, () => {
             this._loadQuestions();
         });
+
+        this.setState({ server: server, config: config, server2: server2 }, () => {
+            this._loadMyQuestions();
+        });
     }
 
     _loadQuestions = () => {
@@ -359,7 +363,7 @@ export default class Community extends Component {
                                 top: styles.subpanel.top,
                             }
                         }>
-                            {this.state.questions.map((item, i) =>
+                            {this.state.myQuestions.map((item, i) =>
                                 <Fragment key={i}>
                                     <div className={"question"}>
                                         <div className={"title"}><span>{item.question}</span></div>
