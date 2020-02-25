@@ -221,7 +221,9 @@ export default class Community extends Component {
                                 <Fragment key={i}>
                                     <div className={"question"}>
                                         <div className={"title"}><span>{item.question}</span></div>
-                                        <div className={"bar"}></div>
+                                        <div className={"bar"}>
+                                            <div className={"hor"}></div>
+                                        </div>
                                         <div className={"question-title"}><span>{item.questionContent}</span></div>
                                         <div className={"deploy"} onClick={() => this.openComment(i)}><span>{item.isClicked? "unsee comments": "see comments"} ({item.comments.length})</span></div>
                                         <div className={"user-information"}>
