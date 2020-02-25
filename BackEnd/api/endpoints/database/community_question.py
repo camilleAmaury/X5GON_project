@@ -15,6 +15,7 @@ community_question_schema = api.model('CommunityQuestion', {
     'question': fields.String(required=True, description='Question content'),
     'user_id': fields.Integer(required=True, description='Id of the user who ask this question'),
     'username': fields.String(required=False, description='Username of the user who ask this question', readonly=True),
+    'user_name': fields.Integer(required=False, description='User image id of the user who ask this question', readonly=True),
     'date': fields.String(required=False, description='String who represent the datetime of the post of this question', readonly=True),
     'comments': fields.List(fields.Nested(community_comment_schema), readonly=True)
 })
@@ -36,7 +37,7 @@ class CommunityQuestionsRoute(Resource):
         }
     )
     def get(self):
-        
+
         return get_all_community_questions(
             get_comments=bool(request.args.get('get_comment', False)),
             check_comment_like=int(request.args.get('check_comment_like', 0)),
@@ -44,7 +45,7 @@ class CommunityQuestionsRoute(Resource):
             page_size=int(request.args.get('page_size', 0)),
             user_id = int(request.args.get('user_id', 0))
         )
-        
+
 
     @api.expect(community_question_schema, envelope='json')
     @api.doc(responses={
