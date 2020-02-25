@@ -51,8 +51,5 @@ api.add_namespace(user_search_api)
 api.add_namespace(doc_see_by_user_api)
 api.add_namespace(community_question_api)
 api.add_namespace(community_comment_api)
-<<<<<<< HEAD
 api.add_namespace(comment_like_api)
-=======
 api.add_namespace(remove_my_data_api)
->>>>>>> origin/master
