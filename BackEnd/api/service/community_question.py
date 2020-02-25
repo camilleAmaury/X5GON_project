@@ -2,7 +2,7 @@ from flask import current_app, abort, jsonify, make_response
 from sqlalchemy import exc
 
 from api.database import db
-from api.database.model import User, CommunityQuestion, CommunityComment
+from api.database.model import User, CommunityQuestion, CommunityComment, UserLike
 from .community_comment import build_comment_schema
 
 def build_question_schema(question):
@@ -14,13 +14,13 @@ def build_question_schema(question):
     mod['date'] = question.date
     return mod
 
-def get_all_community_questions(get_comments):
+def get_all_community_questions(get_comments, check_comment_like):
     questions = CommunityQuestion.query.order_by(CommunityQuestion.date.desc()).all()
     arr_questions = []
     for question in questions :
         mod = build_question_schema(question)
         if get_comments :
-            list = get_all_question_comments(question.question_id)
+            list = get_all_question_comments(question.question_id, check_comment_like)
             mod['comments'] = list
         user = User.query.get(question.user_id)
         if user :
@@ -64,7 +64,7 @@ def create_community_question(data):
 # Question Comment *******************************************************************************************************************************
 
 
-def get_all_question_comments(question_id) :
+def get_all_question_comments(question_id, check_comment_like) :
     question = CommunityQuestion.query.get(question_id)
     if not question :
         abort(make_response(jsonify({
@@ -80,5 +80,11 @@ def get_all_question_comments(question_id) :
         user = User.query.get(comment.user_id)
         if user :
             mod["username"] = user.username
+        if check_comment_like :
+            like = UserLike.query.filter_by(user_id=check_comment_like, comment_id=comment.comment_id).first()
+            if like :
+                mod["user_like_status"] = like.like_value
+            else :
+                mod["user_like_status"] = 0
         arr_comments.append(mod)
     return arr_comments
