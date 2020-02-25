@@ -7,6 +7,7 @@ import Lectures from './Scenes/Lectures/Lectures';
 import Community from './Scenes/Community/Community';
 
 import './Scene.css';
+import Confidentiality from './Scenes/Confidentiality';
 
 export default class Scene extends Component {
     constructor(props) {
@@ -55,7 +56,7 @@ export default class Scene extends Component {
                 {this.props.sceneOpened[2] ? <Community isOpen={this.props.sceneOpened[2]} scene={styles.scene} ratio={this.props.ratio} isMounted={this.props.isMounted}></Community> : "" }
                 {this.props.sceneOpened[3] ? <Scholar isOpen={this.props.sceneOpened[3]} scene={styles.scene} ratio={this.props.ratio} isMounted={this.props.isMounted}></Scholar> : ""}
                 {this.props.sceneOpened[4] ? <Lectures isOpen={this.props.sceneOpened[4]} scene={styles.scene} ratio={this.props.ratio} isMounted={this.props.isMounted}></Lectures> : ""}
-
+                {this.props.sceneOpened[5] ? <Confidentiality isOpen={this.props.sceneOpened[5]} scene={styles.scene} ratio={this.props.ratio} isMounted={this.props.isMounted}></Confidentiality> : ""}
             </div>
         );
     }

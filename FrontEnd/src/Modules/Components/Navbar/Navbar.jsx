@@ -31,7 +31,9 @@ export default class Navbar extends Component {
             { text: "Knowledge", icon: Icon2, IconHover: Icon2Hover, hover:"Looking for more knowledge ?"  }, 
             { text: "Community", icon: Icon3, IconHover: Icon3Hover, hover:"Retrieve all your answers and questions"  }, 
             { text: "Scholar", icon: Icon4, IconHover: Icon4Hover, hover:"Ask the scholar something you don't know"  }, 
-            { text: "Lectures", icon: Icon5, IconHover: Icon5Hover, hover:"Retrieve Your document and improve yourself"  }];
+            { text: "Lectures", icon: Icon5, IconHover: Icon5Hover, hover:"Retrieve Your document and improve yourself"  },
+            { text: "Confidentiality", icon: Icon5, IconHover: Icon5Hover, hover:"All about our CGU, your data and the system"  },
+            { text: "LogOut", icon: Icon5, IconHover: Icon5Hover, hover:"LogOut from the plateform"  }];
         this.setState({
             icons: icons
         }, () => {
@@ -49,7 +51,7 @@ export default class Navbar extends Component {
         // information
         obj.info = {
             width: this.props.NavbarBox.width,
-            height: 30 / 100 * this.props.NavbarBox.height
+            height: 20 / 100 * this.props.NavbarBox.height
         };
         // personnal Image
         let imagewidth = Math.floor(this.props.NavbarBox.width * 1 / 2 * this.props.ratio);
@@ -124,6 +126,16 @@ export default class Navbar extends Component {
                 top: Math.floor(obj.icons.height * 5 / 7),
                 left: Math.floor((obj.icons.width - obj.icon.width) / 2)
             }
+            ,
+            {
+                top: Math.floor(obj.icons.height * 6 / 7),
+                left: Math.floor((obj.icons.width - obj.icon.width) / 2)
+            }
+            ,
+            {
+                top: Math.floor(obj.icons.height * 7 / 7),
+                left: Math.floor((obj.icons.width - obj.icon.width) / 2)
+            }
         );
         obj.scroll = {
             width:obj.navbarBg.width
@@ -155,7 +167,19 @@ export default class Navbar extends Component {
                 left: this.state.hoverIcon[4] ? obj.navbarBg.width : 0,
                 zIndex:this.state.hoverIcon[4] ? 3:2
             }
+            ,
+            {
+                top: obj.icon.icons[5].top + obj.icons.top - Math.floor((this.state.scrollBox.height - obj.icon.height) / 2),
+                left: this.state.hoverIcon[5] ? obj.navbarBg.width : 0,
+                zIndex:this.state.hoverIcon[5] ? 3:2
+            },
+            {
+                top: obj.icon.icons[6].top + obj.icons.top - Math.floor((this.state.scrollBox.height - obj.icon.height) / 2),
+                left: this.state.hoverIcon[6] ? obj.navbarBg.width : 0,
+                zIndex:this.state.hoverIcon[6] ? 3:2
+            }
         );
+
         return obj;
     }
 
@@ -207,12 +231,7 @@ export default class Navbar extends Component {
                                 top: styles.imageAccount.top
                             }
                         }></img>
-                        <div id={"username-text"} style={
-                            {
-                                width: styles.usernameAccount.width,
-                                top: styles.usernameAccount.top
-                            }
-                        }>Static Username</div>
+                        
                         <div className={"separation-bar"} style={
                             {
                                 width: styles.sepBar1.width,
