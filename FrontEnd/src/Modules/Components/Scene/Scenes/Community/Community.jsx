@@ -28,25 +28,6 @@ export default class Community extends Component {
         this.setState({ server: server, config: config, server2: server2 }, () => {
             this._loadQuestions();
         });
-        let questions = [
-            {
-                question: "How to toncler some mother ?", questionContent: `dddddddddddddddddddddd ddddddddddddddddddddd dddddddddddddddddddd ddddddddddddddddddddddddd
-            dddddddddddddddddddddd dddddddddddddddddddddd dddddddddddddddddddddd dddddddddddddddddddd dddddddddddddddd d ddddddddddddd
-            dddddddddddddddddddddd ddddddddddddddddddddd dddddddddddddddddddd ddddddddddddddddddddddddd
-            dddddddddddddddddddddd dddddddddddddddddddddd dddddddddddddddddddddd dddddddddddddddddddd dddddddddddddddd d ddddddddddddd
-            dddddddddddddddddddddd ddddddddddddddddddddd dddddddddddddddddddd ddddddddddddddddddddddddd
-            dddddddddddddddddddddd dddddddddddddddddddddd dddddddddddddddddddddd dddddddddddddddddddd dddddddddddddddd d ddddddddddddd
-            dddddddddddddddddddddd ddddddddddddddddddddd dddddddddddddddddddd ddddddddddddddddddddddddd`, author: { username: "tonclure2000", time: '17:20 18/09/2020' },
-                isClicked: false,
-                comments: [
-                    { author: 'jean-eude', time: '17:21 18/09/2020', content: 'easy game, take a jus de fruit and drink like pacific sound the great did in the battle of Hulao Pass', like: 12, isLiked: 0, hoveredArrow: 0 },
-                    { author: 'jean-rage', time: '17:25 18/09/2020', content: 'Don`t escucha this cabron ! Go to miami and don\'t be a virgin !', like: -1, isLiked: 0, hoveredArrow: 0 },
-                ]
-            }
-        ];
-        if(this.props.isMounted){
-            this.setState({ questions: questions });
-        }
     }
 
     _loadQuestions = () => {
@@ -264,7 +245,7 @@ export default class Community extends Component {
                                             <div className={"bar"}>
                                                 <div className={"upArrow"} onMouseEnter={() => this.hoverArrow(i, j, 1)} onMouseLeave={() => this.hoverArrow(i, j, 0)}
                                                     onClick={com.isLiked === 1 ? () => this.unliked(i, j) : () => this.liked(i, j, 1)} style={{
-                                                        borderColor: com.isLiked === 1 ? (com.hoverArrow === 1 ? "black" : "white") : (com.hoverArrow === 1 ? "white" : "black"),
+                                                        borderColor: com.isLiked === 1 ? (com.hoverArrow === 1 ? "#b43120" : "#dd3636") : (com.hoverArrow === 1 ? "#dd3636" : "#b43120"),
                                                         borderStyle: "solid",
                                                         borderWidth: "0px 5px 5px 0px",
                                                         display: "inline-block",
@@ -272,11 +253,11 @@ export default class Community extends Component {
                                                         transform: "rotate(-135deg)"
                                                     }}></div>
                                                 <div className={"likes"} style={{
-                                                    color: com.isLiked === 0 ? "black" : "white"
+                                                    color: com.isLiked === 0 ? "#b43120" : "#dd3636"
                                                 }}>{com.like}</div>
                                                 <div className={"downArrow"} onMouseEnter={() => this.hoverArrow(i, j, -1)} onMouseLeave={() => this.hoverArrow(i, j, 0)}
                                                     onClick={com.isLiked === -1 ? () => this.unliked(i, j) : () => this.liked(i, j, -1)} style={{
-                                                        borderColor: com.isLiked === -1 ? (com.hoverArrow === -1 ? "black" : "white") : (com.hoverArrow === -1 ? "white" : "black"),
+                                                        borderColor: com.isLiked === -1 ? (com.hoverArrow === -1 ? "#b43120" : "#dd3636") : (com.hoverArrow === -1 ? "#dd3636" : "#b43120"),
                                                         borderStyle: "solid",
                                                         borderWidth: "0px 5px 5px 0px",
                                                         display: "inline-block",
