@@ -55,8 +55,8 @@ export default class Scene extends Component {
                 <Knowledge isOpen={this.props.sceneOpened[1]} clickIcon={this.props.clickIcon} scene={styles.scene} ratio={this.props.ratio} setSearch={this.props.setSearch} ref={"knowledge"} isMounted={this.props.isMounted}></Knowledge>
                 {this.props.sceneOpened[2] ? <Community isOpen={this.props.sceneOpened[2]} scene={styles.scene} ratio={this.props.ratio} isMounted={this.props.isMounted}></Community> : "" }
                 {this.props.sceneOpened[3] ? <Scholar isOpen={this.props.sceneOpened[3]} scene={styles.scene} ratio={this.props.ratio} isMounted={this.props.isMounted}></Scholar> : ""}
-                {this.props.sceneOpened[4] ? <Lectures isOpen={this.props.sceneOpened[4]} scene={styles.scene} ratio={this.props.ratio} isMounted={this.props.isMounted}></Lectures> : ""}
-                {this.props.sceneOpened[5] ? <Confidentiality isOpen={this.props.sceneOpened[5]} scene={styles.scene} ratio={this.props.ratio} isMounted={this.props.isMounted}></Confidentiality> : ""}
+                {this.props.sceneOpened[4] ? <Lectures isOpen={this.props.sceneOpened[4]} scene={styles.scene} ratio={this.props.ratio} isMounted={this.props.isMounted} search={this.knowledgeSearch}></Lectures> : ""}
+                {this.props.sceneOpened[5] ? <Confidentiality isOpen={this.props.sceneOpened[5]} scene={styles.scene} ratio={this.props.ratio} isMounted={this.props.isMounted} ></Confidentiality> : ""}
             </div>
         );
     }
