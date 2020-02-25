@@ -52,7 +52,25 @@ export default class Community extends Component {
     _loadQuestions = () => {
         axios.get(`${this.state.server}community_questions?get_comment=true`, this.state.config)
             .then(request => {
-                console.log(request.data);
+                let res = request.data;
+                let questions = [];
+                for(let i = 0; i < res.length; i++){
+                    questions.push({
+                        question: res[i].question_title, questionContent: res[i].question, 
+                        author: { username: res[i].question_title, time: res[i].date},
+                        isClicked: false, comments: []
+                    });
+                    for(let j = 0; j < res[i].comments.length; j++){
+                        questions[i].comments.push({ 
+                            author: res[i].comments[j].username, time: res[i].comments[j].date, 
+                            content: res[i].comments[j].comment, 
+                            like: res[i].comments[j].like_count, isLiked: 0, hoveredArrow: 0 })
+                    }
+                }
+                console.log(questions)
+                this.setState({
+                    questions:questions
+                });
             })
             .catch(error => {
                 //
