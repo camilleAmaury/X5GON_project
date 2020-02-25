@@ -28,29 +28,10 @@ export default class Community extends Component {
         this.setState({ server: server, config: config, server2: server2 }, () => {
             this._loadQuestions();
         });
-        let questions = [
-            {
-                question: "How to toncler some mother ?", questionContent: `dddddddddddddddddddddd ddddddddddddddddddddd dddddddddddddddddddd ddddddddddddddddddddddddd
-            dddddddddddddddddddddd dddddddddddddddddddddd dddddddddddddddddddddd dddddddddddddddddddd dddddddddddddddd d ddddddddddddd
-            dddddddddddddddddddddd ddddddddddddddddddddd dddddddddddddddddddd ddddddddddddddddddddddddd
-            dddddddddddddddddddddd dddddddddddddddddddddd dddddddddddddddddddddd dddddddddddddddddddd dddddddddddddddd d ddddddddddddd
-            dddddddddddddddddddddd ddddddddddddddddddddd dddddddddddddddddddd ddddddddddddddddddddddddd
-            dddddddddddddddddddddd dddddddddddddddddddddd dddddddddddddddddddddd dddddddddddddddddddd dddddddddddddddd d ddddddddddddd
-            dddddddddddddddddddddd ddddddddddddddddddddd dddddddddddddddddddd ddddddddddddddddddddddddd`, author: { username: "tonclure2000", time: '17:20 18/09/2020' },
-                isClicked: false,
-                comments: [
-                    { author: 'jean-eude', time: '17:21 18/09/2020', content: 'easy game, take a jus de fruit and drink like pacific sound the great did in the battle of Hulao Pass', like: 12, isLiked: 0, hoveredArrow: 0 },
-                    { author: 'jean-rage', time: '17:25 18/09/2020', content: 'Don`t escucha this cabron ! Go to miami and don\'t be a virgin !', like: -1, isLiked: 0, hoveredArrow: 0 },
-                ]
-            }
-        ];
-        if(this.props.isMounted){
-            this.setState({ questions: questions });
-        }
     }
 
     _loadQuestions = () => {
-        axios.get(`${this.state.server}community_questions?get_comment=true`, this.state.config)
+        axios.get(`${this.state.server}community_questions?get_comment=true&check_comment_like=${JSON.parse(localStorage.getItem("isConnected")).id}`, this.state.config)
             .then(request => {
                 let res = request.data;
                 let questions = [];
