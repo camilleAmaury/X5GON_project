@@ -25,14 +25,15 @@ class CommunityQuestionsRoute(Resource):
     @api.marshal_with(community_question_schema, as_list=True)
     @api.doc(
         params={
-            'get_comment': 'true if you want to retrive for all question their comments (default value : false)'
+            'get_comment': 'true if you want to retrive for all question their comments (default value : false)',
+            'check_comment_like': 'Ask if user like return comments (indicate in user_like_status variable)'
         },
         responses={
             200: 'Active community questions list',
         }
     )
     def get(self):
-        return get_all_community_questions(bool(request.args.get('get_comment', False)))
+        return get_all_community_questions(bool(request.args.get('get_comment', False)), int(request.args.get('check_comment_like', None)))
 
     @api.expect(community_question_schema, envelope='json')
     @api.doc(responses={
@@ -50,9 +51,12 @@ class CommunityQuestionCommentsRoute(Resource):
 
     @api.marshal_with(community_comment_schema, as_list=True)
     @api.doc(
+        params={
+            'check_comment_like': 'Ask if user like return comments (indicate in user_like_status variable)'
+        },
         responses={
             200: 'Active community questions list',
         }
     )
     def get(self, question_id):
-        return get_all_question_comments(question_id)
+        return get_all_question_comments(question_id, int(request.args.get('check_comment_like', None)))

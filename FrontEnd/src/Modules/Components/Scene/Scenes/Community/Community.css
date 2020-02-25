@@ -87,6 +87,7 @@
     grid-auto-rows: minmax(50px, auto);
     grid-gap: 10px;
     background-color: #FFFFFF;
+    box-shadow: 0px 0px 10px 5px rgba(0,0,0,0.3);
 }
 
 #community .title{
@@ -118,7 +119,6 @@
     grid-column: 2 / 10;
     grid-row: 2 / 6;
     display: flex;
-    align-items: center;
 }
 
 #community .question-title span{
@@ -196,7 +196,7 @@
 
 /* comment */
 #community .comment .bar{
-    background-color: rgb(180, 114, 80);
+    background-color: rgb(218, 218, 218);
     grid-column: 1 / 3;
     grid-row: 1 / 3;
     display: flex;
@@ -270,7 +270,7 @@
     background-color: #FFFFFF;
 }
 #community .answer .bar{
-    background-color: rgb(180, 114, 80);
+    background-color: rgb(218, 218, 218);
     grid-column: 1 / 3;
     grid-row: 1 / 3;
     display: flex;
@@ -305,21 +305,22 @@
     text-align: center;
     overflow-y: scroll;
     -ms-overflow-style: none;
-    border:10px solid #e8e8e8;
+    border:0px #e8e8e8;
     z-index: 5;
     border-radius: 5px;
+    box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.27);
 }
 #community .answer .textarea textarea::-webkit-scrollbar {
     display: none;
 }
-#community .answer .textarea textarea:hover, #community .answer .textarea textarea:active, #community .answer .textarea textarea:focus{
+#community .answer .textarea textarea:focus{
     outline:0px !important;
     -webkit-appearance:none;
     box-shadow: none !important;
 }
 
 #community .answer .send .arrow{
-    border-color:black;
+    border-color: #b43120;
     border-style:solid;
     border-width:0px 10px 10px 0px;
     display: inline-block;
@@ -328,5 +329,5 @@
 }
 
 #community .answer .send .arrow:hover{
-    border-color:white;
+    border-color:#dd3636;
 }

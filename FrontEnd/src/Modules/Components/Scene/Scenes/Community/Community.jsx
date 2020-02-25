@@ -245,7 +245,7 @@ export default class Community extends Component {
                                             <div className={"bar"}>
                                                 <div className={"upArrow"} onMouseEnter={() => this.hoverArrow(i, j, 1)} onMouseLeave={() => this.hoverArrow(i, j, 0)}
                                                     onClick={com.isLiked === 1 ? () => this.unliked(i, j) : () => this.liked(i, j, 1)} style={{
-                                                        borderColor: com.isLiked === 1 ? (com.hoverArrow === 1 ? "black" : "white") : (com.hoverArrow === 1 ? "white" : "black"),
+                                                        borderColor: com.isLiked === 1 ? (com.hoverArrow === 1 ? "#b43120" : "#dd3636") : (com.hoverArrow === 1 ? "#dd3636" : "#b43120"),
                                                         borderStyle: "solid",
                                                         borderWidth: "0px 5px 5px 0px",
                                                         display: "inline-block",
@@ -253,11 +253,11 @@ export default class Community extends Component {
                                                         transform: "rotate(-135deg)"
                                                     }}></div>
                                                 <div className={"likes"} style={{
-                                                    color: com.isLiked === 0 ? "black" : "white"
+                                                    color: com.isLiked === 0 ? "#b43120" : "#dd3636"
                                                 }}>{com.like}</div>
                                                 <div className={"downArrow"} onMouseEnter={() => this.hoverArrow(i, j, -1)} onMouseLeave={() => this.hoverArrow(i, j, 0)}
                                                     onClick={com.isLiked === -1 ? () => this.unliked(i, j) : () => this.liked(i, j, -1)} style={{
-                                                        borderColor: com.isLiked === -1 ? (com.hoverArrow === -1 ? "black" : "white") : (com.hoverArrow === -1 ? "white" : "black"),
+                                                        borderColor: com.isLiked === -1 ? (com.hoverArrow === -1 ? "#b43120" : "#dd3636") : (com.hoverArrow === -1 ? "#dd3636" : "#b43120"),
                                                         borderStyle: "solid",
                                                         borderWidth: "0px 5px 5px 0px",
                                                         display: "inline-block",
