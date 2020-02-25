@@ -9,7 +9,6 @@ def build_badge_schema(badge):
     mod['badge_id'] = badge.badge_id
     mod['badge_name'] = badge.badge_name
     mod['description'] = badge.description
-    mod['badge_image'] = badge.badge_image
     return mod
 
 def get_badge(badge_id):
