@@ -192,7 +192,7 @@ export default class Community extends Component {
                     
                     questions[i].comments.push(
                         {
-                            author: JSON.parse(localStorage.getItem("isConnected")).id,
+                            author: JSON.parse(localStorage.getItem("isConnected")).username,
                             time: `${now.getMinutes()}:${now.getHours()} ${day}/${month}/${now.getFullYear()}`,
                             content: answerValue,
                             like: 0,
