@@ -86,11 +86,11 @@
     grid-template-columns: repeat(11, 1fr);
     grid-auto-rows: minmax(50px, auto);
     grid-gap: 10px;
-    background-color: #D08864;
+    background-color: #FFFFFF;
 }
 
 #community .title{
-    grid-column: 3 / 12;
+    grid-column: 2 / 12;
     grid-row: 1;
     display: flex;
     align-items: center;
@@ -102,14 +102,20 @@
     font-family: 'Roboto';
 }
 #community .question .bar{
-    grid-column: 1/3;
+    grid-column: 1/2;
     grid-row: 1 / 7;
     display: flex;
     align-items: center;
-    background-color: rgb(180, 114, 80);
+}
+
+#community .question .hor{
+    background-color: #dadada;
+    width: 47%;
+    height: 100%;
+    float: right;
 }
 #community .question-title{
-    grid-column: 3 / 10;
+    grid-column: 2 / 10;
     grid-row: 2 / 6;
     display: flex;
     align-items: center;
@@ -185,7 +191,7 @@
     display: grid;
     grid-template-columns: repeat(11, 1fr);
     grid-auto-rows: minmax(50px, auto);
-    background-color: #D08864;
+    background-color: #FFFFFF;
 }
 
 /* comment */
@@ -209,7 +215,7 @@
 #community .comment .content{
     grid-column: 3 / 10;
     grid-row: 1 / 3;
-    border-top: 1px solid black;
+    border-top: 1px solid #e8e8e8;
     display: flex;
     align-items: center;
 }
@@ -261,7 +267,7 @@
     display: grid;
     grid-template-columns: repeat(11, 1fr);
     grid-auto-rows: minmax(50px, auto);
-    background-color: #D08864;
+    background-color: #FFFFFF;
 }
 #community .answer .bar{
     background-color: rgb(180, 114, 80);
@@ -284,14 +290,14 @@
 #community .answer .textarea{
     grid-column: 3 / 10;
     grid-row: 1 / 3;
-    border-top: 1px solid black;
+    border-top: 1px solid#e8e8e8;
     display: flex;
     align-items: center;
 }
 
 #community .answer .textarea textarea{
     width:100%;
-    background-color: lightgray;
+    background-color: #e8e8e8;
     color: #303030;
     resize: none;
     font-family: 'Roboto-Light';
@@ -299,9 +305,9 @@
     text-align: center;
     overflow-y: scroll;
     -ms-overflow-style: none;
-    border:10px solid lightgray;
+    border:10px solid #e8e8e8;
     z-index: 5;
-    border-radius: 50px;
+    border-radius: 5px;
 }
 #community .answer .textarea textarea::-webkit-scrollbar {
     display: none;
