@@ -164,7 +164,7 @@ class TraceNavigationUser(db.Model):
     trace_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer)
     graph_ref = db.Column(db.String(100))
-    timestamp = db.Column(db.String(100), default=str(datetime.datetime.utcnow))
+    timestamp = db.Column(db.String(100), default='{0:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now()))
 
 class ScholarQuestion(db.Model):
     __tablename__ = 'scholar_questions'
