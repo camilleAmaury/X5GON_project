@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy_imageattach.entity import Image, image_attachment
+# from sqlalchemy_imageattach.entity import Image, image_attachment
 import datetime
 
 from api.database import db
@@ -140,11 +140,11 @@ class User(db.Model):
         self.level = level
         self.experience = 0
 
-class UserPicture(db.Modl, Image):
-    __tablename__ = 'user_picture'
-
-    user_id = db.Column(db.Integer, ForeignKey('user.id'), primary_key=True)
-    user = relationship('User')
+# class UserPicture(db.Modl, Image):
+#     __tablename__ = 'user_picture'
+#
+#     user_id = db.Column(db.Integer, ForeignKey('user.id'), primary_key=True)
+#     user = relationship('User')
 
 class Document(db.Model):
     __tablename__ = 'documents'
