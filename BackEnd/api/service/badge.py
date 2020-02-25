@@ -86,36 +86,3 @@ def set_badge_image(badge_id, badge_image):
     badge.badge_image = badge_image
     db.session.commit()
     return ''
-
-# Badge Condition Verification ******************************************************************************************
-
-
-def badge_possession_verification(user_id, badge_name):
-    switcher = {
-        'Apprentice' : badge_apprentice_verification,
-        'Seeking for help' : badge_seeking_for_help_verification,
-        'Eager to learn' : badge_eager_to_learn_verification,
-        'Path of mastership' : badge_path_of_mastership_verification,
-        'Knowledge architect' : badge_knowledge_architect_verification
-    }
-    return switcher[badge_name](user_id)
-
-def badge_apprentice_verification(user_id):
-
-    return
-
-def badge_seeking_for_help_verification(user_id):
-
-    return
-
-def badge_eager_to_learn_verification(user_id):
-
-    return
-
-def badge_path_of_mastership_verification(user_id):
-
-    return
-
-def badge_knowledge_architect_verification(user_id):
-
-    return

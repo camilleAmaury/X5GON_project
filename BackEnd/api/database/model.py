@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-import datetime
+import datetime, random
 
 from api.database import db
 
@@ -39,13 +39,14 @@ class User(db.Model):
     experience = db.Column(db.Integer)
     user_questions = db.relationship('CommunityQuestion', backref='users')
     user_comments = db.relationship('CommunityComment', backref='users')
-    user_image = db.Column(db.String(300))
+    user_image = db.Column(db.Integer)
 
     def __init__(self, username, pwd, email, year):
         self.username = username
         self.pwd = generate_password_hash(pwd)
         self.email = email
         self.year = year
+        self.user_image = random.randint(0, 9)
 
     def __repr__(self):
         return '<User {}>'.format(self.user_id)

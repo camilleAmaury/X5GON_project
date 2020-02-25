@@ -1,6 +1,7 @@
 from flask import current_app, abort, jsonify, make_response
 from io import BytesIO
 from sqlalchemy import exc
+import random
 
 from api.database import db
 from api.database.model import User, Document, ScholarQuestion, Badge, Level, UserSearch, TraceNavigationUser
@@ -139,19 +140,6 @@ def check_user_auth(username, pwd):
         }), 403))
     return generate_auth_token(user)
 
-def set_user_image(user_id, user_image):
-    user = User.query.get(user_id)
-    if not user:
-        abort(make_response(jsonify({
-            "errors":{
-                0:"User not found"
-            },
-            "message":"User not found"
-        }), 409))
-    user.user_image = user_image
-    db.session.commit()
-    return ''
-
 
 # User Opened Documents *******************************************************************************************************************************
 
@@ -230,6 +218,7 @@ def add_opened_document(user_id, data):
             graph_ref=document.graph_ref,
             user_id=user.user_id
         )
+    #    badge_possession_verification('Apprentice') #******************************************************************
         db.session.add(trace)
         db.session.flush()
         db.session.commit()
