@@ -2,7 +2,6 @@ import React, { Component, Fragment } from 'react';
 
 import './Navbar.css';
 
-import BackgroundImage from '../../../assets/Panel/Navbar/backgroundimage.png';
 import Icon1 from '../../../assets/Panel/Navbar/IconImprovement.png';
 import Icon2 from '../../../assets/Panel/Navbar/IconKnowledge.png';
 import Icon3 from '../../../assets/Panel/Navbar/IconCommunity.png';
@@ -14,6 +13,17 @@ import Icon3Hover from '../../../assets/Panel/Navbar/IconCommunityHover.png';
 import Icon4Hover from '../../../assets/Panel/Navbar/IconScholarHover.png';
 import Icon5Hover from '../../../assets/Panel/Navbar/IconLecturesHover.png';
 
+import im1 from '../../../assets/Img/_1.png';
+import im2 from '../../../assets/Img/_2.png';
+import im3 from '../../../assets/Img/_3.png';
+import im4 from '../../../assets/Img/_4.png';
+import im5 from '../../../assets/Img/_5.png';
+import im6 from '../../../assets/Img/_6.png';
+import im7 from '../../../assets/Img/_7.png';
+import im8 from '../../../assets/Img/_8.png';
+import im9 from '../../../assets/Img/_9.png';
+import im10 from '../../../assets/Img/_10.png';
+
 export default class Navbar extends Component {
     constructor(props) {
         super(props);
@@ -22,7 +32,8 @@ export default class Navbar extends Component {
             scrollBox:{
                 height:90
             },
-            hoverIcon : [false, false, false, false, false]
+            hoverIcon : [false, false, false, false, false],
+            images:[im1,im2,im3,im4,im5,im6,im7,im8,im9,im10]
         }
     }
 
@@ -31,7 +42,9 @@ export default class Navbar extends Component {
             { text: "Knowledge", icon: Icon2, IconHover: Icon2Hover, hover:"Looking for more knowledge ?"  }, 
             { text: "Community", icon: Icon3, IconHover: Icon3Hover, hover:"Retrieve all your answers and questions"  }, 
             { text: "Scholar", icon: Icon4, IconHover: Icon4Hover, hover:"Ask the scholar something you don't know"  }, 
-            { text: "Lectures", icon: Icon5, IconHover: Icon5Hover, hover:"Retrieve Your document and improve yourself"  }];
+            { text: "Lectures", icon: Icon5, IconHover: Icon5Hover, hover:"Retrieve Your document and improve yourself"  },
+            { text: "Confidentiality", icon: Icon5, IconHover: Icon5Hover, hover:"All about our CGU, your data and the system"  },
+            { text: "LogOut", icon: Icon5, IconHover: Icon5Hover, hover:"LogOut from the plateform"  }];
         this.setState({
             icons: icons
         }, () => {
@@ -49,7 +62,7 @@ export default class Navbar extends Component {
         // information
         obj.info = {
             width: this.props.NavbarBox.width,
-            height: 30 / 100 * this.props.NavbarBox.height
+            height: 20 / 100 * this.props.NavbarBox.height
         };
         // personnal Image
         let imagewidth = Math.floor(this.props.NavbarBox.width * 1 / 2 * this.props.ratio);
@@ -124,6 +137,16 @@ export default class Navbar extends Component {
                 top: Math.floor(obj.icons.height * 5 / 7),
                 left: Math.floor((obj.icons.width - obj.icon.width) / 2)
             }
+            ,
+            {
+                top: Math.floor(obj.icons.height * 6 / 7),
+                left: Math.floor((obj.icons.width - obj.icon.width) / 2)
+            }
+            ,
+            {
+                top: Math.floor(obj.icons.height * 7 / 7),
+                left: Math.floor((obj.icons.width - obj.icon.width) / 2)
+            }
         );
         obj.scroll = {
             width:obj.navbarBg.width
@@ -155,7 +178,19 @@ export default class Navbar extends Component {
                 left: this.state.hoverIcon[4] ? obj.navbarBg.width : 0,
                 zIndex:this.state.hoverIcon[4] ? 3:2
             }
+            ,
+            {
+                top: obj.icon.icons[5].top + obj.icons.top - Math.floor((this.state.scrollBox.height - obj.icon.height) / 2),
+                left: this.state.hoverIcon[5] ? obj.navbarBg.width : 0,
+                zIndex:this.state.hoverIcon[5] ? 3:2
+            },
+            {
+                top: obj.icon.icons[6].top + obj.icons.top - Math.floor((this.state.scrollBox.height - obj.icon.height) / 2),
+                left: this.state.hoverIcon[6] ? obj.navbarBg.width : 0,
+                zIndex:this.state.hoverIcon[6] ? 3:2
+            }
         );
+
         return obj;
     }
 
@@ -182,6 +217,10 @@ export default class Navbar extends Component {
         
     }
 
+    onChangeHandler = event => {
+        console.log(event.target.files[0])
+    }
+
     render() {
         let styles = this.preparePositions();
 
@@ -199,20 +238,18 @@ export default class Navbar extends Component {
                             width: styles.info.width
                         }
                     }>
-                        <img id={"image-account"} src={BackgroundImage} alt={"frame"} style={
+                        <div id={"image-account"} style={
                             {
                                 width: styles.imageAccount.width,
                                 height: styles.imageAccount.height,
                                 left: styles.imageAccount.left,
-                                top: styles.imageAccount.top
+                                top: styles.imageAccount.top+10,
+                                backgroundImage:`url('${this.state.images[JSON.parse(localStorage.getItem("isConnected")).image]}')`,
+                                backgroundSize:"cover",
+                                borderRadius:styles.imageAccount.width/2
                             }
-                        }></img>
-                        <div id={"username-text"} style={
-                            {
-                                width: styles.usernameAccount.width,
-                                top: styles.usernameAccount.top
-                            }
-                        }>Static Username</div>
+                        
+                        }></div>
                         <div className={"separation-bar"} style={
                             {
                                 width: styles.sepBar1.width,

@@ -193,21 +193,29 @@ export default class Panel extends Component {
         return obj;
     }
 
+    logout = () => {
+        localStorage.removeItem("isConnected");
+    }
+
     onIconClick = (i) => {
+        console.log(i);
+        if(i === 6){
+            this.logout()
+        }
         if(this._isMounted){
             let iconClick = this.state.SceneOpened;
             if (iconClick[i]) {
                 // close the door
-                iconClick = [false, false, false, false, false];
+                iconClick = [false, false, false, false, false, false, false];
                 this.CloseScene(iconClick, null);
             } else {
                 if (this.state.isSceneOpen) {
                     // close + open
-                    iconClick = [false, false, false, false, false];
+                    iconClick = [false, false, false, false, false, false, false];
                     this.CloseScene(iconClick, i);
                 } else {
                     // open
-                    iconClick = [false, false, false, false, false];
+                    iconClick = [false, false, false, false, false, false, false];
                     iconClick[i] = true;
                     this.OpenScene(iconClick);
                 }
