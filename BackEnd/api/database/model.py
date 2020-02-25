@@ -1,4 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy_imageattach.entity import Image, image_attachment
 import datetime
 
 from api.database import db
@@ -39,6 +40,7 @@ class User(db.Model):
     experience = db.Column(db.Integer)
     user_questions = db.relationship('CommunityQuestion', backref='users')
     user_comments = db.relationship('CommunityComment', backref='users')
+    picture = image_attachment('UserPicture')
 
     def __init__(self, username, pwd, email, year):
         self.username = username
@@ -138,6 +140,12 @@ class User(db.Model):
         self.level = level
         self.experience = 0
 
+class UserPicture(db.Modl, Image):
+    __tablename__ = 'user_picture'
+
+    user_id = db.Column(db.Integer, ForeignKey('user.id'), primary_key=True)
+    user = relationship('User')
+
 class Document(db.Model):
     __tablename__ = 'documents'
 
@@ -199,8 +207,8 @@ class CommunityQuestion(db.Model):
     __tablename__ = 'community_questions'
 
     question_id = db.Column(db.Integer, primary_key=True)
-    question_title = db.Column(db.String(100), nullable=False)
-    question = db.Column(db.String(300), nullable=False)
+    question_title = db.Column(db.String(1000), nullable=False)
+    question = db.Column(db.String(10000), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     comments = db.relationship('CommunityComment', backref='community_comments')
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
