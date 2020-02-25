@@ -718,7 +718,6 @@ def add_user_experience(user_id, experience):
     user.add_experience(experience)
     db.session.commit()
 
-
 def remove_user_experience(user_id, experience):
     user = User.query.get(user_id)
     if not user:

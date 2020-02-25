@@ -5,6 +5,7 @@ from api.database import db
 from api.database.model import User, CommunityQuestion, CommunityComment, UserLike
 from .like import build_like_schema
 from .event import badge_possession_verification
+from .user import add_user_experience, remove_user_experience
 
 def build_comment_schema(comment):
     mod = {}
@@ -86,12 +87,17 @@ def modify_comment_likes(data):
         if like.like_value == data.get('like_value') :
             if like.like_value == 1 :
                 comment.addLike(-1)
+                remove_user_experience(comment.user_id, 5)
             elif like.like_value == -1 :
                 comment.addLike(1)
             like.like_value = 0
         else:
             comment.addLike(- like.like_value + data.get('like_value'))
+            if like.like_value == 1:
+                remove_user_experience(comment.user_id, 5)
             like.like_value = data.get('like_value')
+            if like.like_value == 1:
+                add_user_experience(comment.user_id, 5)
     else :
         like = UserLike(
             user_id=data.get('user_id'),
@@ -100,6 +106,8 @@ def modify_comment_likes(data):
         )
         db.session.add(like)
         comment.addLike(like.like_value)
+        if like.like_value == 1:
+            add_user_experience(comment.user_id, 5)
     badge_possession_verification(like.user_id, 'Path of mastership', {
         'question_id': question.question_id,
         'comment_id': like.comment_id

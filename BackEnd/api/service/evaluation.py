@@ -3,6 +3,7 @@ from flask import abort, jsonify, make_response
 from . import user as user_service
 from api.database import db
 from api.database.model import User, Document, Evaluation
+from .user import add_user_experience
 
 def build_evaluation_schema(evaluation):
     mod = {}
@@ -66,6 +67,7 @@ def add_evaluation(data):
         db.session.add(evaluation)
         user_service.add_validated_document(evaluation.user_id, evaluation.graph_ref)
         badge_possession_verification(evaluation.user_id, 'Knowledge architect', {})
+        add_user_experience(evaluation.user_id, 30)
         db.session.flush()
         db.session.commit()
 
