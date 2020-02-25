@@ -9,6 +9,7 @@ export default class Community extends Component {
         super(props);
         this.state = {
             questions: [],
+            myQuestions : [],
             panelOpened: [true, false],
             isAnimating: false,
             server: "",
@@ -51,6 +52,34 @@ export default class Community extends Component {
                 }
                 this.setState({
                     questions:questions
+                });
+            })
+            .catch(error => {
+                //
+            });
+    }
+
+    _loadMyQuestions = () => {
+        axios.get(`${this.state.server}community_questions?user_id=${JSON.parse(localStorage.getItem("isConnected")).id}&get_comment=true&check_comment_like=${JSON.parse(localStorage.getItem("isConnected")).id}`, this.state.config)
+            .then(request => {
+                let res = request.data;
+                let myQuestions = [];
+                for(let i = 0; i < res.length; i++){
+                    myQuestions.push({
+                        question: res[i].question_title, questionContent: res[i].question, 
+                        author: { username: res[i].question_title, time: res[i].date},
+                        isClicked: false, comments: [], id:res[i].question_id
+                    });
+                    for(let j = 0; j < res[i].comments.length; j++){
+                        myQuestions[i].comments.push({ 
+                            author: res[i].comments[j].username, time: res[i].comments[j].date, 
+                            content: res[i].comments[j].comment, 
+                            like: res[i].comments[j].like_count, isLiked: 0, hoveredArrow: 0,
+                            id:res[i].comments[j].comment_id });
+                    }
+                }
+                this.setState({
+                    myQuestions:myQuestions
                 });
             })
             .catch(error => {
@@ -330,7 +359,65 @@ export default class Community extends Component {
                                 top: styles.subpanel.top,
                             }
                         }>
-
+                            {this.state.questions.map((item, i) =>
+                                <Fragment key={i}>
+                                    <div className={"question"}>
+                                        <div className={"title"}><span>{item.question}</span></div>
+                                        <div className={"bar"}>
+                                            <div className={"hor"}></div>
+                                        </div>
+                                        <div className={"question-title"}><span>{item.questionContent}</span></div>
+                                        <div className={"deploy"} onClick={() => this.openComment(i)}><span>{item.isClicked? "unsee comments": "see comments"} ({item.comments.length})</span></div>
+                                        <div className={"user-information"}>
+                                            <div className={"picture"}></div>
+                                            <div className={"username"}>{item.author.username}</div>
+                                            <div className={"date"}>{item.author.time}</div>
+                                        </div>
+                                    </div>
+                                    {item.isClicked ?
+                                        <div className={"answer"}>
+                                            <div className={"bar"}></div>
+                                            <div className={"send"}><div className={"arrow"} onClick={() => this.postAnswer(i)}></div></div>
+                                            <div className={"textarea"}><textarea id={"answer-textarea-" + i}
+                                                onKeyPress={event => this.postAnswer2(event, i)}></textarea>
+                                            </div>
+                                        </div>
+                                        : ""}
+                                    {item.isClicked ? item.comments.map((com, j) =>
+                                        <div className={"comment"} key={j}>
+                                            <div className={"bar"}>
+                                                <div className={"upArrow"} onMouseEnter={() => this.hoverArrow(i, j, 1)} onMouseLeave={() => this.hoverArrow(i, j, 0)}
+                                                    onClick={com.isLiked === 1 ? () => this.unliked(i, j) : () => this.liked(i, j, 1)} style={{
+                                                        borderColor: com.isLiked === 1 ? (com.hoverArrow === 1 ? "#b43120" : "#dd3636") : (com.hoverArrow === 1 ? "#dd3636" : "#b43120"),
+                                                        borderStyle: "solid",
+                                                        borderWidth: "0px 5px 5px 0px",
+                                                        display: "inline-block",
+                                                        padding: "5px",
+                                                        transform: "rotate(-135deg)"
+                                                    }}></div>
+                                                <div className={"likes"} style={{
+                                                    color: com.isLiked === 0 ? "#b43120" : "#dd3636"
+                                                }}>{com.like}</div>
+                                                <div className={"downArrow"} onMouseEnter={() => this.hoverArrow(i, j, -1)} onMouseLeave={() => this.hoverArrow(i, j, 0)}
+                                                    onClick={com.isLiked === -1 ? () => this.unliked(i, j) : () => this.liked(i, j, -1)} style={{
+                                                        borderColor: com.isLiked === -1 ? (com.hoverArrow === -1 ? "#b43120" : "#dd3636") : (com.hoverArrow === -1 ? "#dd3636" : "#b43120"),
+                                                        borderStyle: "solid",
+                                                        borderWidth: "0px 5px 5px 0px",
+                                                        display: "inline-block",
+                                                        padding: "5px",
+                                                        transform: "rotate(45deg)"
+                                                    }}></div>
+                                            </div>
+                                            <div className={"user"}>
+                                                <div className={"picture"}></div>
+                                                <div className={"username"}>{com.author}</div>
+                                                <div className={"date"}>{com.time}</div>
+                                            </div>
+                                            <div className={"content"}><span>{com.content}</span></div>
+                                        </div>
+                                    ) : ""}
+                                </Fragment>
+                            )}
                         </div>
                     </div>
                 </div>
