@@ -195,7 +195,7 @@ class Evaluation(db.Model):
     comprehension_rating = db.Column(db.Integer)
     quality_rating = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    graph_ref = db.Column(db.Integer, db.ForeignKey('documents.graph_ref'))
+    graph_ref = db.Column(db.String(100), db.ForeignKey('documents.graph_ref'))
 
 class Badge(db.Model):
     __tablename__ = 'badges'
