@@ -427,8 +427,7 @@ export default class Profile extends Component {
                                         }
                                     }></div>
                                 </div>
-                                {console.log(localStorage.getItem("isConnected"))}
-                                {localStorage.getItem("isConnected") !== undefined ?
+                                {localStorage.getItem("isConnected") !== undefined && localStorage.getItem("isConnected") !== null ?
                                 <div className={"image"} onClick={this.openUploadFile} style={
                                     {
                                         width: styles.centerCircle.width,
@@ -451,68 +450,6 @@ export default class Profile extends Component {
                             }
                         }>
                             {this.state.isHoverExp ? <span>Level {this.state.currentLevel}</span> : <Fragment><span>{this.state.currentXp}</span><div className={"separation"}></div><span>{this.state.maxXp}</span></Fragment>}
-                        </div>
-                        {/* badges */}
-                        <div className={"badges module"} style={
-                            {
-                                left: styles.badges.left,
-                                top: styles.badges.top,
-                                width: styles.badges.width,
-                                height: styles.badges.height,
-                            }
-                        }>
-                            {this.state.badges.map((item, i) =>
-                                <Fragment key={i}>
-                                    <div className={"badge"} onMouseEnter={() => { this.hoverBadge(i, true) }} onMouseLeave={() => { this.hoverBadge(i, false) }} style={
-                                        {
-                                            left: styles["badge" + item.badge_id].left,
-                                            width: styles["badge" + item.badge_id].width,
-                                            height: styles["badge" + item.badge_id].height,
-                                            top: styles["badge" + item.badge_id].top,
-                                            borderRadius: i === 0 ? "50%" : "0%",
-                                            backgroundImage: i !== 0 ? `url('${item.image_adress}')` : "linear-gradient(0.15turn, white, grey)",
-                                            backgroundSize: i !== 0 ? "cover" : "none"
-                                        }
-                                    }>
-                                        {i === 0 ?
-                                            <div className={"badge1"} style={
-                                                {
-                                                    width: styles["badge" + item.badge_id].width * 0.8,
-                                                    height: styles["badge" + item.badge_id].height * 0.8,
-                                                    backgroundImage: `url('${item.image_adress}')`,
-                                                    backgroundSize: "cover"
-                                                }
-                                            }></div> : ""
-                                        }
-
-                                        <div className={"silk"} style={
-                                            {
-                                                borderRadius: i === 0 ? "50%" : "0%",
-                                                width: "100%",
-                                                height: "100%",
-                                                backgroundColor: item.possess_by_user ? (item.hovered ? `rgba(0,0,0,0.1)` : `rgba(0,0,0,0)`) : (item.hovered ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.3)`)
-                                            }
-                                        }></div>
-                                    </div>
-                                    <Popover color={"#334458"} id={"badge-hover-" + i} ratio={1 / 2} side={"left"} size={{ width: 350, height: 100 }}
-                                        target={{ left: styles["badge" + item.badge_id].left, width: styles["badge" + item.badge_id].width, height: styles["badge" + item.badge_id].height, top: styles["badge" + item.badge_id].top }}
-                                        isOpen={item.hovered && this.props.isOpen} title={item.badge_name}>
-                                        <div className={"badge-hover"}>
-                                            <span>{item.description}</span>
-                                        </div>
-                                    </Popover>
-                                </Fragment>
-                            )}
-                        </div>
-                        <div className={"badgesBar moduleTitle"} style={
-                            {
-                                left: styles.badgesBar.left,
-                                width: styles.badgesBar.width,
-                                height: styles.badgesBar.height,
-                                top: styles.badgesBar.top,
-                            }
-                        }>
-                            <span>Badges</span>
                         </div>
                         {/* skills */}
                         <div className={"skills module"} style={
@@ -577,6 +514,68 @@ export default class Profile extends Component {
                                     </div>
                                 </div>
                             )}
+                        </div>
+                        {/* badges */}
+                        <div className={"badges module"} style={
+                            {
+                                left: styles.badges.left,
+                                top: styles.badges.top,
+                                width: styles.badges.width,
+                                height: styles.badges.height,
+                            }
+                        }>
+                            {this.state.badges.map((item, i) =>
+                                <Fragment key={i}>
+                                    <div className={"badge"} onMouseEnter={() => { this.hoverBadge(i, true) }} onMouseLeave={() => { this.hoverBadge(i, false) }} style={
+                                        {
+                                            left: styles["badge" + item.badge_id].left,
+                                            width: styles["badge" + item.badge_id].width,
+                                            height: styles["badge" + item.badge_id].height,
+                                            top: styles["badge" + item.badge_id].top,
+                                            borderRadius: i === 0 ? "50%" : "0%",
+                                            backgroundImage: i !== 0 ? `url('${item.image_adress}')` : "linear-gradient(0.15turn, white, grey)",
+                                            backgroundSize: i !== 0 ? "cover" : "none"
+                                        }
+                                    }>
+                                        {i === 0 ?
+                                            <div className={"badge1"} style={
+                                                {
+                                                    width: styles["badge" + item.badge_id].width * 0.8,
+                                                    height: styles["badge" + item.badge_id].height * 0.8,
+                                                    backgroundImage: `url('${item.image_adress}')`,
+                                                    backgroundSize: "cover"
+                                                }
+                                            }></div> : ""
+                                        }
+
+                                        <div className={"silk"} style={
+                                            {
+                                                borderRadius: i === 0 ? "50%" : "0%",
+                                                width: "100%",
+                                                height: "100%",
+                                                backgroundColor: item.possess_by_user ? (item.hovered ? `rgba(0,0,0,0.1)` : `rgba(0,0,0,0)`) : (item.hovered ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.3)`)
+                                            }
+                                        }></div>
+                                    </div>
+                                    <Popover color={"#334458"} id={"badge-hover-" + i} ratio={1 / 2} side={"left"} size={{ width: 350, height: 100 }}
+                                        target={{ left: styles["badge" + item.badge_id].left, width: styles["badge" + item.badge_id].width, height: styles["badge" + item.badge_id].height, top: styles["badge" + item.badge_id].top }}
+                                        isOpen={item.hovered && this.props.isOpen} title={item.badge_name}>
+                                        <div className={"badge-hover"}>
+                                            <span>{item.description}</span>
+                                        </div>
+                                    </Popover>
+                                </Fragment>
+                            )}
+                        </div>
+                        <div className={"badgesBar moduleTitle"} style={
+                            {
+                                left: styles.badgesBar.left,
+                                width: styles.badgesBar.width,
+                                height: styles.badgesBar.height,
+                                top: styles.badgesBar.top,
+                            }
+                        }>
+                            <span>Badges</span>
                         </div>
                     </div>
                 </Fragment> : ""}

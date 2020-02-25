@@ -43,14 +43,15 @@ export default class Panel extends Component {
             isSceneOpen: false,
             isAnimationOpenEnded: true,
             isAnimationCloseEnded: true,
-            animationTime: 1500
+            animationTime: 1500,
+            logout:false
         };
     }
 
     componentDidMount = () => {
         window.addEventListener("resize", this.resize);
         let panel = document.getElementById("Panel");
-        if (this._isMounted) {
+        if (localStorage.getItem("isConnected") !== undefined && localStorage.getItem("isConnected") !== null) {
             this.setState({
                 PanelBox: {
                     width: panel.clientWidth,
@@ -196,8 +197,9 @@ export default class Panel extends Component {
     }
 
     logout = () => {
-        this._isMounted = false;
-        localStorage.removeItem("isConnected");
+        this.setState({logout:false}, () => {
+            localStorage.removeItem("isConnected");
+        });
         
     }
 
@@ -316,9 +318,9 @@ export default class Panel extends Component {
 
     render() {
         let styles = this.preparePositions();
-        return (
+        return(localStorage.getItem("isConnected") !== undefined && localStorage.getItem("isConnected") !== null ?
             <div id={"Panel"}>
-                {this._isMounted ?
+                {!this.state.logout ?
                     <Fragment>
                         {this.isConnected()}
                         <Cursor windowSize={this.state.PanelBox}></Cursor>
@@ -479,8 +481,7 @@ export default class Panel extends Component {
                         }></div> */}
                         <ScholarBubble ratio={this.state.ratio} windowSize={this.state.PanelBox} NavbarBox={styles.navbar}></ScholarBubble>
                     </Fragment>
-                : ""}
-            </div>
-        );
+                : <Redirect to='/' />}
+            </div> : <Redirect to='/' />);
     }
 }

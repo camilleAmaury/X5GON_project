@@ -7,11 +7,15 @@ import Icon2 from '../../../assets/Panel/Navbar/IconKnowledge.png';
 import Icon3 from '../../../assets/Panel/Navbar/IconCommunity.png';
 import Icon4 from '../../../assets/Panel/Navbar/IconScholar.png';
 import Icon5 from '../../../assets/Panel/Navbar/IconLectures.png';
+import Icon6 from '../../../assets/Panel/Navbar/IconConfidentiality.png';
+import Icon7 from '../../../assets/Panel/Navbar/IconLogout.png';
 import Icon1Hover from '../../../assets/Panel/Navbar/IconImprovementHover.png';
 import Icon2Hover from '../../../assets/Panel/Navbar/IconKnowledgeHover.png';
 import Icon3Hover from '../../../assets/Panel/Navbar/IconCommunityHover.png';
 import Icon4Hover from '../../../assets/Panel/Navbar/IconScholarHover.png';
 import Icon5Hover from '../../../assets/Panel/Navbar/IconLecturesHover.png';
+import Icon6Hover from '../../../assets/Panel/Navbar/IconConfidentialityHover.png';
+import Icon7Hover from '../../../assets/Panel/Navbar/IconLogoutHover.png';
 
 import im1 from '../../../assets/Img/_1.png';
 import im2 from '../../../assets/Img/_2.png';
@@ -48,8 +52,8 @@ export default class Navbar extends Component {
             { text: "Community", icon: Icon3, IconHover: Icon3Hover, hover:"Retrieve all your answers and questions"  }, 
             { text: "Scholar", icon: Icon4, IconHover: Icon4Hover, hover:"Ask the scholar something you don't know"  }, 
             { text: "Lectures", icon: Icon5, IconHover: Icon5Hover, hover:"Retrieve Your document and improve yourself"  },
-            { text: "Confidentiality", icon: Icon5, IconHover: Icon5Hover, hover:"All about our CGU, your data and the system"  },
-            { text: "LogOut", icon: Icon5, IconHover: Icon5Hover, hover:"LogOut from the plateform"  }];
+            { text: "Confidentiality", icon: Icon6, IconHover: Icon6Hover, hover:"All about our CGU, your data and the system"  },
+            { text: "LogOut", icon: Icon7, IconHover: Icon7Hover, hover:"LogOut from the plateform"  }];
         if(this._isMounted){
             this.setState({
                 icons: icons
@@ -247,7 +251,7 @@ export default class Navbar extends Component {
                                 width: styles.info.width
                             }
                         }>
-                            {localStorage.getItem("isConnected") !== undefined ?
+                            {localStorage.getItem("isConnected") !== undefined && localStorage.getItem("isConnected") !== null ?
                                 <div id={"image-account"} style={
                                     {
                                         width: styles.imageAccount.width,
