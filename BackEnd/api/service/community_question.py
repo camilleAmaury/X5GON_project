@@ -58,9 +58,9 @@ def create_community_question(data):
             question_title=data.get('question_title')
         )
         db.session.add(question)
-        badge_possession_verification(question.user_id, 'Seeking for help', {})
         db.session.flush()
         db.session.commit()
+        badge_possession_verification(question.user_id, 'Seeking for help', {})
         return build_question_schema(question)
     except exc.DBAPIError as e:
         current_app.logger.error('Fail on create user %s' % str(e) )
