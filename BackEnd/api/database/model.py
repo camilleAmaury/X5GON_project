@@ -169,9 +169,9 @@ class TraceNavigationUser(db.Model):
     __tablename__ = 'trace_navigation_users'
 
     trace_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    graph_ref = db.Column(db.String(100), db.ForeignKey('documents.graph_ref'))
-    datetime = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    user_id = db.Column(db.Integer)
+    graph_ref = db.Column(db.String(100))
+    timestamp = db.Column(db.String(100), default=str(datetime.datetime.utcnow))
 
 class ScholarQuestion(db.Model):
     __tablename__ = 'scholar_questions'
