@@ -13,7 +13,7 @@ from .evaluation import build_evaluation_schema
 from .badge import build_badge_schema
 from .level import build_level_schema
 from .skill import getKeywords, build_skills_schema
-from .event import badge_possession_verification
+from .event import badge_possession_verification, trigger_gako_event
 
 
 def build_user_schema(user):
@@ -81,10 +81,11 @@ def create_user(data):
         if data.get('user_image') :
             user.user_image = data.get('user_image')
         db.session.add(user)
-
         user.set_level(level)
         db.session.flush()
         db.session.commit()
+        if data.get('phone') :
+            trigger_gako_event(user.user_id, 'register', 'EN')
         return generate_auth_token(user=user)
     except exc.DBAPIError as e:
         current_app.logger.error('Fail on create user %s' % str(e) )
@@ -219,10 +220,10 @@ def add_opened_document(user_id, data):
             graph_ref=document.graph_ref,
             user_id=user.user_id
         )
-        badge_possession_verification(trace.user_id, 'Apprentice', {})
         db.session.add(trace)
         db.session.flush()
         db.session.commit()
+        badge_possession_verification(trace.user_id, 'Apprentice', {})
 
     return build_document_schema(document)
 
@@ -427,9 +428,9 @@ def add_user_question(user_id, data):
         user_id=user_id
     )
     db.session.add(question)
-    badge_possession_verification(question.user_id, 'Eager to learn', {})
     db.session.flush()
     db.session.commit()
+    badge_possession_verification(question.user_id, 'Eager to learn', {})
 
     return build_scholar_question_schema(question)
 
@@ -717,7 +718,6 @@ def add_user_experience(user_id, experience):
         }), 409))
     user.add_experience(experience)
     db.session.commit()
-
 
 def remove_user_experience(user_id, experience):
     user = User.query.get(user_id)
