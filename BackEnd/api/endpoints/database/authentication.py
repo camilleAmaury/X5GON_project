@@ -56,7 +56,7 @@ authentication_schema = api.model('Authentication', {
     'user_id': fields.Integer(required=False, description='User id', readonly=True),
     'username': fields.String(required=True, description='Username of the user'),
     'pwd': fields.String(required=True, description='Password of the user'),
-    'user_image': fields.String(required=False, description='User image path', readonly=True)
+    'user_image': fields.Integer(required=False, decription='Image id of the user', readonly=True)
 })
 
 @api.route("/login")

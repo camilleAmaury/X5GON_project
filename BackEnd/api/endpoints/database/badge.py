@@ -2,7 +2,7 @@ from flask import request
 from flask_restplus import Namespace, Resource, fields
 
 from api.utils import validator
-from api.service.badge import get_badge, get_all_badges, create_badge, delete_badge
+from api.service.badge import get_badge, get_all_badges, create_badge, delete_badge, set_badge_image
 
 import json
 
@@ -14,6 +14,11 @@ badge_schema = api.model('Badge', {
     'description': fields.String(required=True, description='Badge description'),
     'badge_image': fields.String(required=False, description='File path of the badge image'),
     'possess_by_user': fields.Boolean(required=False, description='True if the submit user possess this badge', readonly=True)
+})
+
+badge_image_schema = api.model('Badge_image', {
+    'badge_id': fields.Integer(required=False, description='ID of the badge', readonly=True),
+    'badge_image': fields.String(required=True, decription='File path of the badge_image')
 })
 
 @api.route("/")
@@ -63,17 +68,10 @@ class BadgeRoute(Resource):
 @api.route("/<int:badge_id>/image")
 class BadgeImageRoute(Resource):
 
-    @api.doc(responses={
-        200: 'Badge image',
-        409: 'Badge not found'
-    })
-    def get(self, badge_id):
-        return send_file(get_badge_image(badge_id))
-
+    @api.expect(badge_image_schema, envelope='json')
     @api.doc(responses={
         201: 'Badge image successfully added',
         409: 'Badge not found'
     })
-    def post(self, badge_id):
-        image = request.files['user_image']
-        return set_badge_image(badge_id, image), 201
+    def put(self, badge_id):
+        return set_badge_image(badge_id, request.json.get('badge_image')), 201

@@ -24,7 +24,7 @@ user_schema = api.model('User', {
     'phone': fields.String(required=False, description='User phone number'),
     'email': fields.String(required=True, description='User email'),
     'year': fields.Integer(required=True, description='Number of years from the end of high school'),
-    'user_image': fields.String(required=False, decription='File path of the user_image')
+    'user_image': fields.Integer(required=False, decription='Image id of the user', readonly=True)
 })
 
 @api.route("/")
@@ -75,24 +75,6 @@ class UserRoute(Resource):
     def delete(self, user_id):
         delete_user(user_id=user_id)
         return '', 201
-
-@api.route("/<int:user_id>/image")
-class UserImageRoute(Resource):
-
-    @api.doc(responses={
-        200: 'User image',
-        409: 'User not found'
-    })
-    def get(self, user_id):
-        return send_file(get_user_image(user_id))
-
-    @api.doc(responses={
-        201: 'User image successfully added',
-        409: 'User not found'
-    })
-    def post(self, user_id):
-        image = request.files['user_image']
-        return set_user_image(user_id, image), 201
 
 
 # User Opened Documents *******************************************************************************************************************************

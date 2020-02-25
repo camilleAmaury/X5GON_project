@@ -22,7 +22,8 @@ export default class Navbar extends Component {
             scrollBox:{
                 height:90
             },
-            hoverIcon : [false, false, false, false, false]
+            hoverIcon : [false, false, false, false, false],
+            images:[]
         }
     }
 
@@ -206,6 +207,10 @@ export default class Navbar extends Component {
         
     }
 
+    onChangeHandler = event => {
+        console.log(event.target.files[0])
+    }
+
     render() {
         let styles = this.preparePositions();
 
@@ -223,15 +228,23 @@ export default class Navbar extends Component {
                             width: styles.info.width
                         }
                     }>
-                        <img id={"image-account"} src={BackgroundImage} alt={"frame"} style={
+                        <div id={"image-account"} style={
                             {
                                 width: styles.imageAccount.width,
                                 height: styles.imageAccount.height,
                                 left: styles.imageAccount.left,
-                                top: styles.imageAccount.top
+                                top: styles.imageAccount.top,
+                                backgroundImage:`url('${BackgroundImage}')`,
+                                backgroundSize:"cover"
                             }
-                        }></img>
                         
+                        }></div>
+                        <div id={"username-text"} style={
+                            {
+                                width: styles.usernameAccount.width,
+                                top: styles.usernameAccount.top
+                            }
+                        }>Static Username</div>
                         <div className={"separation-bar"} style={
                             {
                                 width: styles.sepBar1.width,
