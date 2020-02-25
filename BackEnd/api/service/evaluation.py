@@ -66,11 +66,10 @@ def add_evaluation(data):
         )
         db.session.add(evaluation)
         user_service.add_validated_document(evaluation.user_id, evaluation.graph_ref)
-        badge_possession_verification(evaluation.user_id, 'Knowledge architect', {})
         userService.add_user_experience(evaluation.user_id, 30)
         db.session.flush()
         db.session.commit()
-
+        badge_possession_verification(evaluation.user_id, 'Knowledge architect', {})
 
     return build_evaluation_schema(evaluation)
 

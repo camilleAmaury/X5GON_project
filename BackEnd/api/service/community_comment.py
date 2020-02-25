@@ -44,12 +44,12 @@ def create_community_comment(data):
             like_count=0
         )
         db.session.add(comment)
+        db.session.flush()
+        db.session.commit()
         badge_possession_verification(comment.user_id, 'Path of mastership', {
             'question_id': question.question_id,
             'comment_id': comment.comment_id
         })
-        db.session.flush()
-        db.session.commit()
         return build_comment_schema(comment)
     except exc.DBAPIError as e:
         current_app.logger.error('Fail on create user %s' % str(e) )
@@ -108,10 +108,10 @@ def modify_comment_likes(data):
         comment.addLike(like.like_value)
         if like.like_value == 1:
             add_user_experience(comment.user_id, 5)
+    db.session.flush()
+    db.session.commit()
     badge_possession_verification(like.user_id, 'Path of mastership', {
         'question_id': question.question_id,
         'comment_id': like.comment_id
     })
-    db.session.flush()
-    db.session.commit()
     return build_like_schema(like)
