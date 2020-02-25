@@ -21,6 +21,7 @@ def build_user_schema(user):
     mod['email'] = user.email
     mod['phone'] = user.phone
     mod['year'] = user.year
+    mod['user_image'] = user.user_image
     return mod
 
 def get_user(user_id):
@@ -75,6 +76,8 @@ def create_user(data):
         )
         if data.get('phone') :
             user.phone = data.get('phone')
+        if data.get('user_image') :
+            user.user_image = data.get('user_image')
         db.session.add(user)
 
         user.set_level(level)
@@ -145,7 +148,7 @@ def get_user_image(user_id):
             },
             "message":"User not found"
         }), 409))
-    return BytesIO(user.user_image)
+    return user.user_image
 
 def set_user_image(user_id, image):
     user = User.query.get(user_id)

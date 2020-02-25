@@ -2,7 +2,7 @@ from flask import request
 from flask_restplus import Namespace, Resource, fields
 
 from api.utils import validator
-from api.service.badge import get_badge, get_all_badges, create_badge, delete_badge, get_badge_image, set_badge_image
+from api.service.badge import get_badge, get_all_badges, create_badge, delete_badge
 
 import json
 
@@ -12,6 +12,7 @@ badge_schema = api.model('Badge', {
     'badge_id': fields.Integer(required=False, description='ID of the badge', readonly=True),
     'badge_name': fields.String(required=True, description='Badge name'),
     'description': fields.String(required=True, description='Badge description'),
+    'badge_image': fields.String(required=False, description='File path of the badge image'),
     'possess_by_user': fields.Boolean(required=False, description='True if the submit user possess this badge', readonly=True)
 })
 

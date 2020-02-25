@@ -1,6 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
-from base64 import b64encode, b64decode
 
 from api.database import db
 
@@ -40,7 +39,7 @@ class User(db.Model):
     experience = db.Column(db.Integer)
     user_questions = db.relationship('CommunityQuestion', backref='users')
     user_comments = db.relationship('CommunityComment', backref='users')
-    user_image = db.LargeBinary()
+    user_image = db.Column(db.String(300))
 
     def __init__(self, username, pwd, email, year):
         self.username = username
@@ -140,12 +139,6 @@ class User(db.Model):
         self.level = level
         self.experience = 0
 
-    def get_image(self):
-        return b64decode(self.user_image)
-
-    def set_image(self, image):
-        self.user_image = image.read()
-
 class Document(db.Model):
     __tablename__ = 'documents'
 
@@ -203,13 +196,7 @@ class Badge(db.Model):
     badge_id = db.Column(db.Integer, primary_key=True)
     badge_name = db.Column(db.String(100))
     description = db.Column(db.String(300))
-    badge_image = db.LargeBinary()
-
-    def get_image(self):
-        return b64decode(self.user_image)
-
-    def set_image(self, image):
-        self.user_image = image.read()
+    badge_image = db.Column(db.String(300))
 
 class Level(db.Model):
     __tablename__ = 'levels'
