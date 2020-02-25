@@ -15,6 +15,7 @@ community_question_schema = api.model('CommunityQuestion', {
     'question': fields.String(required=True, description='Question content'),
     'user_id': fields.Integer(required=True, description='Id of the user who ask this question'),
     'username': fields.String(required=False, description='Username of the user who ask this question', readonly=True),
+    'date': fields.DateTime(required=False, description='Date time of the post of this question', readonly=True),
     'comments': fields.List(fields.Nested(community_comment_schema), readonly=True)
 })
 
