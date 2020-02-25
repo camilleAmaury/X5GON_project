@@ -24,6 +24,7 @@ user_schema = api.model('User', {
     'phone': fields.String(required=False, description='User phone number'),
     'email': fields.String(required=True, description='User email'),
     'year': fields.Integer(required=True, description='Number of years from the end of high school'),
+    'lang': fields.String(required=False, description='User language (default value : EN)'),
     'user_image': fields.Integer(required=False, decription='Image id of the user', readonly=True)
 })
 

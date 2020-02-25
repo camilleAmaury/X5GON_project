@@ -13,7 +13,7 @@ from .evaluation import build_evaluation_schema
 from .badge import build_badge_schema
 from .level import build_level_schema
 from .skill import getKeywords, build_skills_schema
-from .event import badge_possession_verification
+from .event import badge_possession_verification, trigger_gako_event
 
 
 def build_user_schema(user):
@@ -24,6 +24,7 @@ def build_user_schema(user):
     mod['phone'] = user.phone
     mod['year'] = user.year
     mod['user_image'] = user.user_image
+    mod['lang'] = user.lang
     return mod
 
 def get_user(user_id):
@@ -80,11 +81,14 @@ def create_user(data):
             user.phone = data.get('phone')
         if data.get('user_image') :
             user.user_image = data.get('user_image')
+        if data.get('lang') :
+            user.lang = data.get('lang')
         db.session.add(user)
-
         user.set_level(level)
         db.session.flush()
         db.session.commit()
+        if data.get('phone') :
+            trigger_gako_event(user.user_id, 'register')
         return generate_auth_token(user=user)
     except exc.DBAPIError as e:
         current_app.logger.error('Fail on create user %s' % str(e) )

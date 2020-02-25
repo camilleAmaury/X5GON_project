@@ -1,5 +1,11 @@
+import requests
+
 from api.database import db
 from api.database.model import Badge, User, TraceNavigationUser, CommunityQuestion, ScholarQuestion, CommunityComment
+
+
+# Badge verification *****************************************************************************************************
+
 
 def badge_possession_verification(user_id, badge_name, data):
     user = User.query.get(user_id)
@@ -44,3 +50,18 @@ def badge_knowledge_architect_verification(user, badge, data):
     if evaluation_count >= 10 :
         user.add_badge(badge)
         db.session.commit()
+
+
+# Badge verification *****************************************************************************************************
+
+
+def trigger_gako_event(user_id, gako_event):
+    user = User.query.get(user_id)
+    if user :
+        switcher = {
+            'register' : gako_event_register
+        }
+        switcher[gako_event](user)
+
+def gako_event_register(user):
+    print(requests.get('http://185.157.246.81:5001/event/register?lang=' + user.lang + '&username=' + user.username + '&phone=' + str(user.phone) + '&user_id=' + str(user.user_id)).content)

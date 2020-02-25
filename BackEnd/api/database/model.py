@@ -28,6 +28,7 @@ class User(db.Model):
     email = db.Column(db.String(100))
     phone = db.Column(db.String(30))
     year = db.Column(db.Integer())
+    lang = db.Column(db.String(10), default='EN')
     opened_documents = db.relationship('Document', secondary=user_opened_documents)
     validated_documents = db.relationship('Document', secondary=user_validated_documents)
     scholar_questions = db.relationship('ScholarQuestion', backref='users', lazy=True)
