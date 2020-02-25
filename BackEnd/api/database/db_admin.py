@@ -75,10 +75,11 @@ def db_admin(app, db):
     @app.cli.command()
     def initialize_tables():
         try:
-            create_level({
-                'level_number': 1,
-                'next_stage': 100
-            })
+            for i in range(1, 10):
+                create_level({
+                    'level_number': i,
+                    'next_stage': i*50 + 50
+                })
         except :
             print('Error on creation of entity : create_level')
         try:

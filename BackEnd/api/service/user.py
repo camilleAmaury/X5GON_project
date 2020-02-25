@@ -219,10 +219,10 @@ def add_opened_document(user_id, data):
             graph_ref=document.graph_ref,
             user_id=user.user_id
         )
-        badge_possession_verification(trace.user_id, 'Apprentice', {})
         db.session.add(trace)
         db.session.flush()
         db.session.commit()
+        badge_possession_verification(trace.user_id, 'Apprentice', {})
 
     return build_document_schema(document)
 
@@ -427,9 +427,9 @@ def add_user_question(user_id, data):
         user_id=user_id
     )
     db.session.add(question)
-    badge_possession_verification(question.user_id, 'Eager to learn', {})
     db.session.flush()
     db.session.commit()
+    badge_possession_verification(question.user_id, 'Eager to learn', {})
 
     return build_scholar_question_schema(question)
 
@@ -717,7 +717,6 @@ def add_user_experience(user_id, experience):
         }), 409))
     user.add_experience(experience)
     db.session.commit()
-
 
 def remove_user_experience(user_id, experience):
     user = User.query.get(user_id)
