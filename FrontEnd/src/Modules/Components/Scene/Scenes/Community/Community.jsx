@@ -46,11 +46,7 @@ export default class Community extends Component {
             this.setState({ server: server, config: config, server2: server2 }, () => {
                 this._loadQuestions();
             }, () => {
-                if (this._isMounted) {
-                    this.setState({ server: server, config: config, server2: server2 }, () => {
-                        this._loadMyQuestions();
-                    });
-                }
+                this._loadMyQuestions();
             });
         }
     }
@@ -72,7 +68,7 @@ export default class Community extends Component {
                                 author: res[i].comments[j].username, time: res[i].comments[j].date,
                                 content: res[i].comments[j].comment,
                                 like: res[i].comments[j].like_count, isLiked: 0, hoveredArrow: 0,
-                                id: res[i].comments[j].comment_i, image: res[i].comments[j].user_image
+                                id: res[i].comments[j].comment_id, image: res[i].comments[j].user_image
                             });
                         }
                     }

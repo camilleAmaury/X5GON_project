@@ -129,7 +129,7 @@ export default class SwitchingForm extends Component {
                             <button className={"ghost"} id={"signIn"}>Sign In</button>
                         </div>
                         <div className={"overlay-panel overlay-right"}>
-                            <h1>Welcome on Knowledge's Recipe</h1>
+                            <h1>Welcome on Gako</h1>
                             <p>This application was created for the X5GON 2020 hackathon by <a href={"https://www.linkedin.com/in/vincent-kowalski-b7868b166/"}  target="_blank" rel="noopener noreferrer">Vincent Kowalski</a>, <a href={"https://www.linkedin.com/in/camille-amaury-juge/"}  target="_blank" rel="noopener noreferrer">Camille-Amaury Juge</a> and <a href={"https://www.linkedin.com/in/aniss-bentebib-a449a8155/"}  target="_blank" rel="noopener noreferrer">Aniss Bentebib</a>.</p>
                             <p>LogIn in order to continue.</p>
                             <button className={"ghost"} id={"signUp"}>Sign Up</button>

@@ -70,6 +70,10 @@ export default class Knowledge extends Component {
         }
     }
 
+    componentWillUnmount = () => {
+        this._isMounted = false;
+    }
+
     preparePositions = () => {
         let obj = {};
         //beams
@@ -223,13 +227,11 @@ export default class Knowledge extends Component {
                                     .then(request => {
                                         if (request.status === 200) {
                                             data.push({ id: documents[i][0], title: documents[i][1], format: documents[i][3], keywords: documents[i][2].split(",") });
-                                            if (this.props.isMounted) {
-                                                if (this._isMounted) {
-                                                    this.setState({
-                                                        data: data,
-                                                        librarianState: 2
-                                                    });
-                                                }
+                                            if (this._isMounted) {
+                                                this.setState({
+                                                    data: data,
+                                                    librarianState: 2
+                                                });
                                             }
                                         }
                                     })

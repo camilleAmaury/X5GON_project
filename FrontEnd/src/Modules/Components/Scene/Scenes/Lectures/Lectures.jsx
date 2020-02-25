@@ -115,7 +115,7 @@ export default class Lectures extends Component {
     }
 
     _loadDocument = () => {
-        axios.get(`${this.state.server}users/${JSON.parse(localStorage.getItem("isConnected")).id}/opened_documents?isValidated=True`)
+        axios.get(`${this.state.server}users/${JSON.parse(localStorage.getItem("isConnected")).id}/opened_documents?isValidated=true`)
             .then(request => {
                 let documentsId = [];
                 for (let i = 0; i < request.data.length; i++) {
@@ -125,79 +125,73 @@ export default class Lectures extends Component {
                 for (let i = 0; i < documentsId.length; i++) {
                     axios.get(`${this.state.server2}api/v1/oer_materials/${documentsId[i].id}/contents/`)
                         .then(request1 => {
-                            if (this.props.isMounted) {
-                                // find the prerequisites
-                                axios.get(`http://185.157.246.81:5000/prerequisites/${documentsId[i].id}`)
-                                    .then(request2 => {
-                                        let prerequisites = [];
-                                        let datas = request2.data;
-                                        let dataper2 = Math.ceil(datas.length / 2);
-                                        for (let j = 0; j < dataper2; j++) {
-                                            let temp_array = [];
-                                            if (j === dataper2 - 1 && datas.length % 2 === 1) {
-                                                temp_array.push({ title: datas[2 * j][0], link: datas[2 * j][1] });
-                                            } else {
-                                                temp_array.push({ title: datas[2 * j][0], link: datas[2 * j][1] });
-                                                temp_array.push({ title: datas[2 * j + 1][0], link: datas[2 * j + 1][1] });
-                                            }
-                                            prerequisites.push(temp_array);
+                            // find the prerequisites
+                            axios.get(`http://185.157.246.81:5000/prerequisites/${documentsId[i].id}`)
+                                .then(request2 => {
+                                    let prerequisites = [];
+                                    let datas = request2.data;
+                                    let dataper2 = Math.ceil(datas.length / 2);
+                                    for (let j = 0; j < dataper2; j++) {
+                                        let temp_array = [];
+                                        if (j === dataper2 - 1 && datas.length % 2 === 1) {
+                                            temp_array.push({ title: datas[2 * j][0], link: datas[2 * j][1] });
+                                        } else {
+                                            temp_array.push({ title: datas[2 * j][0], link: datas[2 * j][1] });
+                                            temp_array.push({ title: datas[2 * j + 1][0], link: datas[2 * j + 1][1] });
                                         }
-                                        let reco;
-                                        reco = "The users who read this document have also read these documents :\n";
-                                        axios.get(`http://185.157.246.81:5000/doc_see_by_user/${documentsId[i].id}`)
-                                            .then(request3 => {
-                                                let datas = request3.data;
-                                                for (let [key, value] of Object.entries(datas)) {
-                                                    console.log(`${key}: ${value}`);
-                                                    reco = <div onClick={() => this.props.search(key)}>{reco + "- " + value + "\n"}</div>
+                                        prerequisites.push(temp_array);
+                                    }
+                                    let reco = "The users who read this document have also read these documents :\n";
+                                    axios.get(`http://185.157.246.81:5000/doc_see_by_user/${documentsId[i].id}`)
+                                        .then(request3 => {
+                                            let datas = request3.data;
+                                            for (let [key, value] of Object.entries(datas)) {
+                                                reco = <div onClick={() => this.props.search(key)}>{reco + "- " + value + "\n"}</div>
+                                            }
+                                            let doc = {
+                                                title: documentsId[i].title, id: documentsId[i].id, content: `\n${request1.data.oer_contents[0].value.value}\n\n${reco}`, isTitleHover: false,
+                                                isScrolled: false, bgY1: 150, bgY2: 0, corpusTop: 0, isOpened: false, data: [], isDeleteHovered: false, isDeleteClicked: 0, isValidateHovered: false,
+                                                isValidateClicked: false, ratingUnderstanding: 0, ratingQuality: 0, ratingUnderstandingHover: 0, ratingQualityHover: 0, isRated: documentsId[i].isRated
+                                            };
+                                            doc.data = prerequisites;
+                                            let bool = [];
+                                            let bool2 = [];
+                                            for (let j = 0; j < doc.data.length; j++) {
+                                                bool.push(false);
+                                                bool2.push(false);
+                                            }
+                                            let floorhovered = this.state.isFloorHovered;
+                                            let floorcliked = this.state.isFloorClicked;
+                                            floorhovered.push(bool);
+                                            floorcliked.push(bool2);
+                                            let ind = documents.push(doc) - 1;
+                                            this.setState({ documents: documents, isFloorHovered: floorhovered, isFloorClicked: floorcliked }, () => {
+                                                try {
+                                                    setTimeout(() => {
+                                                        let list = document.getElementsByClassName("scrollUpper");
+                                                        list[ind * 2].addEventListener("click", this.scrollDocument);
+                                                        list[ind * 2 + 1].addEventListener("click", this.scrollDocument);
+                                                    }, 500);
+                                                } catch (error) {
+                                                    // console.log(error);
                                                 }
-                                                console.log(reco)
-                                                let doc = {
-                                                    title: documentsId[i].title, id: documentsId[i].id, content: `\n${request1.data.oer_contents[0].value.value}\n\n${reco}`, isTitleHover: false,
-                                                    isScrolled: false, bgY1: 150, bgY2: 0, corpusTop: 0, isOpened: false, data: [], isDeleteHovered: false, isDeleteClicked: 0, isValidateHovered: false,
-                                                    isValidateClicked: false, ratingUnderstanding: 0, ratingQuality: 0, ratingUnderstandingHover: 0, ratingQualityHover: 0, isRated: documentsId[i].isRated
-                                                };
-                                                doc.data = prerequisites;
-                                                let bool = [];
-                                                let bool2 = [];
-                                                for (let j = 0; j < doc.data.length; j++) {
-                                                    bool.push(false);
-                                                    bool2.push(false);
-                                                }
-                                                let floorhovered = this.state.isFloorHovered;
-                                                let floorcliked = this.state.isFloorClicked;
-                                                floorhovered.push(bool);
-                                                floorcliked.push(bool2);
-                                                if (this.props.isMounted) {
-                                                    let ind = documents.push(doc) - 1;
-                                                    this.setState({ documents: documents, isFloorHovered: floorhovered, isFloorClicked: floorcliked }, () => {
-                                                        try {
-                                                            setTimeout(() => {
-                                                                let list = document.getElementsByClassName("scrollUpper");
-                                                                list[ind * 2].addEventListener("click", this.scrollDocument);
-                                                                list[ind * 2 + 1].addEventListener("click", this.scrollDocument);
-                                                            }, 500);
-                                                        } catch (error) {
-                                                            // console.log(error);
-                                                        }
-                                                    });
-                                                }
-                                            })
-                                            .catch(error => {
-                                                // console.log(error)
-                                                console.log("Can't load prerequisites");
                                             });
-                                    });
-                            }
+                                        })
+                                        .catch(error => {
+                                            // console.log(error)
+                                            console.log("Can't load prerequisites");
+                                        });
+                                });
                         })
                         .catch(error => {
                             // console.log(error)
                             console.log("Can't load document");
                         });
+
                 }
             })
             .catch(error => {
-                console.log("pd")
+                console.log("can't do")
             });
     }
 
@@ -245,37 +239,35 @@ export default class Lectures extends Component {
         poptitle.style.transition = "1.5s top";
         document.getElementsByClassName("side1")[nb].style.transition = "1.5s height";
         document.getElementsByClassName("side2")[nb].style.transition = "1.5s height";
-        if (this.props.isMounted) {
-            this.setState({
-                documents: documents
-            }, () => {
-                setTimeout(() => {
-                    document.getElementById("lectures").scrollTo(0, document.getElementsByClassName("lectures-document")[nb].offsetTop);
-                    // transition out 
-                    if (documents[nb].isScrolled) {
-                        btn1.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
-                        btn2.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
-                    }
-                    upper_scroll.addEventListener('click', this.scrollDocument);
-                    lower_scroll.addEventListener('click', this.scrollDocument);
-                    lower_scroll.style.transition = "none";
-                    lower_texture.style.transition = "none";
-                    documentContainer.style.transition = "none";
-                    documentSeparator.style.transition = "none";
-                    center_texture.style.transition = "none";
-                    lower_scroll_sideLeft.style.transition = "none";
-                    lower_scroll_sideRight.style.transition = "none";
-                    lectures.style.transition = "none";
-                    btnVal.style.transition = "none";
-                    btnDel.style.transition = "none";
-                    popDel.style.transition = "none";
-                    poptitle.style.transition = "none";
-                    document.getElementsByClassName("side1")[nb].style.transition = "none";
-                    document.getElementsByClassName("side2")[nb].style.transition = "none";
-                    corpus.style.transition = "none";
-                }, 1500);
-            });
-        }
+        this.setState({
+            documents: documents
+        }, () => {
+            setTimeout(() => {
+                document.getElementById("lectures").scrollTo(0, document.getElementsByClassName("lectures-document")[nb].offsetTop);
+                // transition out 
+                if (documents[nb].isScrolled) {
+                    btn1.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
+                    btn2.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
+                }
+                upper_scroll.addEventListener('click', this.scrollDocument);
+                lower_scroll.addEventListener('click', this.scrollDocument);
+                lower_scroll.style.transition = "none";
+                lower_texture.style.transition = "none";
+                documentContainer.style.transition = "none";
+                documentSeparator.style.transition = "none";
+                center_texture.style.transition = "none";
+                lower_scroll_sideLeft.style.transition = "none";
+                lower_scroll_sideRight.style.transition = "none";
+                lectures.style.transition = "none";
+                btnVal.style.transition = "none";
+                btnDel.style.transition = "none";
+                popDel.style.transition = "none";
+                poptitle.style.transition = "none";
+                document.getElementsByClassName("side1")[nb].style.transition = "none";
+                document.getElementsByClassName("side2")[nb].style.transition = "none";
+                corpus.style.transition = "none";
+            }, 1500);
+        });
     }
 
     scrollEv = event => {
@@ -340,205 +332,165 @@ export default class Lectures extends Component {
         corpus.style.transition = "1.5s left";
         document.getElementsByClassName("side1")[nb].style.transition = "1.5s left";
         document.getElementsByClassName("side2")[nb].style.transition = "1.5s left";
-        if (this.props.isMounted) {
-            this.setState({
-                documents: documents
-            }, () => {
-                setTimeout(() => {
-                    document.getElementById("lectures").scrollTo(0, document.getElementsByClassName("lectures-document")[nb].offsetTop);
-                    // transition out 
-                    if (documents[nb].isScrolled) {
-                        btn1.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
-                        btn2.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
-                    }
-                    upper_scroll.addEventListener('click', this.scrollDocument);
-                    lower_scroll.addEventListener('click', this.scrollDocument);
-                    lower_scroll.style.transition = "none";
-                    documentContainer.style.transition = "none";
-                    lower_scroll_sideLeft.style.transition = "none";
-                    lower_scroll_sideRight.style.transition = "none";
-                    pagodaContainer.style.transition = "none";
-                    separatorContainer.style.transition = "none";
-                    document.getElementsByClassName("side1")[nb].style.transition = "none";
-                    document.getElementsByClassName("side2")[nb].style.transition = "none";
-                    corpus.style.transition = "none";
-                }, 1500);
-            });
-        }
+        this.setState({
+            documents: documents
+        }, () => {
+            setTimeout(() => {
+                document.getElementById("lectures").scrollTo(0, document.getElementsByClassName("lectures-document")[nb].offsetTop);
+                // transition out 
+                if (documents[nb].isScrolled) {
+                    btn1.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
+                    btn2.addEventListener('click', documents[nb].isScrolled ? this.changeScene : () => { });
+                }
+                upper_scroll.addEventListener('click', this.scrollDocument);
+                lower_scroll.addEventListener('click', this.scrollDocument);
+                lower_scroll.style.transition = "none";
+                documentContainer.style.transition = "none";
+                lower_scroll_sideLeft.style.transition = "none";
+                lower_scroll_sideRight.style.transition = "none";
+                pagodaContainer.style.transition = "none";
+                separatorContainer.style.transition = "none";
+                document.getElementsByClassName("side1")[nb].style.transition = "none";
+                document.getElementsByClassName("side2")[nb].style.transition = "none";
+                corpus.style.transition = "none";
+            }, 1500);
+        });
     }
 
     hoverPagoda = (i, j) => {
         let floor = this.state.isFloorHovered;
         floor[i][j] = true;
-        if (this.props.isMounted) {
-            this.setState({
-                isFloorHovered: floor
-            });
-        }
+        this.setState({
+            isFloorHovered: floor
+        });
     }
 
     unhoverPagoda = (i, j) => {
         let floor = this.state.isFloorHovered;
         floor[i][j] = false;
-        if (this.props.isMounted) {
-            this.setState({
-                isFloorHovered: floor
-            });
-        }
+        this.setState({
+            isFloorHovered: floor
+        });
     }
 
     clickPagoda = (i, j) => {
         let floor = this.state.isFloorClicked;
         floor[i][j] = !floor[i][j];
-        if (this.props.isMounted) {
-            if (this.props.isMounted) {
-                this.setState({
-                    isFloorClicked: floor
-                });
-            }
-        }
+        this.setState({
+            isFloorClicked: floor
+        });
     }
 
     clickDelete = (i) => {
-        if (this.props.isMounted) {
-            let arr = this.state.documents;
-            if (arr[i].isScrolled) {
-                arr[i].isDeleteClicked = arr[i].isDeleteClicked + 1;
-                if (this.props.isMounted) {
-                    this.setState({ documents: arr }, () => {
-                        let arr = this.state.documents;
-                        if (arr[i].isDeleteClicked === 1) {
-                            // wait 10 seconds to reset state 0
-                            setTimeout(() => {
-                                try {
-                                    let arr = this.state.documents;
-                                    if (arr[i].isDeleteClicked === 0) {
-                                        // it means that we already deleted it
-                                    } else {
-                                        // user don't want to delete
-                                        arr[i].isDeleteClicked = 0;
-                                        if (this.props.isMounted) {
-                                            this.setState({ documents: arr });
-                                        }
-                                    }
-                                }
-                                catch (error) {
-                                    // already deleted, no need to pursue
-                                }
-                            }, 10000);
+        let arr = this.state.documents;
+        if (arr[i].isScrolled) {
+            arr[i].isDeleteClicked = arr[i].isDeleteClicked + 1;
+            this.setState({ documents: arr }, () => {
+                let arr = this.state.documents;
+                if (arr[i].isDeleteClicked === 1) {
+                    // wait 10 seconds to reset state 0
+                    setTimeout(() => {
+                        try {
+                            let arr = this.state.documents;
+                            if (arr[i].isDeleteClicked === 0) {
+                                // it means that we already deleted it
+                            } else {
+                                // user don't want to delete
+                                arr[i].isDeleteClicked = 0;
+                                this.setState({ documents: arr });
+                            }
                         }
-                        if (arr[i].isDeleteClicked === 2) {
-                            // request sent to server
-                            axios.delete(`${this.state.server}users/${JSON.parse(localStorage.getItem("isConnected")).id}/opened_documents/${arr[i].id}`)
-                                .then(request => {
-                                    if (request.status === 201) {
-
-                                        // process front end
-                                        let doc1 = this.state.isFloorClicked;
-                                        let doc2 = this.state.isFloorHovered;
-                                        arr.splice(i, 1);
-                                        doc1.splice(i, 1);
-                                        doc2.splice(i, 1);
-                                        if (this.props.isMounted) {
-                                            this.setState({ documents: arr, isFloorClicked: doc1, isFloorHovered: doc2 });
-                                        }
-                                    }
-                                })
-                                .catch(error => {
-                                    // nothing to do
-                                });
-
+                        catch (error) {
+                            // already deleted, no need to pursue
                         }
-                    });
+                    }, 10000);
                 }
-            }
+                if (arr[i].isDeleteClicked === 2) {
+                    // request sent to server
+                    axios.delete(`${this.state.server}users/${JSON.parse(localStorage.getItem("isConnected")).id}/opened_documents/${arr[i].id}`)
+                        .then(request => {
+                            if (request.status === 201) {
+
+                                // process front end
+                                let doc1 = this.state.isFloorClicked;
+                                let doc2 = this.state.isFloorHovered;
+                                arr.splice(i, 1);
+                                doc1.splice(i, 1);
+                                doc2.splice(i, 1);
+                                this.setState({ documents: arr, isFloorClicked: doc1, isFloorHovered: doc2 });
+                            }
+                        })
+                        .catch(error => {
+                            // nothing to do
+                        });
+
+                }
+            });
         }
     }
 
     hoverDelButton = (i, bool) => {
-        if (this.props.isMounted) {
-            let arr = this.state.documents;
-            arr[i].isDeleteHovered = bool;
-            if (this.props.isMounted) {
-                this.setState({ documents: arr });
-            }
-        }
+        let arr = this.state.documents;
+        arr[i].isDeleteHovered = bool;
+        this.setState({ documents: arr });
     }
 
     hoverValButton = (i, bool) => {
-        if (this.props.isMounted) {
-            let arr = this.state.documents;
-            arr[i].isValidateHovered = bool;
-            if (this.props.isMounted) {
-                this.setState({ documents: arr });
-            }
-        }
+        let arr = this.state.documents;
+        arr[i].isValidateHovered = bool;
+        this.setState({ documents: arr });
     }
 
     clickValidate = (i) => {
-        if (this.props.isMounted) {
-            let doc = this.state.documents;
-            if (doc[i].isScrolled) {
-                doc[i].isValidateClicked = !doc[i].isValidateClicked;
-                if (this.props.isMounted) {
-                    this.setState({ documents: doc });
-                }
-            }
-        }
-    }
-
-    ratingHover = (pos, i, j) => {
-        if (this.props.isMounted) {
-            let doc = this.state.documents;
-            if (pos === 0) {
-                doc[i].ratingUnderstandingHover = j;
-            } else if (pos === 1) {
-                doc[i].ratingQualityHover = j;
-            }
+        let doc = this.state.documents;
+        if (doc[i].isScrolled) {
+            doc[i].isValidateClicked = !doc[i].isValidateClicked;
             this.setState({ documents: doc });
         }
     }
 
-    ratingClick = (pos, i, j) => {
-        if (this.props.isMounted) {
-            let doc = this.state.documents;
-            if (pos === 0) {
-                doc[i].ratingUnderstanding = j;
-            } else if (pos === 1) {
-                doc[i].ratingQuality = j;
-            }
-            if (this.props.isMounted) {
-                this.setState({ documents: doc });
-            }
+    ratingHover = (pos, i, j) => {
+        let doc = this.state.documents;
+        if (pos === 0) {
+            doc[i].ratingUnderstandingHover = j;
+        } else if (pos === 1) {
+            doc[i].ratingQualityHover = j;
         }
+        this.setState({ documents: doc });
+    }
+
+    ratingClick = (pos, i, j) => {
+        let doc = this.state.documents;
+        if (pos === 0) {
+            doc[i].ratingUnderstanding = j;
+        } else if (pos === 1) {
+            doc[i].ratingQuality = j;
+        }
+        this.setState({ documents: doc });
     }
 
     sendRating = (i) => {
-        if (this.props.isMounted) {
-            let doc = this.state.documents;
-            if (doc[i].ratingQuality !== 0 && doc[i].ratingUnderstanding !== 0) {
+        let doc = this.state.documents;
+        if (doc[i].ratingQuality !== 0 && doc[i].ratingUnderstanding !== 0) {
 
-                // request
-                let obj = {
-                    graph_ref: doc[i].id,
-                    user_id: JSON.parse(localStorage.getItem("isConnected")).id,
-                    comprehension_rating: doc[i].ratingUnderstanding,
-                    quality_rating: doc[i].ratingQuality
-                }
-                axios.post(`${this.state.server}evaluations/`, obj, this.state.config)
-                    .then(request => {
-                        if (request.status === 201) {
-                            // hide validate state
-                            doc[i].isRated = true;
-                            if (this.props.isMounted) {
-                                this.setState({ documents: doc });
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        // nothing to do
-                    });
+            // request
+            let obj = {
+                graph_ref: doc[i].id,
+                user_id: JSON.parse(localStorage.getItem("isConnected")).id,
+                comprehension_rating: doc[i].ratingUnderstanding,
+                quality_rating: doc[i].ratingQuality
             }
+            axios.post(`${this.state.server}evaluations/`, obj, this.state.config)
+                .then(request => {
+                    if (request.status === 201) {
+                        // hide validate state
+                        doc[i].isRated = true;
+                        this.setState({ documents: doc });
+                    }
+                })
+                .catch(error => {
+                    // nothing to do
+                });
         }
     }
 

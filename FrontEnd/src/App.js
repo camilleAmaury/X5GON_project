@@ -14,7 +14,7 @@ export default class App extends Component {
   }
 
   componentDidMount = () => {
-    document.title = "Knowlegde Recipe";
+    document.title = "Gako";
   }
 
 
