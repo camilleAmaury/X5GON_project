@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import './Confidentiality.css';
+import gako_archi from '../../../../assets/Img/Gako_Architecture.png';
 
 import axios from "axios";
 
@@ -160,11 +161,29 @@ export default class Confidentiality extends Component {
                             Why ? It's really useful to detect your affinity and your interest and advise you new documents<br/>
                         - <b>All the query engine you send to the api</b><br/>
                             Why ? First, if you want to ask the same question to the "Oracle", you don't have to wait the response because it's already on the database<br/>
-                            Why ? In the future, we could want to improve our system, to cleaning the data and fit our model<br/>
+                            Why ? In the future, we could want to improve our system, to cleaning the data and fit our model<br/><br/>
+
+                        <b>Your data aren't selled and will not sell it</b>
                     </p>
                 </div>
             </div>
             </div>
+            </div>
+            <div className={"question"} style={
+                {
+                    marginTop: "20px",
+                    width: "80%",
+                    display: "grid",
+                    gridTemplateColumns: "repeat(11, 1fr)",
+                    gridAutoRows: "minmax(50px, auto)",
+                    gridGap: "10px",
+                    backgroundColor: "#FFFFFF",
+                    boxShadow: "0px 0px 10px 5px rgba(0,0,0,0.3)",
+                    backgroundImage: `url('${gako_archi}')`
+                }
+            }>
+
+
             </div>
             </div>
         );
