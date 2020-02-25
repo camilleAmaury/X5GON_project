@@ -43,7 +43,7 @@ export default class Community extends Component {
                 for(let i = 0; i < res.length; i++){
                     questions.push({
                         question: res[i].question_title, questionContent: res[i].question, 
-                        author: { username: res[i].username, time: res[i].date},
+                        author: { username: res[i].username, time: res[i].date, image: res[i].user_image},
                         isClicked: false, comments: [], id:res[i].question_id
                     });
                     for(let j = 0; j < res[i].comments.length; j++){
@@ -51,7 +51,7 @@ export default class Community extends Component {
                             author: res[i].comments[j].username, time: res[i].comments[j].date, 
                             content: res[i].comments[j].comment, 
                             like: res[i].comments[j].like_count, isLiked: 0, hoveredArrow: 0,
-                            id:res[i].comments[j].comment_id });
+                            id:res[i].comments[j].comment_i, image: res[i].comments[j].user_image });
                     }
                 }
                 this.setState({
