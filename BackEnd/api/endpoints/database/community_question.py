@@ -28,19 +28,23 @@ class CommunityQuestionsRoute(Resource):
             'get_comment': 'true if you want to retrive for all question their comments (default value : false)',
             'check_comment_like': 'Ask if user like return comments (indicate in user_like_status variable)',
             'page': 'Number of the page',
-            'page_size': 'Number of questions on each pages'
+            'page_size': 'Number of questions on each pages',
+            'user_id': 'Id of user'
         },
         responses={
             200: 'Active community questions list',
         }
     )
     def get(self):
+        
         return get_all_community_questions(
             get_comments=bool(request.args.get('get_comment', False)),
             check_comment_like=int(request.args.get('check_comment_like', 0)),
             page=int(request.args.get('page', 0)),
-            page_size=int(request.args.get('page_size', 0))
+            page_size=int(request.args.get('page_size', 0)),
+            user_id = int(request.args.get('user_id', 0))
         )
+        
 
     @api.expect(community_question_schema, envelope='json')
     @api.doc(responses={

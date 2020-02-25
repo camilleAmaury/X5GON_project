@@ -14,8 +14,11 @@ def build_question_schema(question):
     mod['date'] = question.date
     return mod
 
-def get_all_community_questions(get_comments, check_comment_like, page, page_size):
-    query = CommunityQuestion.query.order_by(CommunityQuestion.date.desc())
+def get_all_community_questions(get_comments, check_comment_like, page, page_size, user_id):
+    if(user_id != 0):
+        query = CommunityQuestion.query.filter_by(user_id=user_id)
+    else:
+        query = CommunityQuestion.query.order_by(CommunityQuestion.date.desc())
     if page_size:
         query = query.limit(page_size)
         if page:
@@ -93,3 +96,4 @@ def get_all_question_comments(question_id, check_comment_like) :
                 mod["user_like_status"] = 0
         arr_comments.append(mod)
     return arr_comments
+    
