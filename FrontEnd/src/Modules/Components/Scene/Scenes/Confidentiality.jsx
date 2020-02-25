@@ -82,7 +82,7 @@ export default class Confidentiality extends Component {
                     backgroundColor: "rgb(242, 177, 95)"
                 }
             }>
-                <div id={"community-inner"}>
+                <div id={"community-inner"} style={{backgroundColor: "#f2b15f"}}>
             <div className={"sub-panel"} id={"confidentiality"} style={
                 {
                     height: styles.subpanel.height,
@@ -142,32 +142,30 @@ export default class Confidentiality extends Component {
                     }
                 }>
                     <p>
-                        To works, Gako needs many informations about you. We will explain you exactly what data we collect and why. 
-                        You could make some links with the "Our System Explained" part of this page.<br/><br/>
+                        To work, Gako needs many informations about you. We will explain to you exactly what data we collect and why. 
+                        You could make some links with the "How your data are used?" part of this page.<br/><br/>
 
-                        First, at your subscription we collect :<br/>
-                        - Your <b>e-mail</b> to send you notifications if you want <br/>
-                        - An <b>username</b> to allow the community to identify you<br/>
+                        First, at your subscription we collect:<br/>
+                        - Your <b>e-mail</b> to send you notifications (if you want) <br/>
+                        - A <b>username</b> to allow the community to recognize you<br/>
                         - A <b>password</b> to log in<br/>
-                        - Your <b>year after baccalaureat</b> to adapt the platform to your scholar level<br/>
-                        - Your phone <b>number</b> if you want a personal adaptative learning buddy on your smartphone without internet !<br/><br/>
+                        - Your <b>year after baccalaureat*</b> to adapt the platform to your scholar level (*if your unlucky not to be french, use your end of school diploma)<br/>
+                        - Your phone <b>number</b> if you want a personal adaptative learning buddy on your smartphone without internet!<br/><br/>
 
-                        During your navigation, we collect also many action that you did, here is the list :<br/>
-                        - <b>What documents you have opened and when you opened it</b><br/>
-                            Why ? We need to improve our recommendation model. Indeed, we fill the field "The users who read this document they have also reads these documents : ..." by checking what documents are read after the current document do your read<br/>
-                            Why ? We also need your time activity to adapt your personal adaptative learning buddy<br/>
-                        - <b>What documents you have validate</b><br/>
-                            Why ? We recommend you some documents based on keywords of document that you already read and validated<br/>
-                            Why ? It's really useful to detect your affinity and your interest and advise you new documents<br/>
-                        - <b>All the query engine you send to the api</b><br/>
-                            Why ? First, if you want to ask the same question to the "Oracle", you don't have to wait the response because it's already on the database<br/>
-                            Why ? In the future, we could want to improve our system, to cleaning the data and fit our model<br/><br/>
+                        During your navigation, we also collect your traces, here is the list:<br/>
+                        - <b>What documents you have opened and when you have opened them</b><br/>
+                            Why? We need to improve our recommendation model. Indeed, we fill the field "The users who read this document have also read these documents: ..." by keeping track off the sequence of documents you have consulted<br/>
+                            Why? We also need your time activity to adapt your personal adaptative learning buddy<br/>
+                        - <b>What documents you have validated</b><br/>
+                            Why? We recommend some documents based on keywords of documents that you have already read and validated<br/>
+                            Why? It's really useful to detect your affinity and your interest and advise you new documents. Validate documents help us to improve our model and understand precisely your affinities are.<br/>
+                        - <b>All your query history</b><br/>
+                            Why? First, if you want to ask the same question to the "Oracle", you don't have to wait for the answer because it's already in the database<br/>
+                            Why? In the future, we could want to improve our system, to clean the data and retrain our model<br/><br/>
 
-                        <b>Your data aren't selled and will not sell it</b>
+                        <b>Your data aren't sold and we will not sell them</b>
                     </p>
                 </div>
-            </div>
-            </div>
             </div>
             <div className={"question"} style={
                 {
@@ -178,13 +176,46 @@ export default class Confidentiality extends Component {
                     gridAutoRows: "minmax(50px, auto)",
                     gridGap: "10px",
                     backgroundColor: "#FFFFFF",
-                    boxShadow: "0px 0px 10px 5px rgba(0,0,0,0.3)",
-                    backgroundImage: `url('${gako_archi}')`
+                    boxShadow: "0px 0px 10px 5px rgba(0,0,0,0.3)"
                 }
             }>
+                <div className={"titleConf"} style={
+                    {
+                        gridRow: "1",
+                        gridColumn: "2/9",
+                        display: "flex",
+                        alignItems: "center",
+                        fontSize: "35px"
+                    }
+                }>
+                    How your data are used ?
+                </div>
+                <img src={gako_archi} width={'100%'} style={
+                    {
 
+                gridArea: "2 / 2 / 2/ 11",
+                display: "flex",
+                alignItems: "center",
+
+                    }}/>
+                    <div className={"content"} style={
+                    {
+                        gridRow: "3",
+                        gridColumn: "2/11",
+                        display: "flex"
+                    }
+                }>
+                    <p>
+                        Here is our full architecture. As you can see, you are the person to the left of the picture. You interact with the solution throught the front end. The front end communicate with all the API and send your data which are stored into Gako SQL Database.
+                        The only API which use your data are "API Back End" (store your data into gako db), API Gako Agent (calculate recommendations, get all event about your actions, generate SMS to motivate you, suggest you a new subjetcs, etc) and the API Sms Sender which only have some data like your username to personalize the messages you will received ONLY IF you fill your phone number during you registered.
+                    </p>
+            </div> 
 
             </div>
+            </div>
+            
+            </div>
+            
             </div>
         );
     }
