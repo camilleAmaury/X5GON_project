@@ -1,6 +1,6 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-# from sqlalchemy_imageattach.entity import Image, image_attachment
 import datetime
+from base64 import b64encode, b64decode
 
 from api.database import db
 
@@ -40,7 +40,7 @@ class User(db.Model):
     experience = db.Column(db.Integer)
     user_questions = db.relationship('CommunityQuestion', backref='users')
     user_comments = db.relationship('CommunityComment', backref='users')
-    picture = image_attachment('UserPicture')
+    user_image = db.LargeBinary()
 
     def __init__(self, username, pwd, email, year):
         self.username = username
@@ -140,11 +140,11 @@ class User(db.Model):
         self.level = level
         self.experience = 0
 
-# class UserPicture(db.Modl, Image):
-#     __tablename__ = 'user_picture'
-#
-#     user_id = db.Column(db.Integer, ForeignKey('user.id'), primary_key=True)
-#     user = relationship('User')
+    def get_image(self):
+        return b64decode(self.user_image)
+
+    def set_image(self, image):
+        self.user_image = image.read()
 
 class Document(db.Model):
     __tablename__ = 'documents'
@@ -164,6 +164,14 @@ class Document(db.Model):
 
     def remove_user_evaluation(self, user_evaluation):
         self.user_evaluations.remove(user_evaluation)
+
+class TraceNavigationUser(db.Model):
+    __tablename__ = 'trace_navigation_users'
+
+    trace_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    graph_ref = db.Column(db.String(100), db.ForeignKey('documents.graph_ref'))
+    datetime = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
 class ScholarQuestion(db.Model):
     __tablename__ = 'scholar_questions'
@@ -195,6 +203,13 @@ class Badge(db.Model):
     badge_id = db.Column(db.Integer, primary_key=True)
     badge_name = db.Column(db.String(100))
     description = db.Column(db.String(300))
+    badge_image = db.LargeBinary()
+
+    def get_image(self):
+        return b64decode(self.user_image)
+
+    def set_image(self, image):
+        self.user_image = image.read()
 
 class Level(db.Model):
     __tablename__ = 'levels'

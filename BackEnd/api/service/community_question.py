@@ -14,8 +14,13 @@ def build_question_schema(question):
     mod['date'] = question.date
     return mod
 
-def get_all_community_questions(get_comments, check_comment_like):
-    questions = CommunityQuestion.query.order_by(CommunityQuestion.date.desc()).all()
+def get_all_community_questions(get_comments, check_comment_like, page, page_size):
+    query = CommunityQuestion.query.order_by(CommunityQuestion.date.desc())
+    if page_size:
+        query = query.limit(page_size)
+        if page:
+            query = query.offset((page-1)*page_size)
+    questions = query.all()
     arr_questions = []
     for question in questions :
         mod = build_question_schema(question)
