@@ -4,6 +4,7 @@ from sqlalchemy import exc
 from api.database import db
 from api.database.model import User, CommunityQuestion, CommunityComment, UserLike
 from .like import build_like_schema
+from .event import badge_possession_verification
 
 def build_comment_schema(comment):
     mod = {}
@@ -42,6 +43,10 @@ def create_community_comment(data):
             like_count=0
         )
         db.session.add(comment)
+        badge_possession_verification(comment.user_id, 'Path of mastership', {
+            'question_id': question.question_id,
+            'comment_id': comment.comment_id
+        })
         db.session.flush()
         db.session.commit()
         return build_comment_schema(comment)
@@ -95,6 +100,10 @@ def modify_comment_likes(data):
         )
         db.session.add(like)
         comment.addLike(like.like_value)
+    badge_possession_verification(like.user_id, 'Path of mastership', {
+        'question_id': question.question_id,
+        'comment_id': like.comment_id
+    })
     db.session.flush()
     db.session.commit()
     return build_like_schema(like)

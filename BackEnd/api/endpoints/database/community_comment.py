@@ -14,6 +14,7 @@ community_comment_schema = api.model('CommunityComment', {
     'like_count': fields.Integer(required=False, description='Number of like on this comment', readonly=True),
     'user_id': fields.Integer(required=True, description='Id of the user who post this comment'),
     'username': fields.String(required=False, description='Username of the user who post this comment', readonly=True),
+    'user_image': fields.Integer(required=False, description='User image id of the user who post this comment', readonly=True),
     'question_id': fields.Integer(required=True, description='Id of the question concerned by this comment'),
     'date': fields.String(required=False, description='String who represent the datetime of the post of this comment', readonly=True),
     'user_like_status': fields.Integer(required=False, description='If ask, indicate if the user like this post (1 like, -1 unlike, 0 neutral)', readonly=True)

@@ -15,20 +15,20 @@ def badge_possession_verification(user_id, badge_name, data):
         switcher[badge_name](user, badge, data)
 
 def badge_apprentice_verification(user, badge, data):
-    trace = TraceNavigationUser.query.filter_by(user_id=user.user_id).count()
-    if trace >= 5 :
+    trace_count = TraceNavigationUser.query.filter_by(user_id=user.user_id).count()
+    if trace_count >= 5 :
         user.add_badge(badge)
         db.session.commit()
 
 def badge_seeking_for_help_verification(user, badge, data):
-    question = CommunityQuestion.query.filter_by(user_id=user.user_id).count()
-    if question >= 3 :
+    question_count = CommunityQuestion.query.filter_by(user_id=user.user_id).count()
+    if question_count >= 3 :
         user.add_badge(badge)
         db.session.commit()
 
 def badge_eager_to_learn_verification(user, badge, data):
-    questions = ScholarQuestion.query.filter_by(user_id=user.user_id).count()
-    if questions >= 10 :
+    question_count = ScholarQuestion.query.filter_by(user_id=user.user_id).count()
+    if question_count >= 10 :
         user.add_badge(badge)
         db.session.commit()
 
@@ -40,6 +40,7 @@ def badge_path_of_mastership_verification(user, badge, data):
         db.session.commit()
 
 def badge_knowledge_architect_verification(user, badge, data):
-    if len(user.get_validated_documents()) >= 10 :
+    evaluation_count = Evaluation.query.filter_by(user_id=user.user_id).count()
+    if evaluation_count >= 10 :
         user.add_badge(badge)
         db.session.commit()

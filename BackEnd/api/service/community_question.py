@@ -4,6 +4,7 @@ from sqlalchemy import exc
 from api.database import db
 from api.database.model import User, CommunityQuestion, CommunityComment, UserLike
 from .community_comment import build_comment_schema
+from .event import badge_possession_verification
 
 def build_question_schema(question):
     mod = {}
@@ -34,6 +35,7 @@ def get_all_community_questions(get_comments, check_comment_like, page, page_siz
         user = User.query.get(question.user_id)
         if user :
             mod['username'] = user.username
+            mod['user_image'] = user.user_image
         arr_questions.append(mod)
     return arr_questions
 
@@ -56,6 +58,7 @@ def create_community_question(data):
             question_title=data.get('question_title')
         )
         db.session.add(question)
+        badge_possession_verification(question.user_id, 'Seeking for help', {})
         db.session.flush()
         db.session.commit()
         return build_question_schema(question)
@@ -89,6 +92,7 @@ def get_all_question_comments(question_id, check_comment_like) :
         user = User.query.get(comment.user_id)
         if user :
             mod["username"] = user.username
+            mod['user_image'] = user.user_image
         if check_comment_like :
             like = UserLike.query.filter_by(user_id=check_comment_like, comment_id=comment.comment_id).first()
             if like :
@@ -97,4 +101,3 @@ def get_all_question_comments(question_id, check_comment_like) :
                 mod["user_like_status"] = 0
         arr_comments.append(mod)
     return arr_comments
-    
