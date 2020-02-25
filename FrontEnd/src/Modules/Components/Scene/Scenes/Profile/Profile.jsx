@@ -85,12 +85,10 @@ export default class Profile extends Component {
                     }
                 ]
             };
-            console.log(skills)
             for(let i = 0; i < res.length; i++){
                 skills.labels.push(res[i].skill_name);
                 skills.datasets[0].data.push(res[i].skill_level);
             }
-            console.log(skills)
             this.setState({skills: skills});
         })
         .catch(error => {
