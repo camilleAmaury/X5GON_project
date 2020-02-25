@@ -13,6 +13,7 @@ from .evaluation import build_evaluation_schema
 from .badge import build_badge_schema
 from .level import build_level_schema
 from .skill import getKeywords, build_skills_schema
+from .event import badge_possession_verification
 
 
 def build_user_schema(user):
@@ -218,7 +219,7 @@ def add_opened_document(user_id, data):
             graph_ref=document.graph_ref,
             user_id=user.user_id
         )
-    #    badge_possession_verification('Apprentice') #******************************************************************
+        badge_possession_verification(trace.user_id, 'Apprentice', {})
         db.session.add(trace)
         db.session.flush()
         db.session.commit()
@@ -362,7 +363,7 @@ def remove_validated_document(user_id, graph_ref):
     return True
 
 
-# User Questions *******************************************************************************************************************************
+# User Scholar Questions *******************************************************************************************************************************
 
 
 def get_all_user_questions(user_id):
@@ -426,6 +427,7 @@ def add_user_question(user_id, data):
         user_id=user_id
     )
     db.session.add(question)
+    badge_possession_verification(question.user_id, 'Eager to learn', {})
     db.session.flush()
     db.session.commit()
 

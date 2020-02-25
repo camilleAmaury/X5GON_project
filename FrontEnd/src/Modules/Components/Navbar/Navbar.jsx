@@ -2,7 +2,6 @@ import React, { Component, Fragment } from 'react';
 
 import './Navbar.css';
 
-import BackgroundImage from '../../../assets/Panel/Navbar/backgroundimage.png';
 import Icon1 from '../../../assets/Panel/Navbar/IconImprovement.png';
 import Icon2 from '../../../assets/Panel/Navbar/IconKnowledge.png';
 import Icon3 from '../../../assets/Panel/Navbar/IconCommunity.png';
@@ -14,6 +13,17 @@ import Icon3Hover from '../../../assets/Panel/Navbar/IconCommunityHover.png';
 import Icon4Hover from '../../../assets/Panel/Navbar/IconScholarHover.png';
 import Icon5Hover from '../../../assets/Panel/Navbar/IconLecturesHover.png';
 
+import im1 from '../../../assets/Img/_1.png';
+import im2 from '../../../assets/Img/_2.png';
+import im3 from '../../../assets/Img/_3.png';
+import im4 from '../../../assets/Img/_4.png';
+import im5 from '../../../assets/Img/_5.png';
+import im6 from '../../../assets/Img/_6.png';
+import im7 from '../../../assets/Img/_7.png';
+import im8 from '../../../assets/Img/_8.png';
+import im9 from '../../../assets/Img/_9.png';
+import im10 from '../../../assets/Img/_10.png';
+
 export default class Navbar extends Component {
     constructor(props) {
         super(props);
@@ -23,7 +33,7 @@ export default class Navbar extends Component {
                 height:90
             },
             hoverIcon : [false, false, false, false, false],
-            images:[]
+            images:[im1,im2,im3,im4,im5,im6,im7,im8,im9,im10]
         }
     }
 
@@ -233,18 +243,13 @@ export default class Navbar extends Component {
                                 width: styles.imageAccount.width,
                                 height: styles.imageAccount.height,
                                 left: styles.imageAccount.left,
-                                top: styles.imageAccount.top,
-                                backgroundImage:`url('${BackgroundImage}')`,
-                                backgroundSize:"cover"
+                                top: styles.imageAccount.top+10,
+                                backgroundImage:`url('${this.state.images[JSON.parse(localStorage.getItem("isConnected")).image]}')`,
+                                backgroundSize:"cover",
+                                borderRadius:styles.imageAccount.width/2
                             }
                         
                         }></div>
-                        <div id={"username-text"} style={
-                            {
-                                width: styles.usernameAccount.width,
-                                top: styles.usernameAccount.top
-                            }
-                        }>Static Username</div>
                         <div className={"separation-bar"} style={
                             {
                                 width: styles.sepBar1.width,

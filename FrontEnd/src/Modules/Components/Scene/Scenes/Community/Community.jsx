@@ -4,6 +4,17 @@ import './Community.css';
 
 import axios from "axios";
 
+import im1 from '../../../../../assets/Img/_1.png';
+import im2 from '../../../../../assets/Img/_2.png';
+import im3 from '../../../../../assets/Img/_3.png';
+import im4 from '../../../../../assets/Img/_4.png';
+import im5 from '../../../../../assets/Img/_5.png';
+import im6 from '../../../../../assets/Img/_6.png';
+import im7 from '../../../../../assets/Img/_7.png';
+import im8 from '../../../../../assets/Img/_8.png';
+import im9 from '../../../../../assets/Img/_9.png';
+import im10 from '../../../../../assets/Img/_10.png';
+
 export default class Community extends Component {
     constructor(props) {
         super(props);
@@ -13,7 +24,8 @@ export default class Community extends Component {
             panelOpened: [true, false],
             isAnimating: false,
             server: "",
-            config: {}
+            config: {},
+            images:[im1,im2,im3,im4,im5,im6,im7,im8,im9,im10]
         };
     }
 
@@ -39,6 +51,8 @@ export default class Community extends Component {
         axios.get(`${this.state.server}community_questions?get_comment=true&check_comment_like=${JSON.parse(localStorage.getItem("isConnected")).id}`, this.state.config)
             .then(request => {
                 let res = request.data;
+                
+                console.log(res)
                 let questions = [];
                 for(let i = 0; i < res.length; i++){
                     questions.push({
@@ -71,7 +85,7 @@ export default class Community extends Component {
                 for(let i = 0; i < res.length; i++){
                     myQuestions.push({
                         question: res[i].question_title, questionContent: res[i].question, 
-                        author: { username: res[i].username, time: res[i].date},
+                        author: { username: res[i].username, time: res[i].date, image: res[i].user_image},
                         isClicked: false, comments: [], id:res[i].question_id
                     });
                     for(let j = 0; j < res[i].comments.length; j++){
@@ -79,7 +93,7 @@ export default class Community extends Component {
                             author: res[i].comments[j].username, time: res[i].comments[j].date, 
                             content: res[i].comments[j].comment, 
                             like: res[i].comments[j].like_count, isLiked: 0, hoveredArrow: 0,
-                            id:res[i].comments[j].comment_id });
+                            id:res[i].comments[j].comment_id, image: res[i].comments[j].user_image });
                     }
                 }
                 this.setState({
@@ -332,7 +346,9 @@ export default class Community extends Component {
                                         <div className={"question-title"}><span>{item.questionContent}</span></div>
                                         <div className={"deploy"} onClick={() => this.openComment(i)}><span>{item.isClicked? "unsee comments": "see comments"} ({item.comments.length})</span></div>
                                         <div className={"user-information"}>
-                                            <div className={"picture"}></div>
+                                            <div className={"picture"} style={{
+                                                backgroundImage:`url('${this.state.images[item.author.image]}')`
+                                            }}></div>
                                             <div className={"username"}>{item.author.username}</div>
                                             <div className={"date"}>{item.author.time}</div>
                                         </div>
@@ -372,7 +388,9 @@ export default class Community extends Component {
                                                     }}></div>
                                             </div>
                                             <div className={"user"}>
-                                                <div className={"picture"}></div>
+                                                <div className={"picture"} style={{
+                                                    backgroundImage:`url('${this.state.images[item.author.image]}')`
+                                                }}></div>
                                                 <div className={"username"}>{com.author}</div>
                                                 <div className={"date"}>{com.time}</div>
                                             </div>
