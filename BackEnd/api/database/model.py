@@ -1,5 +1,6 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
+from base64 import b64encode, b64decode
 
 from api.database import db
 
@@ -39,6 +40,7 @@ class User(db.Model):
     experience = db.Column(db.Integer)
     user_questions = db.relationship('CommunityQuestion', backref='users')
     user_comments = db.relationship('CommunityComment', backref='users')
+    user_image = db.LargeBinary()
 
     def __init__(self, username, pwd, email, year):
         self.username = username
@@ -138,6 +140,12 @@ class User(db.Model):
         self.level = level
         self.experience = 0
 
+    def get_image(self):
+        return b64decode(self.user_image)
+
+    def set_image(self, image):
+        self.user_image = image.read()
+
 class Document(db.Model):
     __tablename__ = 'documents'
 
@@ -156,6 +164,14 @@ class Document(db.Model):
 
     def remove_user_evaluation(self, user_evaluation):
         self.user_evaluations.remove(user_evaluation)
+
+class TraceNavigationUser(db.Model):
+    __tablename__ = 'trace_navigation_users'
+
+    trace_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    graph_ref = db.Column(db.String(100))
+    timestamp = db.Column(db.String(100), default=str(datetime.datetime.utcnow))
 
 class ScholarQuestion(db.Model):
     __tablename__ = 'scholar_questions'
@@ -187,6 +203,13 @@ class Badge(db.Model):
     badge_id = db.Column(db.Integer, primary_key=True)
     badge_name = db.Column(db.String(100))
     description = db.Column(db.String(300))
+    badge_image = db.LargeBinary()
+
+    def get_image(self):
+        return b64decode(self.user_image)
+
+    def set_image(self, image):
+        self.user_image = image.read()
 
 class Level(db.Model):
     __tablename__ = 'levels'
@@ -199,8 +222,8 @@ class CommunityQuestion(db.Model):
     __tablename__ = 'community_questions'
 
     question_id = db.Column(db.Integer, primary_key=True)
-    question_title = db.Column(db.String(100), nullable=False)
-    question = db.Column(db.String(300), nullable=False)
+    question_title = db.Column(db.String(1000), nullable=False)
+    question = db.Column(db.String(10000), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     comments = db.relationship('CommunityComment', backref='community_comments')
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)

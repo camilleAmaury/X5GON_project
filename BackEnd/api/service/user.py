@@ -1,8 +1,9 @@
 from flask import current_app, abort, jsonify, make_response
+from io import BytesIO
 from sqlalchemy import exc
 
 from api.database import db
-from api.database.model import User, Document, ScholarQuestion, Badge, Level, UserSearch
+from api.database.model import User, Document, ScholarQuestion, Badge, Level, UserSearch, TraceNavigationUser
 from .authentication import generate_auth_token
 from .document import build_document_schema
 from .scholar_question import build_scholar_question_schema
@@ -79,9 +80,7 @@ def create_user(data):
         user.set_level(level)
         db.session.flush()
         db.session.commit()
-        return {
-                'user_id': user.user_id
-            }, 201
+        return generate_auth_token(user=user)
     except exc.DBAPIError as e:
         current_app.logger.error('Fail on create user %s' % str(e) )
         db.session().rollback()
@@ -136,6 +135,30 @@ def check_user_auth(username, pwd):
             "message":"Invalide password"
         }), 403))
     return generate_auth_token(user)
+
+def get_user_image(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+    return BytesIO(user.user_image)
+
+def set_user_image(user_id, image):
+    user = User.query.get(user_id)
+    if not user:
+        abort(make_response(jsonify({
+            "errors":{
+                0:"User not found"
+            },
+            "message":"User not found"
+        }), 409))
+    user.set_image(image)
+    db.session.commit()
+    return ''
 
 
 # User Opened Documents *******************************************************************************************************************************
@@ -211,6 +234,12 @@ def add_opened_document(user_id, data):
         db.session.commit()
     if not (document in user.get_opened_documents()):
         user.add_opened_document(document)
+        trace = TraceNavigationUser(
+            graph_ref=document.graph_ref,
+            user_id=user.user_id
+        )
+        db.session.add(trace)
+        db.session.flush()
         db.session.commit()
 
     return build_document_schema(document)
@@ -371,7 +400,7 @@ def get_all_user_questions(user_id):
         for scholar_question in scholar_questions:
             mod = build_scholar_question_schema(scholar_question)
             arr_scholar_questions.append(mod)
-    
+
     return arr_scholar_questions
 
 def get_user_question(user_id, question_id):
@@ -736,4 +765,4 @@ def get_all_user_skills(user_id):
     id_arr = []
     for document in validated_documents :
         id_arr.append(document.graph_ref)
-    return build_skills_schema(getKeywords(id_arr))    
+    return build_skills_schema(getKeywords(id_arr))

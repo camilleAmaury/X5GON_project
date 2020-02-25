@@ -2,7 +2,7 @@ from flask import request
 from flask_restplus import Namespace, Resource, fields
 
 from api.utils import validator
-from api.service.badge import get_badge, get_all_badges, create_badge, delete_badge
+from api.service.badge import get_badge, get_all_badges, create_badge, delete_badge, get_badge_image, set_badge_image
 
 import json
 
@@ -58,3 +58,21 @@ class BadgeRoute(Resource):
     def delete(self, badge_id):
         delete_badge(badge_id=badge_id)
         return '', 201
+
+@api.route("/<int:badge_id>/image")
+class BadgeImageRoute(Resource):
+
+    @api.doc(responses={
+        200: 'Badge image',
+        409: 'Badge not found'
+    })
+    def get(self, badge_id):
+        return send_file(get_badge_image(badge_id))
+
+    @api.doc(responses={
+        201: 'Badge image successfully added',
+        409: 'Badge not found'
+    })
+    def post(self, badge_id):
+        image = request.files['user_image']
+        return set_badge_image(badge_id, image), 201
