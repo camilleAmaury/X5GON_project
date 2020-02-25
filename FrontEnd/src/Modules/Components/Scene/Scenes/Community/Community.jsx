@@ -59,6 +59,34 @@ export default class Community extends Component {
             });
     }
 
+    _loadMyQuestions = () => {
+        axios.get(`${this.state.server}community_questions?user_id=${JSON.parse(localStorage.getItem("isConnected")).id}&get_comment=true&check_comment_like=${JSON.parse(localStorage.getItem("isConnected")).id}`, this.state.config)
+            .then(request => {
+                let res = request.data;
+                let myQuestions = [];
+                for(let i = 0; i < res.length; i++){
+                    myQuestions.push({
+                        question: res[i].question_title, questionContent: res[i].question, 
+                        author: { username: res[i].question_title, time: res[i].date},
+                        isClicked: false, comments: [], id:res[i].question_id
+                    });
+                    for(let j = 0; j < res[i].comments.length; j++){
+                        myQuestions[i].comments.push({ 
+                            author: res[i].comments[j].username, time: res[i].comments[j].date, 
+                            content: res[i].comments[j].comment, 
+                            like: res[i].comments[j].like_count, isLiked: 0, hoveredArrow: 0,
+                            id:res[i].comments[j].comment_id });
+                    }
+                }
+                this.setState({
+                    myQuestions:myQuestions
+                });
+            })
+            .catch(error => {
+                //
+            });
+    }
+
     preparePositions = () => {
         let obj = {};
         // panel
