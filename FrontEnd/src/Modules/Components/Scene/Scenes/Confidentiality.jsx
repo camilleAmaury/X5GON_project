@@ -190,7 +190,7 @@ export default class Confidentiality extends Component {
                 }>
                     How your data are used ?
                 </div>
-                <img src={gako_archi} width={'100%'} style={
+                <img src={gako_archi} width={'100%'} alt={"Gako structure"} style={
                     {
 
                 gridArea: "2 / 2 / 2/ 11",
