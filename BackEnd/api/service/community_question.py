@@ -11,7 +11,8 @@ def build_question_schema(question):
     mod['question_title'] = question.question_title
     mod['question'] = question.question
     mod['user_id'] = question.user_id
-    mod['date'] = question.date
+    d = question.date
+    mod['date'] = str(d.hour) + ':' + str(d.minute) + ' ' + str(d.day) + '/' + str(d.month) + '/' + str(d.year)
     return mod
 
 def get_all_community_questions(get_comments, check_comment_like, page, page_size, user_id):
@@ -81,7 +82,7 @@ def get_all_question_comments(question_id, check_comment_like) :
             },
             "message":"Question not exist"
         }), 409))
-    comments = CommunityComment.query.filter_by(question_id=question_id).order_by(CommunityComment.date.desc()).all()
+    comments = CommunityComment.query.filter_by(question_id=question_id).order_by(CommunityComment.like_count.desc(), CommunityComment.date.desc()).all()
     arr_comments = []
     for comment in comments :
         mod = build_comment_schema(comment)

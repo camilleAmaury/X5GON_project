@@ -11,7 +11,8 @@ def build_comment_schema(comment):
     mod['comment'] = comment.comment
     mod['question_id'] = comment.question_id
     mod['user_id'] = comment.user_id
-    mod['date'] = comment.date
+    d = comment.date
+    mod['date'] = str(d.hour) + ':' + str(d.minute) + ' ' + str(d.day) + '/' + str(d.month) + '/' + str(d.year)
     mod['like_count'] = comment.like_count
     return mod
 

@@ -9,6 +9,7 @@ def build_badge_schema(badge):
     mod['badge_id'] = badge.badge_id
     mod['badge_name'] = badge.badge_name
     mod['description'] = badge.description
+    mod['badge_image'] = badge.badge_image
     return mod
 
 def get_badge(badge_id):
@@ -73,26 +74,36 @@ def delete_badge(badge_id):
     db.session.commit()
     return True
 
-def get_badge_image(badge_id):
-    badge = Badge.query.get(badge_id)
-    if not badge:
-        abort(make_response(jsonify({
-            "errors":{
-                0:"Badge not found"
-            },
-            "message":"Badge not found"
-        }), 409))
-    return BytesIO(badge.badge_image)
 
-def set_badge_image(badge_id, image):
-    badge = Badge.query.get(badge_id)
-    if not badge:
-        abort(make_response(jsonify({
-            "errors":{
-                0:"Badge not found"
-            },
-            "message":"Badge not found"
-        }), 409))
-    badge.set_image(image)
-    db.session.commit()
-    return ''
+# Badge Condition Verification ******************************************************************************************
+
+
+def badge_possession_verification(user_id, badge_name):
+    switcher = {
+        'Apprentice' : badge_apprentice_verification,
+        'Seeking for help' : badge_seeking_for_help_verification,
+        'Eager to learn' : badge_eager_to_learn_verification,
+        'Path of mastership' : badge_path_of_mastership_verification,
+        'Knowledge architect' : badge_knowledge_architect_verification
+    }
+    return switcher[badge_name](user_id)
+
+def badge_apprentice_verification(user_id):
+
+    return
+
+def badge_seeking_for_help_verification(user_id):
+
+    return
+
+def badge_eager_to_learn_verification(user_id):
+
+    return
+
+def badge_path_of_mastership_verification(user_id):
+
+    return
+
+def badge_knowledge_architect_verification(user_id):
+
+    return
