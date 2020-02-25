@@ -43,7 +43,7 @@ export default class Community extends Component {
                 for(let i = 0; i < res.length; i++){
                     questions.push({
                         question: res[i].question_title, questionContent: res[i].question, 
-                        author: { username: res[i].question_title, time: res[i].date},
+                        author: { username: res[i].username, time: res[i].date},
                         isClicked: false, comments: [], id:res[i].question_id
                     });
                     for(let j = 0; j < res[i].comments.length; j++){
@@ -71,7 +71,7 @@ export default class Community extends Component {
                 for(let i = 0; i < res.length; i++){
                     myQuestions.push({
                         question: res[i].question_title, questionContent: res[i].question, 
-                        author: { username: res[i].question_title, time: res[i].date},
+                        author: { username: res[i].username, time: res[i].date},
                         isClicked: false, comments: [], id:res[i].question_id
                     });
                     for(let j = 0; j < res[i].comments.length; j++){
@@ -196,7 +196,7 @@ export default class Community extends Component {
                     
                     questions[i].comments.push(
                         {
-                            author: JSON.parse(localStorage.getItem("isConnected")).id,
+                            author: JSON.parse(localStorage.getItem("isConnected")).username,
                             time: `${now.getMinutes()}:${now.getHours()} ${day}/${month}/${now.getFullYear()}`,
                             content: answerValue,
                             like: 0,
