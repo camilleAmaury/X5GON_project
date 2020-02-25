@@ -1,6 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-import datetime
-from base64 import b64encode, b64decode
+import datetime, random
 
 from api.database import db
 
@@ -40,13 +39,14 @@ class User(db.Model):
     experience = db.Column(db.Integer)
     user_questions = db.relationship('CommunityQuestion', backref='users')
     user_comments = db.relationship('CommunityComment', backref='users')
-    user_image = db.LargeBinary()
+    user_image = db.Column(db.Integer)
 
     def __init__(self, username, pwd, email, year):
         self.username = username
         self.pwd = generate_password_hash(pwd)
         self.email = email
         self.year = year
+        self.user_image = random.randint(0, 9)
 
     def __repr__(self):
         return '<User {}>'.format(self.user_id)
@@ -140,12 +140,6 @@ class User(db.Model):
         self.level = level
         self.experience = 0
 
-    def get_image(self):
-        return b64decode(self.user_image)
-
-    def set_image(self, image):
-        self.user_image = image.read()
-
 class Document(db.Model):
     __tablename__ = 'documents'
 
@@ -171,7 +165,7 @@ class TraceNavigationUser(db.Model):
     trace_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer)
     graph_ref = db.Column(db.String(100))
-    timestamp = db.Column(db.String(100), default=str(datetime.datetime.utcnow))
+    timestamp = db.Column(db.String(100), default='{0:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now()))
 
 class ScholarQuestion(db.Model):
     __tablename__ = 'scholar_questions'
@@ -203,13 +197,7 @@ class Badge(db.Model):
     badge_id = db.Column(db.Integer, primary_key=True)
     badge_name = db.Column(db.String(100))
     description = db.Column(db.String(300))
-    badge_image = db.LargeBinary()
-
-    def get_image(self):
-        return b64decode(self.user_image)
-
-    def set_image(self, image):
-        self.user_image = image.read()
+    badge_image = db.Column(db.String(300))
 
 class Level(db.Model):
     __tablename__ = 'levels'

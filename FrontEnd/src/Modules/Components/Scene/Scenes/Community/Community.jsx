@@ -230,6 +230,44 @@ export default class Community extends Component {
         }
     }
 
+    postQuestion = (i) => {
+        let questionTitle = document.getElementById("question-title-textarea");
+        let questionTitleValue = questionTitle.value;
+        let question = document.getElementById("question-textarea");
+        let questionValue = question.value;
+        if (!(questionValue === null || questionValue === undefined || questionValue === "") && !(questionTitleValue === null || questionTitleValue === undefined || questionTitleValue === "")) {
+            setTimeout(() => {
+                question.value = "";
+                questionTitle.value = "";
+                if(this.props.isMounted){
+                    
+                    // request
+                    let obj = {
+                        "question_title": questionTitleValue,
+                        "user_id": JSON.parse(localStorage.getItem("isConnected")).id,
+                        "question": questionValue
+                    }
+                    axios.post(`${this.state.server}community_questions/`, obj, this.state.config)
+                    .then(request => {
+                        if (request.status === 201) {
+                            //this.setState({ myQuestions: myQuestions });
+                            this._loadMyQuestions()
+                        }
+                    })
+                    .catch(error => {
+                        // nothing
+                    });
+                        }
+                    }, 50);
+        }
+    }
+
+    postQuestion2 = (event) => {
+        if (event.key === 'Enter') {
+            this.postQuestion();
+        }
+    }
+
     changePanel = (i) => {
         let panelOpened = [false, false];
         panelOpened[i] = true;
@@ -355,7 +393,7 @@ export default class Community extends Component {
                             }
                         }></div>
 
-                        <div className={"sub-panel"} style={
+                        <div className={"sub-panel"} id={"community-ask-questions"} style={
                             {
                                 height: styles.subpanel.height,
                                 width: styles.subpanel.width,
@@ -363,6 +401,24 @@ export default class Community extends Component {
                                 top: styles.subpanel.top,
                             }
                         }>
+                            <div className={"question"}>
+                                            
+                                            
+                                            <div className={"textarea"} style={{gridColumn: "2 / 10",
+    gridRow: "1",
+    display: "flex",
+    alignItems: "center"}}><textarea id={"question-title-textarea"} style={{width: "100%"}}></textarea></div>
+                                            <div className={"textarea"} style={{gridColumn: "2 / 10",
+    gridRow: "2",
+    display: "flex",
+    alignItems: "center"}}><textarea id={"question-textarea"} style={{width: "100%"}} 
+                                                onKeyPress={event => this.postQuestion2(event)}></textarea>
+                                            </div>
+                                            <div className={"send"} style={{gridColumn: "10 / 12",
+    gridRow: "1/3",
+    display: "flex",
+    alignItems: "center"}}><div className={"arrow"} onClick={() => this.postQuestion()}></div></div>
+                                        </div>
                             {this.state.myQuestions.map((item, i) =>
                                 <Fragment key={i}>
                                     <div className={"question"}>

@@ -7,7 +7,8 @@ def generate_auth_token(user, expiration = 18000):
     return {
         'token' : token.decode('ascii'),
         'user_id' : user.get_user_id(),
-        'username' : user.username
+        'username' : user.username,
+        'user_image' : user.user_image
     }
 
 def verify_auth_token(token):

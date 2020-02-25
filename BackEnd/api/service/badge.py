@@ -9,6 +9,7 @@ def build_badge_schema(badge):
     mod['badge_id'] = badge.badge_id
     mod['badge_name'] = badge.badge_name
     mod['description'] = badge.description
+    mod['badge_image'] = badge.badge_image
     return mod
 
 def get_badge(badge_id):
@@ -73,7 +74,7 @@ def delete_badge(badge_id):
     db.session.commit()
     return True
 
-def get_badge_image(badge_id):
+def set_badge_image(badge_id, badge_image):
     badge = Badge.query.get(badge_id)
     if not badge:
         abort(make_response(jsonify({
@@ -82,17 +83,6 @@ def get_badge_image(badge_id):
             },
             "message":"Badge not found"
         }), 409))
-    return BytesIO(badge.badge_image)
-
-def set_badge_image(badge_id, image):
-    badge = Badge.query.get(badge_id)
-    if not badge:
-        abort(make_response(jsonify({
-            "errors":{
-                0:"Badge not found"
-            },
-            "message":"Badge not found"
-        }), 409))
-    badge.set_image(image)
+    badge.badge_image = badge_image
     db.session.commit()
     return ''

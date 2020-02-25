@@ -1,6 +1,7 @@
 from flask import current_app, abort, jsonify, make_response
 from io import BytesIO
 from sqlalchemy import exc
+import random
 
 from api.database import db
 from api.database.model import User, Document, ScholarQuestion, Badge, Level, UserSearch, TraceNavigationUser
@@ -21,6 +22,7 @@ def build_user_schema(user):
     mod['email'] = user.email
     mod['phone'] = user.phone
     mod['year'] = user.year
+    mod['user_image'] = user.user_image
     return mod
 
 def get_user(user_id):
@@ -75,6 +77,8 @@ def create_user(data):
         )
         if data.get('phone') :
             user.phone = data.get('phone')
+        if data.get('user_image') :
+            user.user_image = data.get('user_image')
         db.session.add(user)
 
         user.set_level(level)
@@ -135,30 +139,6 @@ def check_user_auth(username, pwd):
             "message":"Invalide password"
         }), 403))
     return generate_auth_token(user)
-
-def get_user_image(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        abort(make_response(jsonify({
-            "errors":{
-                0:"User not found"
-            },
-            "message":"User not found"
-        }), 409))
-    return BytesIO(user.user_image)
-
-def set_user_image(user_id, image):
-    user = User.query.get(user_id)
-    if not user:
-        abort(make_response(jsonify({
-            "errors":{
-                0:"User not found"
-            },
-            "message":"User not found"
-        }), 409))
-    user.set_image(image)
-    db.session.commit()
-    return ''
 
 
 # User Opened Documents *******************************************************************************************************************************
@@ -238,6 +218,7 @@ def add_opened_document(user_id, data):
             graph_ref=document.graph_ref,
             user_id=user.user_id
         )
+    #    badge_possession_verification('Apprentice') #******************************************************************
         db.session.add(trace)
         db.session.flush()
         db.session.commit()
