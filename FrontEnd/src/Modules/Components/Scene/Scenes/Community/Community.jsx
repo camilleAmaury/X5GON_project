@@ -40,16 +40,16 @@ export default class Community extends Component {
                     questions.push({
                         question: res[i].question_title, questionContent: res[i].question, 
                         author: { username: res[i].question_title, time: res[i].date},
-                        isClicked: false, comments: []
+                        isClicked: false, comments: [], id:res[i].question_id
                     });
                     for(let j = 0; j < res[i].comments.length; j++){
                         questions[i].comments.push({ 
                             author: res[i].comments[j].username, time: res[i].comments[j].date, 
                             content: res[i].comments[j].comment, 
-                            like: res[i].comments[j].like_count, isLiked: 0, hoveredArrow: 0 })
+                            like: res[i].comments[j].like_count, isLiked: 0, hoveredArrow: 0,
+                            id:res[i].comments[j].comment_id });
                     }
                 }
-                console.log(questions)
                 this.setState({
                     questions:questions
                 });
@@ -99,9 +99,21 @@ export default class Community extends Component {
             let questions = this.state.questions;
             questions[i].comments[j].like += questions[i].comments[j].isLiked !== 0 ? val * 2 : val;
             questions[i].comments[j].isLiked = val;
-            if(this.props.isMounted){
-                this.setState({ questions: questions });
+            // request
+            let obj = {
+                user_id: JSON.parse(localStorage.getItem("isConnected")).id,
+                comment_id: questions[i].comments[j].id,
+                like_value: val
             }
+            axios.post(`${this.state.server}likes/`, obj, this.state.config)
+            .then(request => {
+                if (request.status === 201) {
+                    this.setState({ questions: questions });
+                }
+            })
+            .catch(error => {
+                // nothing
+            });
         }
     }
 
@@ -110,9 +122,21 @@ export default class Community extends Component {
             let questions = this.state.questions;
             questions[i].comments[j].like -= questions[i].comments[j].isLiked;
             questions[i].comments[j].isLiked = 0;
-            if(this.props.isMounted){
-                this.setState({ questions: questions });
+            // request
+            let obj = {
+                user_id: JSON.parse(localStorage.getItem("isConnected")).id,
+                comment_id: questions[i].comments[j].id,
+                like_value: 0
             }
+            axios.post(`${this.state.server}likes/`, obj, this.state.config)
+            .then(request => {
+                if (request.status === 201) {
+                    this.setState({ questions: questions });
+                }
+            })
+            .catch(error => {
+                // nothing
+            });
         }
     }
 
@@ -137,9 +161,10 @@ export default class Community extends Component {
                     let now = new Date();
                     let day = now.getDate().toString().length === 1 ? "0" + now.getDate().toString() : now.getDate();
                     let month = (now.getMonth() + 1).toString().length === 1 ? "0" + (now.getMonth() + 1).toString() : (now.getMonth() + 1);
+                    
                     questions[i].comments.push(
                         {
-                            author: 'Tonclure2000',
+                            author: JSON.parse(localStorage.getItem("isConnected")).id,
                             time: `${now.getMinutes()}:${now.getHours()} ${day}/${month}/${now.getFullYear()}`,
                             content: answerValue,
                             like: 0,
@@ -147,13 +172,23 @@ export default class Community extends Component {
                             hoveredArrow: 0
                         }
                     );
-                    if(this.props.isMounted){
-                        this.setState({
-                            questions: questions
-                        });
+                    // request
+                    let obj = {
+                        "comment": answerValue,
+                        "user_id": JSON.parse(localStorage.getItem("isConnected")).id,
+                        "question_id": questions[i].id
                     }
-                }
-            }, 50);
+                    axios.post(`${this.state.server}community_comments/`, obj, this.state.config)
+                    .then(request => {
+                        if (request.status === 201) {
+                            this.setState({ questions: questions });
+                        }
+                    })
+                    .catch(error => {
+                        // nothing
+                    });
+                        }
+                    }, 50);
         }
     }
 
