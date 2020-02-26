@@ -4,6 +4,7 @@ from . import user as user_service
 from api.database import db
 from api.database.model import User, Document, Evaluation
 from . import user as userService
+from .event import badge_possession_verification 
 
 def build_evaluation_schema(evaluation):
     mod = {}
