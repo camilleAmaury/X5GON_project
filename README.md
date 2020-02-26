@@ -1,11 +1,4 @@
 <!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
 [![LinkedIn VK][linkedin-shield]][linkedin-url-1]
 [![LinkedIn AB][linkedin-shield]][linkedin-url-2]
 [![LinkedIn CAJ][linkedin-shield]][linkedin-url-3]
@@ -36,13 +29,7 @@
 
 * [About the Project](#about-the-project)
   * [Built With](#built-with)
-* [Install and run](#install-and-run")
-  * [Package management](#package-management")
-    * [Create Virtual Machine](#create-virtual-machine")
-    * [Install packages](#install-packages")
-  * [Run app with flask](#run-flask-app")
-    * [Database](#database")
-    * [Run Server](#run-server")
+  * [Abstract](#abstract)
 * [Usage](#usage)
 * [License](#license)
 * [Contact](#contact)
@@ -55,6 +42,7 @@
 [![Knowledge Recipe][product-screenshot]]()
 
 ### Built With
+
 This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
 * [Bootstrap](https://getbootstrap.com)
 * [Node.js](https://nodejs.org/en/)
@@ -62,100 +50,25 @@ This section should list any major frameworks that you built your project using.
 * [Fuseki server](https://jena.apache.org/documentation/fuseki2/)
 * [Flask](https://www.palletsprojects.com/p/flask/)
 
-## Install and run <a name="install-and-run"></a>
+### Abstract
 
-### Package management <a name="package-management"></a>
+This project was built for the finale of the X5GON (AI for commonth good) 2020 at Paris. It involved 3 student from Nantes university (see the linkedin shields).
 
-#### Create Virtual Machine <a name="create-virtual-machine"></a>
-
-If the virtual machine of this project is not created.  
-Be sure to use Python 3.x.x
-
-```
-$ python -m venv venv
-```
-
-##### Activate virtual machine
-
-```
-$ venv/Scripts/activate
-```
-
-##### Leave virtual machine
-
-```
-$ venv/Scripts/deactivate
-```
-
-[Head of page](#head-page)
-
-#### Install packages <a name="install-packages"></a>
-
-Required packages :
-
-```
-$ pip install -r requirements.txt
-```
-
-If new packages are installed :
-
-```
-$ pip freeze > requirements.txt
-```
-
-[Head of page](#head-page)
-
-### Run app with flask <a name="run-flask-app"></a>
-
-If you want to know all possible commands, you can run :
-
-```
-$ flask
-```
-
-But you will have to run server at least one time to update informations on possible commands.
-
-#### Database <a name="database"></a>
-
-##### Initialize
-
-```
-$ flask create-tables
-```
-
-##### Clean up
-
-```
-$ flask delete-table
-```
-
-[Head of page](#head-page)
-
-#### Run Server <a name="run-server"></a>
-
-To run server use :
-
-```
-$ flask run
-```
-
-[Head of page](#head-page)
+Gako is a platform built to answer the problem of people which can't have access to the education (more than 300 millions). Our aim was to enable people who lack of an internet connection to use their phones to answer Gako chatbot in order to keep motivate and learn new stuffs.
+Moreover, our main tool is the website. It introduces a new style of animation cumulated with a funny manner of learning. We wanted people to keep interested in learning by bringing a lot of concept from motivation and reward concepts.
 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-### From Dataset to Knowledge Graph
-
-[Link of colab Jupyter notebook](https://colab.research.google.com/drive/1a6JEIpiZZ_XFUKIr4osyUXfQEQS0pfMz#scrollTo=TDd4nvYaZEcb)_
-
-... more content later on
+Coming soon ...
 
 
 <!-- LICENSE -->
 ## License
 
-You can freely copy code or other content except all the images, gif and designs created for this project.
-You should also mention our names.
+You can't copy and use code from this repository before having a proof of our agreement.
+You can't copy files, images, folders and design files from this repository before having a proof of our agreement.
+If we agree to let you use this code, you should mention this repository and our names.
 
 
 <!-- CONTACT -->
