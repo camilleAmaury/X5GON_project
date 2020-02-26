@@ -115,6 +115,7 @@
     height: 100%;
     float: right;
 }
+
 #community .question-title{
     grid-column: 2 / 10;
     grid-row: 2 / 6;
@@ -201,15 +202,26 @@
 }
 
 /* comment */
-#community .comment .bar{
-    background-color: rgb(218, 218, 218);
-    grid-column: 1 / 3;
+#community .comment .sep{
+    background-color: #FFFFFF;
+    grid-column: 1 / 2;
+    grid-row: 1 / 3;
+}
+#community .comment .sep .hor{
+    background-color: #dadada;
+    width: 47%;
+    height: 100%;
+}
+#community .comment .vote{
+    background-color: #FFFFFF;
+    grid-column: 2 / 3;
     grid-row: 1 / 3;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
 }
+
 #community .comment .likes {
     font-size: 1vw;
     font-family: 'Roboto';
@@ -275,14 +287,15 @@
     grid-auto-rows: minmax(50px, auto);
     background-color: #FFFFFF;
 }
-#community .answer .bar{
-    background-color: rgb(218, 218, 218);
-    grid-column: 1 / 3;
+#community .answer .sep{
+    background-color: #FFFFFF;
+    grid-column: 1 / 2;
     grid-row: 1 / 3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+}
+#community .answer .sep .hor{
+    background-color: #dadada;
+    width: 47%;
+    height: 100%;
 }
 #community .answer .send {
     grid-column: 10 / 12;

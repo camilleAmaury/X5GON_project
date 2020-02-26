@@ -45,7 +45,6 @@ export default class Community extends Component {
         if (this._isMounted) {
             this.setState({ server: server, config: config, server2: server2 }, () => {
                 this._loadQuestions();
-            }, () => {
                 this._loadMyQuestions();
             });
         }
@@ -67,7 +66,7 @@ export default class Community extends Component {
                             questions[i].comments.push({
                                 author: res[i].comments[j].username, time: res[i].comments[j].date,
                                 content: res[i].comments[j].comment,
-                                like: res[i].comments[j].like_count, isLiked: 0, hoveredArrow: 0,
+                                like: res[i].comments[j].like_count, isLiked: res[i].comments[j].user_like_status, hoveredArrow: 0,
                                 id: res[i].comments[j].comment_id, image: res[i].comments[j].user_image
                             });
                         }
@@ -100,7 +99,7 @@ export default class Community extends Component {
                             myQuestions[i].comments.push({
                                 author: res[i].comments[j].username, time: res[i].comments[j].date,
                                 content: res[i].comments[j].comment,
-                                like: res[i].comments[j].like_count, isLiked: 0, hoveredArrow: 0,
+                                like: res[i].comments[j].like_count, isLiked: res[i].comments[j].user_like_status, hoveredArrow: 0,
                                 id: res[i].comments[j].comment_id, image: res[i].comments[j].user_image
                             });
                         }
@@ -142,19 +141,28 @@ export default class Community extends Component {
         return obj;
     }
 
-    openComment = (i) => {
+    openComment = (i, data) => {
         if (this._isMounted) {
-            let questions = this.state.questions;
-            questions[i].isClicked = !questions[i].isClicked;
-            if (this._isMounted) {
-                this.setState({ questions: questions });
+            if(data === 0){
+                let questions = this.state.questions;
+                questions[i].isClicked = !questions[i].isClicked;
+                if (this._isMounted) {
+                    this.setState({ questions: questions });
+                }
+            }else{
+                let questions = this.state.myQuestions;
+                questions[i].isClicked = !questions[i].isClicked;
+                if (this._isMounted) {
+                    this.setState({ myQuestions: questions });
+                }
             }
+            
         }
     }
 
-    liked = (i, j, val) => {
+    liked = (i, j, val, data) => {
         if (this._isMounted) {
-            let questions = this.state.questions;
+            let questions = data === 0 ? this.state.questions :this.state.myQuestions;
             questions[i].comments[j].like += questions[i].comments[j].isLiked !== 0 ? val * 2 : val;
             questions[i].comments[j].isLiked = val;
             // request
@@ -177,9 +185,9 @@ export default class Community extends Component {
         }
     }
 
-    unliked = (i, j) => {
+    unliked = (i, j, data) => {
         if (this._isMounted) {
-            let questions = this.state.questions;
+            let questions = data === 0 ? this.state.questions :this.state.myQuestions;
             questions[i].comments[j].like -= questions[i].comments[j].isLiked;
             questions[i].comments[j].isLiked = 0;
             // request
@@ -202,18 +210,27 @@ export default class Community extends Component {
         }
     }
 
-    hoverArrow = (i, j, val) => {
+    hoverArrow = (i, j, val, data) => {
         if (this._isMounted) {
-            let questions = this.state.questions;
-            questions[i].comments[j].hoverArrow = val;
-            if (this._isMounted) {
-                this.setState({ questions: questions });
+            if(data === 0){
+                let questions = this.state.questions;
+                questions[i].comments[j].hoverArrow = val;
+                if (this._isMounted) {
+                    this.setState({ questions: questions });
+                }
+            }else{
+                let questions = this.state.myQuestions;
+                questions[i].comments[j].hoverArrow = val;
+                if (this._isMounted) {
+                    this.setState({ myQuestions: questions });
+                }
             }
+            
         }
     }
 
-    postAnswer = (i) => {
-        let answer = document.getElementById("answer-textarea-" + i);
+    postAnswer = (i, data) => {
+        let answer = document.getElementById(`answer-textarea${data === 0 ? "" : "2"}-` + i);
         let answerValue = answer.value;
         if (!(answerValue === null || answerValue === undefined || answerValue === "")) {
             setTimeout(() => {
@@ -262,7 +279,7 @@ export default class Community extends Component {
         }
     }
 
-    postQuestion = (i) => {
+    postQuestion = () => {
         let questionTitle = document.getElementById("question-title-textarea");
         let questionTitleValue = questionTitle.value;
         let question = document.getElementById("question-textarea");
@@ -365,7 +382,7 @@ export default class Community extends Component {
                                                 <div className={"hor"}></div>
                                             </div>
                                             <div className={"question-title"}><span>{item.questionContent}</span></div>
-                                            <div className={"deploy"} onClick={() => this.openComment(i)}><span>{item.isClicked ? "unsee comments" : "see comments"} ({item.comments.length})</span></div>
+                                            <div className={"deploy"} onClick={() => this.openComment(i, 0)}><span>{item.isClicked ? "unsee comments" : "see comments"} ({item.comments.length})</span></div>
                                             <div className={"user-information"}>
                                                 <div className={"picture"} style={{
                                                     backgroundImage: `url('${this.state.images[item.author.image]}')`,
@@ -377,8 +394,10 @@ export default class Community extends Component {
                                         </div>
                                         {item.isClicked ?
                                             <div className={"answer"}>
-                                                <div className={"bar"}></div>
-                                                <div className={"send"}><div className={"arrow"} onClick={() => this.postAnswer(i)}></div></div>
+                                                <div className={"sep"}>
+                                                    <div className={"hor"}></div>
+                                                </div>
+                                                <div className={"send"}><div className={"arrow"} onClick={() => this.postAnswer(i, 0)}></div></div>
                                                 <div className={"textarea"}><textarea id={"answer-textarea-" + i}
                                                     onKeyPress={event => this.postAnswer2(event, i)}></textarea>
                                                 </div>
@@ -386,9 +405,12 @@ export default class Community extends Component {
                                             : ""}
                                         {item.isClicked ? item.comments.map((com, j) =>
                                             <div className={"comment"} key={j}>
-                                                <div className={"bar"}>
-                                                    <div className={"upArrow"} onMouseEnter={() => this.hoverArrow(i, j, 1)} onMouseLeave={() => this.hoverArrow(i, j, 0)}
-                                                        onClick={com.isLiked === 1 ? () => this.unliked(i, j) : () => this.liked(i, j, 1)} style={{
+                                                <div className={"sep"}>
+                                                    <div className={"hor"}></div>
+                                                </div>
+                                                <div className={"vote"}>
+                                                    <div className={"upArrow"} onMouseEnter={() => this.hoverArrow(i, j, 1, 0)} onMouseLeave={() => this.hoverArrow(i, j, 0, 0)}
+                                                        onClick={com.isLiked === 1 ? () => this.unliked(i, j, 0) : () => this.liked(i, j, 1)} style={{
                                                             borderColor: com.isLiked === 1 ? (com.hoverArrow === 1 ? "#b43120" : "#dd3636") : (com.hoverArrow === 1 ? "#dd3636" : "#b43120"),
                                                             borderStyle: "solid",
                                                             borderWidth: "0px 5px 5px 0px",
@@ -399,15 +421,16 @@ export default class Community extends Component {
                                                     <div className={"likes"} style={{
                                                         color: com.isLiked === 0 ? "#b43120" : "#dd3636"
                                                     }}>{com.like}</div>
-                                                    <div className={"downArrow"} onMouseEnter={() => this.hoverArrow(i, j, -1)} onMouseLeave={() => this.hoverArrow(i, j, 0)}
-                                                        onClick={com.isLiked === -1 ? () => this.unliked(i, j) : () => this.liked(i, j, -1)} style={{
+                                                    <div className={"downArrow"} onMouseEnter={() => this.hoverArrow(i, j, -1, 0)} onMouseLeave={() => this.hoverArrow(i, j, 0, 0)}
+                                                        onClick={com.isLiked === -1 ? () => this.unliked(i, j, 0) : () => this.liked(i, j, -1, 0)} style={{
                                                             borderColor: com.isLiked === -1 ? (com.hoverArrow === -1 ? "#b43120" : "#dd3636") : (com.hoverArrow === -1 ? "#dd3636" : "#b43120"),
                                                             borderStyle: "solid",
                                                             borderWidth: "0px 5px 5px 0px",
                                                             display: "inline-block",
                                                             padding: "5px",
                                                             transform: "rotate(45deg)"
-                                                        }}></div>
+                                                        }}>
+                                                    </div>
                                                 </div>
                                                 <div className={"user"}>
                                                     <div className={"picture"} style={{
@@ -474,27 +497,35 @@ export default class Community extends Component {
                                                 <div className={"hor"}></div>
                                             </div>
                                             <div className={"question-title"}><span>{item.questionContent}</span></div>
-                                            <div className={"deploy"} onClick={() => this.openComment(i)}><span>{item.isClicked ? "unsee comments" : "see comments"} ({item.comments.length})</span></div>
+                                            <div className={"deploy"} onClick={() => this.openComment(i, 1)}><span>{item.isClicked ? "unsee comments" : "see comments"} ({item.comments.length})</span></div>
                                             <div className={"user-information"}>
-                                                <div className={"picture"}></div>
+                                                <div className={"picture"} style={{
+                                                    backgroundImage: `url('${this.state.images[item.author.image]}')`,
+                                                    backgroundSize: 'cover'
+                                                }}></div>
                                                 <div className={"username"}>{item.author.username}</div>
                                                 <div className={"date"}>{item.author.time}</div>
                                             </div>
                                         </div>
                                         {item.isClicked ?
                                             <div className={"answer"}>
-                                                <div className={"bar"}></div>
-                                                <div className={"send"}><div className={"arrow"} onClick={() => this.postAnswer(i)}></div></div>
-                                                <div className={"textarea"}><textarea id={"answer-textarea-" + i}
+                                                <div className={"sep"}>
+                                                    <div className={"hor"}></div>
+                                                </div>
+                                                <div className={"send"}><div className={"arrow"} onClick={() => this.postAnswer(i, 1)}></div></div>
+                                                <div className={"textarea"}><textarea id={"answer-textarea2-" + i}
                                                     onKeyPress={event => this.postAnswer2(event, i)}></textarea>
                                                 </div>
                                             </div>
                                             : ""}
                                         {item.isClicked ? item.comments.map((com, j) =>
                                             <div className={"comment"} key={j}>
-                                                <div className={"bar"}>
-                                                    <div className={"upArrow"} onMouseEnter={() => this.hoverArrow(i, j, 1)} onMouseLeave={() => this.hoverArrow(i, j, 0)}
-                                                        onClick={com.isLiked === 1 ? () => this.unliked(i, j) : () => this.liked(i, j, 1)} style={{
+                                                <div className={"sep"}>
+                                                    <div className={"hor"}></div>
+                                                </div>
+                                                <div className={"vote"}>
+                                                    <div className={"upArrow"} onMouseEnter={() => this.hoverArrow(i, j, 1, 1)} onMouseLeave={() => this.hoverArrow(i, j, 0, 1)}
+                                                        onClick={com.isLiked === 1 ? () => this.unliked(i, j, 1) : () => this.liked(i, j, 1, 1)} style={{
                                                             borderColor: com.isLiked === 1 ? (com.hoverArrow === 1 ? "#b43120" : "#dd3636") : (com.hoverArrow === 1 ? "#dd3636" : "#b43120"),
                                                             borderStyle: "solid",
                                                             borderWidth: "0px 5px 5px 0px",
@@ -505,8 +536,8 @@ export default class Community extends Component {
                                                     <div className={"likes"} style={{
                                                         color: com.isLiked === 0 ? "#b43120" : "#dd3636"
                                                     }}>{com.like}</div>
-                                                    <div className={"downArrow"} onMouseEnter={() => this.hoverArrow(i, j, -1)} onMouseLeave={() => this.hoverArrow(i, j, 0)}
-                                                        onClick={com.isLiked === -1 ? () => this.unliked(i, j) : () => this.liked(i, j, -1)} style={{
+                                                    <div className={"downArrow"} onMouseEnter={() => this.hoverArrow(i, j, -1, 1)} onMouseLeave={() => this.hoverArrow(i, j, 0, 1)}
+                                                        onClick={com.isLiked === -1 ? () => this.unliked(i, j, 1) : () => this.liked(i, j, -1, 1)} style={{
                                                             borderColor: com.isLiked === -1 ? (com.hoverArrow === -1 ? "#b43120" : "#dd3636") : (com.hoverArrow === -1 ? "#dd3636" : "#b43120"),
                                                             borderStyle: "solid",
                                                             borderWidth: "0px 5px 5px 0px",
@@ -516,7 +547,10 @@ export default class Community extends Component {
                                                         }}></div>
                                                 </div>
                                                 <div className={"user"}>
-                                                    <div className={"picture"}></div>
+                                                    <div className={"picture"} style={{
+                                                        backgroundImage: `url('${this.state.images[com.image]}')`,
+                                                        backgroundSize: 'cover'
+                                                    }}></div>
                                                     <div className={"username"}>{com.author}</div>
                                                     <div className={"date"}>{com.time}</div>
                                                 </div>
